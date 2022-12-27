@@ -13,6 +13,8 @@ const nextConfig = {
     svgr: false,
   },
 
+  trailingSlash: true,
+
   async rewrites() {
     return [
       {
