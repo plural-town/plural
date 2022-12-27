@@ -1,4 +1,40 @@
-import { Box, Container, Flex, Heading, Image, Stack } from "@chakra-ui/react";
+import NextLink from "next/link";
+import { Box, Button, Container, Flex, Heading, Image, Stack } from "@chakra-ui/react";
+
+function CTAButtons() {
+  return (
+    <Stack
+      spacing={{ base: 4, sm: 6 }}
+      direction={{ base: "column", sm: "row" }}
+    >
+      <NextLink href="/register/" passHref legacyBehavior>
+        <Button
+          as="a"
+          rounded="full"
+          size="lg"
+          fontWeight="normal"
+          px={6}
+          colorScheme="red"
+          bg="red.400"
+          _hover={{ bg: "red.500" }}
+        >
+          Create Account
+        </Button>
+      </NextLink>
+      <NextLink href="/login/" passHref legacyBehavior>
+        <Button
+          as="a"
+          rounded="full"
+          size="lg"
+          fontWeight="normal"
+          px={6}
+        >
+          Login
+        </Button>
+      </NextLink>
+    </Stack>
+  );
+}
 
 export function Index() {
   return (
@@ -13,6 +49,7 @@ export function Index() {
           <Heading as="h1">
             Pural Social
           </Heading>
+          <CTAButtons />
         </Stack>
         <Flex
           flex="1"
