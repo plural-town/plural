@@ -7,8 +7,9 @@ function CustomApp({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>Welcome to plural!</title>
+        <style>{ "body { display: block }" }</style>
       </Head>
-      <main className="app">
+      <main>
         <ChakraProvider>
           <Component {...pageProps} />
         </ChakraProvider>

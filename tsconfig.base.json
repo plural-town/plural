@@ -14,7 +14,11 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@plural/form": ["libs/form/src/index.ts"],
+      "@plural/models": ["libs/models/src/index.ts"],
+      "@plural/schema": ["libs/schema/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

@@ -1,0 +1,116 @@
+datasource db {
+  provider = "postgres"
+  url = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  //output = "../../node_modules/.prisma/client"
+}
+
+enum Role {
+  USER
+  MOD
+  SUPER_MOD
+  ADMIN
+}
+
+model EmailRegistration {
+  id              String      @id
+  code            String
+  name            String
+  email           String
+  password        String
+  singlet         Boolean
+  requestedAt     DateTime    @default(now())
+  completedAt     DateTime?
+  verified        Email?
+}
+
+model EmailConfirmation {
+  id              String      @id
+  code            String
+  email           String
+  userId          Int
+  user            User       @relation(fields: [userId], references: [id])
+  verified        Email?
+}
+
+model User {
+  id              Int         @id @default(autoincrement())
+  singlet         Boolean
+  createdAt       DateTime    @default(now())
+  password        String?
+  defaultEmail    String?
+  nsLimit         Int?
+  subdomainLimit  Int?
+  emails          Email[]
+  personas        Persona[]
+  namespaces      Namespace[]
+  emailConfirms   EmailConfirmation[]
+}
+
+model Email {
+  email           String      @id
+  userId          Int
+  user            User        @relation(fields: [userId], references: [id])
+  createdAt       DateTime    @default(now())
+  registrationId  String?     @unique
+  registration    EmailRegistration? @relation(fields: [registrationId], references: [id])
+  confirmationId  String?     @unique
+  confirmation    EmailConfirmation? @relation(fields: [confirmationId], references: [id])
+}
+
+model Persona {
+  id              Int         @id @default(autoincrement())
+  role            Role        @default(USER)
+  name            String
+  userId          Int
+  user            User        @relation(fields: [userId], references: [id])
+  createdAt       DateTime    @default(now())
+  notes           Note[]
+}
+
+model Namespace {
+  id              String      @id
+  userId          Int
+  user            User        @relation(fields: [userId], references: [id])
+  profileId       Int?        @unique
+  profile         Profile?    @relation(name: "root", fields: [profileId], references: [id])
+  subdomain       Boolean
+  profiles        Profile[]
+}
+
+model Profile {
+  id              Int         @id
+  slug            String
+  namespaceId     String
+  ns              Namespace   @relation(fields: [namespaceId], references: [id])
+  parentId        Int?
+  parent          Profile?    @relation(name: "parent", fields: [parentId], references: [id])
+  children        Profile[]   @relation(name: "parent")
+  primaryFor      Namespace?  @relation(name: "root")
+  notes           Note[]
+}
+
+model Note {
+  id              String      @id @default(cuid())
+  published       Boolean     @default(false)
+  profileId       Int
+  profile         Profile     @relation(fields: [profileId], references: [id])
+  authorId        Int
+  author          Persona     @relation(fields: [authorId], references: [id])
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  drafts          NoteContent[]
+}
+
+model NoteContent {
+  id              String      @id @default(cuid())
+  noteId          String
+  note            Note        @relation(fields: [noteId], references: [id])
+  content         String
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  publishedAt     DateTime?
+}
