@@ -12,6 +12,15 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
+
+  async rewrites() {
+    return [
+      {
+        source: "/.well-known/webfinger",
+        destination: "/api/.well-known/webfinger",
+      },
+    ];
+  },
 };
 
 module.exports = withNx(nextConfig);
