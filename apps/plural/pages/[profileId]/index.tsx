@@ -4,6 +4,7 @@ import { withIronSessionSsr } from "iron-session/next";
 import { getProfilePage } from "@plural/db";
 import { PrismaClient } from "@prisma/client";
 import { InferGetServerSidePropsType } from "next";
+import Head from "next/head";
 
 export const getServerSideProps = withIronSessionSsr(async ({ query, req, res }) => {
   const { profileId } = query;
@@ -33,6 +34,9 @@ export function ProfilePage({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <Container>
+      <Head>
+        <title>@{profile.slug}</title>
+      </Head>
       <Heading>
         Profile { profile.slug }
       </Heading>
