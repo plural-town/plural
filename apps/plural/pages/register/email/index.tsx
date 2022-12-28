@@ -1,4 +1,4 @@
-import { Container, Heading, Link, Text } from "@chakra-ui/react";
+import { Alert, AlertIcon, Container, Heading, Link, Text } from "@chakra-ui/react";
 import { InputField, SubmitButton } from "@plural/form";
 import { NewEmailRequestSchema } from "@plural/schema";
 import { Form, Formik } from "formik";
@@ -9,12 +9,14 @@ import { useRouter } from "next/router";
 export const getStaticProps: GetStaticProps = async (context) => {
   return {
     props: {
+      registrationOpen: process.env.REGISTRATION_ENABLED === "true",
       name: process.env.SITE_NAME ?? "this social network",
     },
   } as const;
 };
 
 export function EmailRegistrationStep({
+  registrationOpen,
   name,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter();
@@ -34,6 +36,12 @@ export function EmailRegistrationStep({
           </Link>
         </NextLink> that you have already been sent.
       </Text>
+      {!registrationOpen && (
+        <Alert status="warning">
+          <AlertIcon />
+          Registrations are currently closed.
+        </Alert>
+      )}
       <Formik
         initialValues={{
           email: "",
@@ -63,7 +71,7 @@ export function EmailRegistrationStep({
             type="password"
             label="Password"
           />
-          <SubmitButton colorScheme="blue">
+          <SubmitButton colorScheme="blue" disabled={!registrationOpen}>
             Create Account
           </SubmitButton>
         </Form>

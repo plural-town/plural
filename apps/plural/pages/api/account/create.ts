@@ -12,11 +12,19 @@ export async function createAccountHandler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  const registrationOpen = process.env.REGISTRATION_ENABLED === "true";
   const emailEnabled = process.env.EMAIL_ENABLED !== "false";
   const {
     email,
     password,
   } = NewEmailRequestSchema.validateSync(req.body);
+
+  if(!registrationOpen) {
+    return res.status(500).send({
+      status: "failure",
+      error: "REG_CLOSED",
+    });
+  }
 
   const hashed = await hash(password, 14);
 
