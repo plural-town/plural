@@ -1,0 +1,41 @@
+= Plural (Social Platform)
+
+Not everyone fits into a single box, or URL.
+
+Plural is a social media server designed to support flexible profiles,
+based on ActivityPub (so users can interact with any Mastodon server).
+
+== Features/Use Cases
+
+Plural Systems::
+Create one system account (`plural.gg/@sys`)
+and member accounts
+(either `plural.gg/@sys/@member` or `sys.plural.gg/@member`)
+
+Post Categories::
+Our social media has multiple categories:
++
+- `plural.gg/@plural/@changelog`
+- `plural.gg/@plural/@support`
+- `plural.gg/@plural/@tips`
++
+which can be viewed (/subscribed to) individually,
+or merged together under `plural.gg/@plural`
+
+== Development
+
+=== Running Locally
+
+- Clone repository
+- `yarn install`
+
+Start Postgres:
+
+[source,sh]
+----
+docker run -d \
+  --name plural-social \
+  -p 4432:5432 \
+  -e POSTGRES_PASSWORD=socialdev \
+  postgres
+----
