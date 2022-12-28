@@ -1,6 +1,7 @@
+import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
@@ -24,13 +25,29 @@ export default function handler(
   const subAccount = resource.match(SUB_ACCOUNT_RESOURCE);
   const subdomainAccount = resource.match(SUB_ACCOUNT_SUBDOMAIN);
 
+  const prisma = new PrismaClient();
+
   if(directAccount) {
     const subject = directAccount[1];
+
+    const profile = await prisma.profile.findFirst({
+      where: {
+        slug: subject,
+        parentId: null,
+      },
+    });
+
+    if(!profile) {
+      return res.status(404).json({});
+    }
+
+    // TODO: Handle profile visibility/privacy
+
     res.status(200).json({
       subject: `acct:${subject}@${BASE_DOMAIN}`,
       aliases: [
         `https://${BASE_DOMAIN}/@${subject}`,
-        `https://${BASE_DOMAIN}/api/account/${subject}/activity`,
+        `https://${BASE_DOMAIN}/api/ap/profile/${profile.id}`,
       ],
       links: [
         {
@@ -41,7 +58,7 @@ export default function handler(
         {
           rel: "self",
           type: "application/activity+json",
-          href: `https://${BASE_DOMAIN}/api/account/${subject}/activity`,
+          href: `https://${BASE_DOMAIN}/api/ap/profile/${profile.id}`,
         },
       ],
     });
