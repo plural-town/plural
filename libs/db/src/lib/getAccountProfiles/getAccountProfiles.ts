@@ -4,24 +4,34 @@ import flatten from "lodash.flatten";
 import uniq from "lodash.uniq";
 
 export function summarizeProfile(
-  profile: Profile & { display: DisplayName },
+  profile: Profile & { display: DisplayName, parent?: Profile | null },
 ): ProfileSummary;
 export function summarizeProfile(
   profile: Profile,
   display: DisplaySummary,
 ): ProfileSummary;
 export function summarizeProfile(
-  profile: Profile | (Profile & { display: DisplayName }),
+  profile: Profile | (Profile & { display: DisplayName, parent?: Profile | null }),
   display?: DisplaySummary,
 ): ProfileSummary {
+  const BASE_URL = process.env["BASE_URL"];
+
   const {
     name,
     displayName,
   } = (("display" in profile) ? profile.display : display) ?? {};
 
+  // TODO: Allow for 3+ levels of nesting
+  // TODO: Format subdomains if applicable
+
+  const profileURL = ("parent" in profile && !!profile.parent)
+    ? `${BASE_URL}/@${profile.parent.slug}/@${profile.slug}/`
+    : `${BASE_URL}/@${profile.slug}/`;
+
   return {
     id: profile.id,
     slug: profile.slug,
+    profileURL,
     parent: profile.parentId,
     isRoot: profile.parentId === null,
     displayId: profile.displayId,
@@ -51,6 +61,7 @@ export async function getAccountProfiles(
               profile: {
                 include: {
                   display: true,
+                  parent: true,
                 },
               },
             },

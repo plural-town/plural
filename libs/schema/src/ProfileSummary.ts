@@ -5,6 +5,8 @@ export interface ProfileSummary {
   id: string;
   slug: string;
 
+  profileURL: string;
+
   parent: string | null;
   isRoot: boolean;
 

@@ -1,10 +1,11 @@
-import { Container, Heading } from "@chakra-ui/react";
+import { Box, Container, Heading } from "@chakra-ui/react";
 import { SESSION_OPTIONS } from "../../lib/session";
 import { withIronSessionSsr } from "iron-session/next";
 import { getProfilePage } from "@plural/db";
 import { PrismaClient } from "@prisma/client";
 import { InferGetServerSidePropsType } from "next";
 import Head from "next/head";
+import { ProfileCard, SiteHeader } from "@plural/ui";
 
 export const getServerSideProps = withIronSessionSsr(async ({ query, req, res }) => {
   const { profileId } = query;
@@ -33,14 +34,16 @@ export function ProfilePage({
   profile,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
-    <Container>
+    <>
       <Head>
         <title>@{profile.slug}</title>
       </Head>
-      <Heading>
-        Profile { profile.slug }
-      </Heading>
-    </Container>
+      <SiteHeader />
+      <Container maxW="container.md">
+        <ProfileCard profile={profile}>
+        </ProfileCard>
+      </Container>
+    </>
   );
 }
 

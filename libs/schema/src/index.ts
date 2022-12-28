@@ -5,6 +5,7 @@ export * from "./CreateNSRequest";
 export * from "./CreateRootProfileRequest";
 export * from "./DisplaySummary";
 export * from "./IdentitySummary";
+export * from "./ImageSummary";
 export * from "./NewEmailRequest";
 export * from "./ProfileSummary";
 export * from "./RegistrationRequest";

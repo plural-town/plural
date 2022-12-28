@@ -1,4 +1,12 @@
-import { PrismaClient, Profile } from "@prisma/client";
+import { DisplayName, PrismaClient, Profile } from "@prisma/client";
+import { summarizeProfile } from "../getAccountProfiles/getAccountProfiles";
+
+type FullProfile
+  = Profile
+  & {
+    display: DisplayName,
+    parent: Profile | null,
+  };
 
 /**
  * Get the resources needed to render a profile page.
@@ -9,13 +17,17 @@ export async function getProfilePage(
   segments: string[],
   prisma: PrismaClient = new PrismaClient(),
 ) {
-  const path: Profile[] = [];
+  const path: FullProfile[] = [];
   let lastId: string | null = null;
   for (const segment of segments) {
-    const profile: Profile | null = await prisma.profile.findFirst({
+    const profile: FullProfile | null = await prisma.profile.findFirst({
       where: {
         slug: segment,
         parentId: lastId,
+      },
+      include: {
+        display: true,
+        parent: true,
       },
     });
     if(!profile) {
@@ -26,13 +38,7 @@ export async function getProfilePage(
     path.push(profile);
   }
 
-  const {
-    id,
-    slug,
-  } = path[path.length - 1];
+  const summary = summarizeProfile(path[path.length - 1]);
 
-  return {
-    id,
-    slug,
-  };
+  return summary;
 }
