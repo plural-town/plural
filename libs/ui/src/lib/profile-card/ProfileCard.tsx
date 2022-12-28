@@ -44,7 +44,7 @@ export function ProfileCard({
           <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">
             { avatar && (
               <Avatar
-                name={displayName}
+                name={displayName ?? undefined}
                 src={avatar.src}
               />
             )}

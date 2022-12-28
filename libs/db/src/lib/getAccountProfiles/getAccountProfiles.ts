@@ -48,8 +48,8 @@ export function summarizeProfile(
     isRoot: profile.parentId === null,
     displayId: profile.displayId,
     display: {
-      name,
-      displayName,
+      name: name ?? null,
+      displayName: displayName ?? null,
     },
     visibility: profile.visibility,
   };
