@@ -1,3 +1,5 @@
+import { InputProps } from "@chakra-ui/react";
+
 export interface CommonFieldProps {
   /**
    * The name of the field (according to Formik)
@@ -8,7 +10,7 @@ export interface CommonFieldProps {
 
    placeholder?: string;
 
-   my?: number;
+   my?: InputProps["my"];
 
    helpText?: string;
 

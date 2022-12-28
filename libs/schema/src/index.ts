@@ -10,4 +10,6 @@ export * from "./NewEmailRequest";
 export * from "./ProfilePage";
 export * from "./ProfileSummary";
 export * from "./RegistrationRequest";
+export * from "./SerializableDisplayName";
 export * from "./Session";
+export * from "./UpdateDisplay";
