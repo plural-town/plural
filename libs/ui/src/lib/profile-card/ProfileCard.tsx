@@ -46,6 +46,7 @@ export function ProfileCard({
             </Box>
           </Flex>
           <HStack>
+            {/* TODO: Implement follow popup */}
             <NextLink href={`${profileURL}follow/`} passHref legacyBehavior>
               <Button as="a" colorScheme="brand" size="xs">
                 Follow
