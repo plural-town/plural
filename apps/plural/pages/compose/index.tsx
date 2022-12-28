@@ -64,6 +64,7 @@ export function ComposeHomePage({
         }}
       >
         <Form>
+          {/* TODO: this should be profiles, not identities. */}
           {identities.map(identity => (
             <Card key={identity.id}>
               <CardHeader>

@@ -1,40 +1,19 @@
-import {
-  FormControl,
-  FormErrorMessage,
-  FormHelperText,
-  FormLabel,
-  Input,
-  Textarea,
-} from "@chakra-ui/react";
+import { FormControl, FormErrorMessage, FormHelperText, FormLabel, Select } from "@chakra-ui/react";
 import { useField } from "formik";
 import { CommonFieldProps } from "../util/CommonFieldProps";
 
-export interface InputFieldProps extends CommonFieldProps {
-  type?: "password" | "number" | "email" | "url";
-
-  size?: "xs" | "sm" | "md" | "lg";
-
-  bg?: string;
-
-  borderColor?: string;
-
-  textarea?: boolean;
-}
-
-export function InputField({
+export function VisibilitySelectField({
   name,
-  type,
   disabled,
   required,
   label,
   placeholder,
   my,
   helpText,
-  textarea,
   ...props
-}: InputFieldProps) {
+}: CommonFieldProps) {
   const [ field, meta ] = useField(name);
-  const InputType = textarea ? Textarea : Input;
+
   return (
     <FormControl
       isRequired={required}
@@ -43,14 +22,17 @@ export function InputField({
       my={my ?? 4}
     >
       <FormLabel>{label}</FormLabel>
-      <InputType
+      <Select
         {...field}
-        type={type}
         placeholder={placeholder}
-        size={props.size}
-        borderColor={props.borderColor}
-        bg={props.bg}
-      />
+      >
+        <option value="PUBLIC">Public</option>
+        <option value="UNLISTED">Unlisted</option>
+        <option value="FOLLOWERS">Followers only</option>
+        <option value="MUTUALS">Mutuals only</option>
+        <option value="SYSTEM">Internal/System only</option>
+        <option value="PRIVATE">Private</option>
+      </Select>
       { helpText && (
         <FormHelperText>
           { helpText }
@@ -60,7 +42,5 @@ export function InputField({
         {meta.error}
       </FormErrorMessage>
     </FormControl>
-  );
+  )
 }
-
-export default InputField;

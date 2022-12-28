@@ -32,6 +32,7 @@ enum Visibility {
   PUBLIC
   UNLISTED
   FOLLOWERS
+  MUTUALS
   SYSTEM
   PRIVATE
 }
@@ -98,6 +99,7 @@ model Profile {
   parent          Profile?    @relation(name: "tree", fields: [parentId], references: [id])
   children        Profile[]   @relation(name: "tree")
   access          ProfileGrant[]
+  content         Item[]
 }
 
 model ProfileGrant {
@@ -138,6 +140,8 @@ model Note {
 
 model Item {
   id              String      @id @default(cuid())
+  profileId       String
+  profile         Profile     @relation(fields: [profileId], references: [id])
   localOnly       Boolean
   privacy         Visibility
   type            ContentType
