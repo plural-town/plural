@@ -7,6 +7,8 @@ export interface IdentitySelectFieldProps extends CommonFieldProps {
   identities: IdentitySummary[];
 
   field?: "id" | "displayId";
+
+  size?: "xs" | "sm" | "md" | "lg";
 }
 
 export function IdentitySelectField({
@@ -17,12 +19,13 @@ export function IdentitySelectField({
   placeholder,
   identities,
   my,
+  size,
   helpText,
   ...props
 }: IdentitySelectFieldProps) {
   const [ field, meta ] = useField(name);
 
-  const nonEmpty = (str?: string) => {
+  const nonEmpty = (str?: string | null) => {
     if(typeof str === "string" && str.length > 0) {
       return str;
     }
@@ -36,10 +39,11 @@ export function IdentitySelectField({
       isDisabled={disabled}
       my={my ?? 4}
     >
-      <FormLabel>{label}</FormLabel>
+      <FormLabel fontSize={size}>{label}</FormLabel>
       <Select
         {...field}
         placeholder={placeholder}
+        size={size}
       >
         { identities.map(identity => (
           <option

@@ -1,5 +1,5 @@
 import { IdentitySummary } from "@plural/schema";
-import { Account, DisplayName, Identity, IdentityGrant, PrismaClient } from "@prisma/client";
+import { Account, DisplayName, Identity, PrismaClient } from "@prisma/client";
 
 export function summarizeIdentity(identity: Identity & { display: DisplayName }): IdentitySummary;
 export function summarizeIdentity(
@@ -19,8 +19,8 @@ export function summarizeIdentity(
     displayId: identity.displayId,
 
     display: {
-      name: display?.name,
-      displayName: display?.displayName,
+      name: display?.name ?? null,
+      displayName: display?.displayName ?? null,
     },
   };
 }

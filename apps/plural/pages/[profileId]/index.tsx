@@ -1,7 +1,7 @@
 import { Container } from "@chakra-ui/react";
 import { SESSION_OPTIONS } from "../../lib/session";
 import { withIronSessionSsr } from "iron-session/next";
-import { getProfilePage, requirePermission } from "@plural/db";
+import { getProfilePage, requirePermission, summarizeIdentity } from "@plural/db";
 import { PrismaClient } from "@prisma/client";
 import { InferGetServerSidePropsType } from "next";
 import Head from "next/head";
@@ -29,10 +29,15 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
       },
     },
     include: {
-      identity: true,
+      identity: {
+        include: {
+          display: true,
+        },
+      },
     },
   });
   const identities = grants.map(g => g.identity);
+  const identitySummaries = identities.map(summarizeIdentity);
 
   // TODO: Use "fronting" system to determine current viewers, vs. all identities for the current profile
 
@@ -43,6 +48,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
   return {
     props: {
       BASE_URL,
+      identities: identitySummaries,
       profile,
     },
   };
@@ -50,6 +56,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
 
 export function ProfilePage({
   BASE_URL,
+  identities,
   profile,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { display, fullUsername, highestRole } = profile;
@@ -64,7 +71,7 @@ export function ProfilePage({
       <Container maxW="container.md">
         <ProfileCard BASE_URL={BASE_URL} profile={profile} />
         {requirePermission(highestRole, "POST") && (
-          <ProfileNoteComposer />
+          <ProfileNoteComposer identities={identities} />
         )}
       </Container>
     </>

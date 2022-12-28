@@ -22,7 +22,7 @@ export function ProfileSelectField({
 }: ProfileSelectFieldProps) {
   const [ field, meta ] = useField(name);
 
-  const nonEmpty = (str?: string) => {
+  const nonEmpty = (str?: string | null) => {
     if(typeof str === "string" && str.length > 0) {
       return str;
     }

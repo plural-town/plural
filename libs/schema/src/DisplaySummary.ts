@@ -1,9 +1,9 @@
 import { ImageSummary } from "./ImageSummary";
 
 export interface DisplaySummary {
-  name?: string;
+  name: string | null;
 
-  displayName?: string;
+  displayName: string | null;
 
   avatar?: ImageSummary;
 
