@@ -2,7 +2,7 @@ import { Container, Heading, Text } from "@chakra-ui/react";
 import { SESSION_OPTIONS } from "../../../../lib/session";
 import { withIronSessionSsr } from "iron-session/next";
 import Head from "next/head";
-import { DisplayName, Permission, PrismaClient } from "@prisma/client";
+import { Permission, PrismaClient } from "@prisma/client";
 import { getAccountIdentities, permissionAbove, requirePermission, summarizeProfile } from "@plural/db";
 import flatten from "lodash.flatten";
 import { InferGetServerSidePropsType } from "next";
