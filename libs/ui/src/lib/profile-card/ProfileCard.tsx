@@ -26,7 +26,7 @@ export function ProfileCard({
   const displayName = useDisplayName(display);
 
   return (
-    <Card variant="elevated" my={4}>
+    <Card variant="filled" my={4}>
       { banner && (
         <Image
           objectFit="cover"
