@@ -7,7 +7,7 @@ function CTAButtons() {
       spacing={{ base: 4, sm: 6 }}
       direction={{ base: "column", sm: "row" }}
     >
-      <NextLink href="/register/" passHref legacyBehavior>
+      <NextLink href="/register/email/" passHref legacyBehavior>
         <Button
           as="a"
           rounded="full"
