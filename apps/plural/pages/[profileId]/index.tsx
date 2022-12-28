@@ -1,11 +1,11 @@
 import { Container } from "@chakra-ui/react";
 import { SESSION_OPTIONS } from "../../lib/session";
 import { withIronSessionSsr } from "iron-session/next";
-import { getProfilePage } from "@plural/db";
+import { getProfilePage, requirePermission } from "@plural/db";
 import { PrismaClient } from "@prisma/client";
 import { InferGetServerSidePropsType } from "next";
 import Head from "next/head";
-import { ProfileCard, SiteHeader, useDisplayName } from "@plural/ui";
+import { ProfileCard, ProfileNoteComposer, SiteHeader, useDisplayName } from "@plural/ui";
 
 export const getServerSideProps = withIronSessionSsr(async ({ query, req, res }) => {
   const { users } = req.session;
@@ -52,7 +52,7 @@ export function ProfilePage({
   BASE_URL,
   profile,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const { display, fullUsername } = profile;
+  const { display, fullUsername, highestRole } = profile;
   const displayName = useDisplayName(display);
 
   return (
@@ -63,6 +63,9 @@ export function ProfilePage({
       <SiteHeader />
       <Container maxW="container.md">
         <ProfileCard BASE_URL={BASE_URL} profile={profile} />
+        {requirePermission(highestRole, "POST") && (
+          <ProfileNoteComposer />
+        )}
       </Container>
     </>
   );

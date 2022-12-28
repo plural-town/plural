@@ -1,0 +1,7 @@
+= Public Assets
+
+== Favicons
+
+All favicons are exported in bulk from Affinity Designer.
+
+See `/art/icon`.

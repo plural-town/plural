@@ -55,7 +55,10 @@ function CustomApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Welcome to plural!</title>
+        {/* TODO: Allow pages to have custom icons */}
+        <link rel="icon" href="/favicon-32.png" sizes="32x32" />
+        <link rel="icon" href="/favicon-128.png" sizes="128x128" />
+        <link rel="icon" href="/favicon-192.png" sizes="192x192" />
         <style>{ "body { display: block }" }</style>
       </Head>
       <main>
