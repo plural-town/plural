@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@plural/db": ["libs/db/src/index.ts"],
       "@plural/form": ["libs/form/src/index.ts"],
       "@plural/models": ["libs/models/src/index.ts"],
       "@plural/schema": ["libs/schema/src/index.ts"]

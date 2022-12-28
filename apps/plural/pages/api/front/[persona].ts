@@ -11,6 +11,10 @@ export async function frontHandler(
   const personaId = req.query.persona;
   const user = req.session.user;
 
+  if(typeof personaId !== "string") {
+    throw new Error("Invalid persona.");
+  }
+
   if(user === undefined) {
     if(isNoScript) {
       return res.redirect("/login/");
@@ -37,7 +41,7 @@ export async function frontHandler(
   await req.session.save();
 
   if(isNoScript) {
-    return res.redirect("/");
+    return res.redirect("/app/");
   }
   return res.send({
     status: "ok",
