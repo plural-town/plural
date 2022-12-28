@@ -1,4 +1,5 @@
-import { Avatar, Box, Button, Card, CardBody, CardFooter, CardHeader, Flex, Heading, HStack, IconButton, Image, Stack, Text } from "@chakra-ui/react";
+import { Avatar, Box, Button, Card, CardBody, CardFooter, CardHeader, Flex, Heading, HStack, IconButton, Image, Menu, MenuButton, MenuItem, MenuList, Stack, Text } from "@chakra-ui/react";
+import { requirePermission } from "@plural/db";
 import { ProfilePage } from "@plural/schema";
 import NextLink from "next/link";
 import { ReactNode } from "react";
@@ -6,16 +7,19 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { useDisplayName } from "../util/useDisplayName";
 
 export interface ProfileCardProps {
+  BASE_URL: string;
   profile: ProfilePage;
   children?: ReactNode;
 }
 
 export function ProfileCard({
+  BASE_URL,
   profile,
   children,
 }: ProfileCardProps) {
   const {
     display,
+    highestRole,
     fullUsername,
     profileURL,
     postCount,
@@ -60,12 +64,33 @@ export function ProfileCard({
                 Follow
               </Button>
             </NextLink>
-            <IconButton
-              variant="ghost"
-              colorScheme="gray"
-              aria-label="Menu"
-              icon={<BsThreeDotsVertical />}
-            />
+            {/* TODO: Use a Menu implementation that can work without JS */}
+            <Menu>
+              <MenuButton
+                as={IconButton}
+                aria-label="Profile Options"
+                icon={<BsThreeDotsVertical />}
+              />
+              <MenuList>
+                { requirePermission(highestRole, "ADMIN") && (
+                  <NextLink href={`${BASE_URL}/account/profile/${profile.id}/`} passHref legacyBehavior>
+                    <MenuItem as="a">
+                      Edit Profile
+                    </MenuItem>
+                  </NextLink>
+                ) }
+                <NextLink href={`${profileURL}dm/`} passHref legacyBehavior>
+                  <MenuItem as="a">
+                    Send DM
+                  </MenuItem>
+                </NextLink>
+                <NextLink href={`${profileURL}block/`} passHref legacyBehavior>
+                  <MenuItem as="a">
+                    Block Profile
+                  </MenuItem>
+                </NextLink>
+              </MenuList>
+            </Menu>
           </HStack>
         </Flex>
       </CardHeader>

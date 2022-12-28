@@ -5,3 +5,4 @@ export * from "./lib/getProfilePage/getProfilePage";
 export * from "./lib/getUser/getUser";
 export * from "./lib/getUserNS/getUserNS";
 export * from "./lib/requireSession/requireSession";
+export * from "./lib/util/permission-math";
