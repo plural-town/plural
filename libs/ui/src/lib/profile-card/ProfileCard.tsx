@@ -1,7 +1,8 @@
-import { Avatar, Box, Button, Card, CardBody, CardFooter, CardHeader, Flex, Heading, HStack, Image, Stack, Text } from "@chakra-ui/react";
+import { Avatar, Box, Button, Card, CardBody, CardFooter, CardHeader, Flex, Heading, HStack, IconButton, Image, Stack, Text } from "@chakra-ui/react";
 import { ProfileSummary } from "@plural/schema";
 import NextLink from "next/link";
 import { ReactNode } from "react";
+import { BsThreeDotsVertical } from "react-icons/bs";
 import { useDisplayName } from "../util/useDisplayName";
 
 export interface ProfileCardProps {
@@ -47,11 +48,18 @@ export function ProfileCard({
           </Flex>
           <HStack>
             {/* TODO: Implement follow popup */}
+            {/* TODO: Render 'unfollow' if user already follows */}
             <NextLink href={`${profileURL}follow/`} passHref legacyBehavior>
-              <Button as="a" colorScheme="brand" size="xs">
+              <Button as="a" colorScheme="brand" size="sm">
                 Follow
               </Button>
             </NextLink>
+            <IconButton
+              variant="ghost"
+              colorScheme="gray"
+              aria-label="Menu"
+              icon={<BsThreeDotsVertical />}
+            />
           </HStack>
         </Flex>
       </CardHeader>
