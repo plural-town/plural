@@ -43,8 +43,7 @@ export function ProfilePage({
       </Head>
       <SiteHeader />
       <Container maxW="container.md">
-        <ProfileCard profile={profile}>
-        </ProfileCard>
+        <ProfileCard profile={profile} />
       </Container>
     </>
   );
