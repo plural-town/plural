@@ -1,3 +1,4 @@
+import { ProfilePage } from "@plural/schema";
 import { DisplayName, PrismaClient, Profile } from "@prisma/client";
 import { summarizeProfile } from "../getAccountProfiles/getAccountProfiles";
 
@@ -16,7 +17,7 @@ type FullProfile
 export async function getProfilePage(
   segments: string[],
   prisma: PrismaClient = new PrismaClient(),
-) {
+): Promise<ProfilePage> {
   const path: FullProfile[] = [];
   let lastId: string | null = null;
   for (const segment of segments) {
@@ -40,5 +41,15 @@ export async function getProfilePage(
 
   const summary = summarizeProfile(path[path.length - 1]);
 
-  return summary;
+  // TODO: Fetch stats
+  // TODO: Check privacy before publishing stats
+
+  const page: ProfilePage = {
+    ...summary,
+    postCount: 0,
+    followingCount: 0,
+    followerCount: 0,
+  };
+
+  return page;
 }

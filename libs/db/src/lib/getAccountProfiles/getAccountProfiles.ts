@@ -14,7 +14,11 @@ export function summarizeProfile(
   profile: Profile | (Profile & { display: DisplayName, parent?: Profile | null }),
   display?: DisplaySummary,
 ): ProfileSummary {
+  const UNIVERSAL_SUBDOMAIN = process.env["UNIVERSAL_SUBDOMAIN"] === "true";
+  const HTTP_PROTOCOL = process.env["HTTP_PROTOCOL"];
+  const BASE_DOMAIN = process.env["BASE_DOMAIN"];
   const BASE_URL = process.env["BASE_URL"];
+  const SUBACCOUNT_CHARACTER = process.env["SUBACCOUNT_CHARACTER"];
 
   const {
     name,
@@ -22,15 +26,23 @@ export function summarizeProfile(
   } = (("display" in profile) ? profile.display : display) ?? {};
 
   // TODO: Allow for 3+ levels of nesting
-  // TODO: Format subdomains if applicable
 
   const profileURL = ("parent" in profile && !!profile.parent)
-    ? `${BASE_URL}/@${profile.parent.slug}/@${profile.slug}/`
+    ? (UNIVERSAL_SUBDOMAIN || profile.parent.subdomain)
+      ? `${HTTP_PROTOCOL}://${profile.parent.slug}.${BASE_DOMAIN}/@${profile.slug}/`
+      : `${BASE_URL}/@${profile.parent.slug}/@${profile.slug}/`
     : `${BASE_URL}/@${profile.slug}/`;
+
+  const fullUsername = ("parent" in profile && !!profile.parent)
+    ? (UNIVERSAL_SUBDOMAIN || profile.parent.subdomain)
+      ? `@${profile.slug}@${profile.parent.slug}.${BASE_DOMAIN}`
+      : `@${profile.parent.slug}${SUBACCOUNT_CHARACTER}${profile.parent.slug}@${BASE_DOMAIN}`
+    : `@${profile.slug}@${BASE_DOMAIN}`;
 
   return {
     id: profile.id,
     slug: profile.slug,
+    fullUsername,
     profileURL,
     parent: profile.parentId,
     isRoot: profile.parentId === null,

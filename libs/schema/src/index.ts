@@ -7,6 +7,7 @@ export * from "./DisplaySummary";
 export * from "./IdentitySummary";
 export * from "./ImageSummary";
 export * from "./NewEmailRequest";
+export * from "./ProfilePage";
 export * from "./ProfileSummary";
 export * from "./RegistrationRequest";
 export * from "./Session";

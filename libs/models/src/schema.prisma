@@ -93,6 +93,7 @@ model Profile {
   display         DisplayName @relation(fields: [displayId], references: [id])
   visibility      Visibility
   slug            String
+  subdomain       Boolean     @default(false)
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   parentId        String?
