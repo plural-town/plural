@@ -50,7 +50,7 @@ export function RegisterProfilesPage({
       { profileList
         .filter(p => p.isRoot)
         .map(profile => (
-          <Card key={profile.id}>
+          <Card key={profile.id} data-profile={profile.id} data-profile-slug={profile.slug}>
             <CardHeader>
               <Heading size="sm">
                 @{ profile.slug }
@@ -58,7 +58,7 @@ export function RegisterProfilesPage({
             </CardHeader>
             <CardBody>
               {profileList.filter(p => p.parent === profile.id).map(nested => (
-                <Card key={nested.id} size="sm" variant="filled">
+                <Card key={nested.id} size="sm" variant="filled" data-profile={nested.id} data-profile-slug={nested.slug}>
                   <CardHeader>
                     <Heading size="xs">
                       @{nested.slug}

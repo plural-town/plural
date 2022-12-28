@@ -108,7 +108,7 @@ export function RegistrationIdentitiesPage({
         <Link href={links.system}>Systems</Link> may wish to create accounts for each alter.
       </Text>
       { identityList.map(identity => (
-        <Card key={identity.id} my={2}>
+        <Card key={identity.id} my={2} data-identity={identity.id} data-identity-name={identity.display.name}>
           <CardHeader>
             <Heading size="sm">
               { nonEmpty(identity.display.displayName) ?? identity.display.name }

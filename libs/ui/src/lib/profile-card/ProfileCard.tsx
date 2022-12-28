@@ -70,6 +70,7 @@ export function ProfileCard({
                 as={IconButton}
                 aria-label="Profile Options"
                 icon={<BsThreeDotsVertical />}
+                data-test-id="profile-dropdown"
               />
               <MenuList>
                 { requirePermission(highestRole, "ADMIN") && (

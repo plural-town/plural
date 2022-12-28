@@ -1,6 +1,6 @@
 describe("webfinger", () => {
 
-  it("handles profiles", () => {
+  it.skip("handles profiles", () => {
     cy.request("/.well-known/webfinger?resource=acct:me@plural.local:4200").as("finger");
     cy.get("@finger").should((res) => {
       expect(res.body).to.have.property("aliases");
