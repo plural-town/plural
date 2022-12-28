@@ -1,5 +1,5 @@
-import { Card, CardHeader, Container, Divider, Heading } from "@chakra-ui/react";
-import { IdentitySelectField, InputField, SubmitButton } from "@plural/form";
+import { Card, CardBody, CardHeader, Container, Divider, Heading } from "@chakra-ui/react";
+import { IdentitySelectField, InputField, ProfileSelectField, SubmitButton } from "@plural/form";
 import { SESSION_OPTIONS } from "../../../lib/session";
 import { Form, Formik } from "formik";
 import { withIronSessionSsr } from "iron-session/next";
@@ -47,21 +47,36 @@ export function RegisterProfilesPage({
       <Heading as="h1">
         Profiles
       </Heading>
-      { profileList.map(profile => (
-        <Card key={profile.id}>
-          <CardHeader>
-            <Heading size="sm">
-              @{ profile.slug }
-            </Heading>
-          </CardHeader>
-        </Card>
-      ))}
+      { profileList
+        .filter(p => p.isRoot)
+        .map(profile => (
+          <Card key={profile.id}>
+            <CardHeader>
+              <Heading size="sm">
+                @{ profile.slug }
+              </Heading>
+            </CardHeader>
+            <CardBody>
+              {profileList.filter(p => p.parent === profile.id).map(nested => (
+                <Card key={nested.id} size="sm" variant="filled">
+                  <CardHeader>
+                    <Heading size="xs">
+                      @{nested.slug}
+                    </Heading>
+                  </CardHeader>
+                </Card>
+              ))}
+            </CardBody>
+          </Card>
+        ))
+      }
       <Divider mt={6} mb={4} />
       <Heading as="h2" size="md">
-        New Root Profile
+        New Profile
       </Heading>
       <Formik
         initialValues={{
+          parent: "",
           owner: "",
           slug: "",
           displayId: undefined,
@@ -84,10 +99,17 @@ export function RegisterProfilesPage({
         }}
       >
         <Form>
+          <ProfileSelectField
+            name="parent"
+            label="Parent"
+            placeholder="No Parent (Root Profile)"
+            profiles={profiles}
+          />
           <IdentitySelectField
             name="owner"
             required
             label="Owner"
+            placeholder="Select Owner"
             identities={identities}
             field="id"
             helpText="Select the first identity that will be able to manage this profile.  You can add more identities after the identity has been created."

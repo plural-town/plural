@@ -2,6 +2,7 @@ import { Visibility } from "@prisma/client";
 import * as Yup from "yup";
 
 export interface CreateRootProfileRequest {
+  parent?: string;
   owner: string;
   slug: string;
   displayId?: string;
@@ -15,6 +16,7 @@ export interface CreateRootProfileRequest {
 }
 
 export const CreateRootProfileRequestSchema = Yup.object().shape({
+  parent: Yup.string().optional(),
   owner: Yup.string().required(),
   slug: Yup.string().min(1).required(),
 

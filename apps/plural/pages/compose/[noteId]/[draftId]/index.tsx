@@ -72,13 +72,13 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
   // TODO: Summarize authors vs. returing entire
 
   const destinations = publishes.map(publish => {
-    const { id, profile, localOnly, privacy, authorType } = publish;
+    const { id, profile, localOnly, privacy, noteAuthor } = publish;
     return {
       id: id,
       profile: summarizeProfile(profile),
       localOnly,
       privacy,
-      authorType,
+      noteAuthor,
     };
   });
 

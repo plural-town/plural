@@ -24,6 +24,7 @@ export async function createProfileHandler(
   }
 
   const {
+    parent,
     owner,
     slug,
     display,
@@ -81,16 +82,27 @@ export async function createProfileHandler(
       },
     });
 
+  const parentProfile = (typeof parent === "string" && parent.length > 0)
+    ? await prisma.profile.findUnique({
+      where: {
+        id: parent,
+      },
+    })
+    : false;
+
+  // TODO: Permission check that we can alter parent
+
   const profile = await prisma.profile.create({
     data: {
       id: profileIdGenerator(),
       displayId: displayObj.id,
       visibility,
       slug,
+      parentId: parentProfile ? parentProfile.id : undefined,
     },
   });
 
-  const grant = await prisma.profileGrant.create({
+  await prisma.profileGrant.create({
     data: {
       identityId: owner,
       profileId: profile.id,
