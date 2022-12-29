@@ -52,6 +52,8 @@ export async function addNoteDestinationHandler(
     });
   }
 
+  // TODO: Prevent duplicate destinations
+
   const item = await prisma.item.create({
     data: {
       profileId,
