@@ -65,7 +65,7 @@ export function ProfilePage({
   return (
     <>
       <Head>
-        <title>{displayName} - {fullUsername}</title>
+        <title>{`${displayName} - ${fullUsername}`}</title>
       </Head>
       <SiteHeader />
       <Container maxW="container.md">
