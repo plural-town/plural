@@ -12,7 +12,7 @@ export function NoteAvatar({
   if(profiles.length === 1) {
     return (
       <Avatar
-        src="https://bit.ly/ryan-florence"
+        src={profiles[0].display.avatar?.src}
         name={getDisplayName(profiles[0].display) ?? ""}
       />
     );
@@ -22,7 +22,7 @@ export function NoteAvatar({
       {profiles.map(profile => (
         <Avatar
           key={profile.id}
-          src="https://bit.ly/ryan-florence"
+          src={profile.display.avatar?.src}
           name={getDisplayName(profile.display) ?? ""}
         />
       ))}
