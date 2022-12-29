@@ -11,6 +11,8 @@ export interface PublishedNoteProfile extends ProfileSummary {
 export interface PublishedNote {
   id: string;
 
+  content: string;
+
   /**
    * The profile this note is being viewed on.
    */

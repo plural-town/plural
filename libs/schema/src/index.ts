@@ -14,3 +14,4 @@ export * from "./RegistrationRequest";
 export * from "./SerializableDisplayName";
 export * from "./Session";
 export * from "./UpdateDisplay";
+export * from "./UpdateNoteContent";

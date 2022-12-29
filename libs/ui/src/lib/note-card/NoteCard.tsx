@@ -1,4 +1,4 @@
-import { Box, Card, CardBody, CardHeader, Flex, Heading, HStack, Link, Spacer, Stack, Text } from "@chakra-ui/react";
+import { Box, Card, CardBody, CardFooter, CardHeader, Flex, Heading, HStack, Link, Spacer, Stack, Text } from "@chakra-ui/react";
 import { PublishedNote, PublishedNoteProfile } from "@plural/schema";
 import { useMemo } from "react";
 import NextLink from "next/link";
@@ -32,7 +32,7 @@ export interface NoteCardProps extends PublishedNote {}
  * (also used for previews)
  */
 export function NoteCard({
-  id,
+  content,
   profile,
   profiles,
 }: NoteCardProps) {
@@ -90,6 +90,7 @@ export function NoteCard({
         )}
       </CardHeader>
       <CardBody>
+        <Text fontSize="xl" mx={4}>{ content }</Text>
       </CardBody>
     </Card>
   );

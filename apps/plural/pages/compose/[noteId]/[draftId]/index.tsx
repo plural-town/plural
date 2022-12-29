@@ -94,6 +94,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
   return {
     props: {
       noteId: note.id,
+      draftId: draft.id,
       name,
       profiles,
       content,
@@ -159,13 +160,13 @@ const NotePreview: React.FC<{
 
 export function ComposeNotePage({
   noteId,
+  draftId,
   name,
   profiles,
   content,
   authors,
   destinations,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-
   const previewProfile = useMemo<PublishedNoteProfile | null>(() => {
     if(destinations.length < 1) {
       return null;
@@ -195,7 +196,14 @@ export function ComposeNotePage({
           content,
         }}
         onSubmit={async (values) => {
-          return;
+          const r = await fetch(`/api/note/draft/${draftId}/update/`, {
+            method: "POST",
+            body: JSON.stringify(values),
+          });
+          const res = await r.json();
+          if(res.status === "ok") {
+            // TODO: do something?
+          }
         }}
       >
         <Form>
@@ -215,6 +223,7 @@ export function ComposeNotePage({
       <Container maxW="container.sm">
         <NoteCard
           id=""
+          content={content}
           profile={previewProfile}
           profiles={previewProfiles}
         />
