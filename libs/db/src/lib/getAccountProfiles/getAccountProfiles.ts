@@ -23,6 +23,7 @@ export function summarizeProfile(
   const {
     name,
     displayName,
+    bio,
   } = (("display" in profile) ? profile.display : display) ?? {};
 
   // TODO: Allow for 3+ levels of nesting
@@ -50,6 +51,7 @@ export function summarizeProfile(
     display: {
       name: name ?? null,
       displayName: displayName ?? null,
+      bio: bio ?? null,
     },
     visibility: profile.visibility,
   };

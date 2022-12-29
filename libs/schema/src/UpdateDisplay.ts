@@ -5,12 +5,13 @@ import { VisibilitySchema } from "./enum/Visibility";
 export interface UpdateDisplay {
 
   name: string;
-
   nameVisibility: Visibility;
 
   displayName: string;
-
   displayNameVisibility: Visibility;
+
+  bio: string;
+  bioVisibility: Visibility;
 
 }
 
@@ -19,4 +20,6 @@ export const UpdateDisplaySchema = Yup.object().shape({
   nameVisibility: VisibilitySchema.required(),
   displayName: Yup.string().optional(),
   displayNameVisibility: VisibilitySchema.required(),
+  bio: Yup.string().optional(),
+  bioVisibility: VisibilitySchema.required(),
 });

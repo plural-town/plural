@@ -5,6 +5,8 @@ export interface DisplaySummary {
 
   displayName: string | null;
 
+  bio: string | null;
+
   avatar?: ImageSummary;
 
   banner?: ImageSummary;

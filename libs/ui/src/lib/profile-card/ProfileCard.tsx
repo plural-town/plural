@@ -2,20 +2,17 @@ import { Avatar, Box, Button, Card, CardBody, CardFooter, CardHeader, Flex, Head
 import { requirePermission } from "@plural/db";
 import { ProfilePage } from "@plural/schema";
 import NextLink from "next/link";
-import { ReactNode } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { useDisplayName } from "../util/useDisplayName";
 
 export interface ProfileCardProps {
   BASE_URL: string;
   profile: ProfilePage;
-  children?: ReactNode;
 }
 
 export function ProfileCard({
   BASE_URL,
   profile,
-  children,
 }: ProfileCardProps) {
   const {
     display,
@@ -96,7 +93,7 @@ export function ProfileCard({
         </Flex>
       </CardHeader>
       <CardBody>
-        { children }
+        <Text fontSize="sm">{ display.bio }</Text>
       </CardBody>
       <CardFooter
         justify="space-between"

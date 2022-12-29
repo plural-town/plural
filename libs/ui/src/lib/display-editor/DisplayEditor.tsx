@@ -1,6 +1,6 @@
 import { Card, CardBody, CardHeader, Heading, Text } from "@chakra-ui/react";
 import { InputField, SubmitButton } from "@plural/form";
-import { SerializableDisplayName } from "@plural/schema";
+import { SerializableDisplayName, UpdateDisplay, UpdateDisplaySchema } from "@plural/schema";
 import { Form, Formik } from "formik";
 import VisibilityFieldWrapper from "../visibility-field-wrapper/VisibilityFieldWrapper";
 
@@ -14,13 +14,16 @@ export function DisplayEditor({
   display,
 }: DisplayEditorProps) {
   return (
-    <Formik
+    <Formik<UpdateDisplay>
       initialValues={{
         name: display.name,
         nameVisibility: display.nameVisibility,
         displayName: display.displayName,
         displayNameVisibility: display.displayNameVisibility,
+        bio: display.bio,
+        bioVisibility: display.bioVisibility,
       }}
+      validationSchema={UpdateDisplaySchema}
       onSubmit={async (values) => {
         const r = await fetch(`/api/display/${id}/update/`, {
           method: "POST",
@@ -59,6 +62,16 @@ export function DisplayEditor({
                 name="displayName"
                 label="Display Name"
                 my={{ md: 0 }}
+              />
+            </VisibilityFieldWrapper>
+            <VisibilityFieldWrapper
+              name="bioVisibility"
+            >
+              <InputField
+                name="bio"
+                label="Description/Bio"
+                my={{ md: 0 }}
+                textarea
               />
             </VisibilityFieldWrapper>
             <SubmitButton colorScheme="blue">

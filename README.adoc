@@ -39,3 +39,10 @@ docker run -d \
   -e POSTGRES_PASSWORD=socialdev \
   postgres
 ----
+
+=== Changing the Database Schema
+
+. Update `libs/models/src/schema.prisma`
+. Migrate database
+  . `cd libs/models/`
+  . Execute `npx prisma migrate dev --schema src/schema.prisma --name <name>`

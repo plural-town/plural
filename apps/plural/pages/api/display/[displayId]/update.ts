@@ -76,6 +76,8 @@ export async function updateDisplayHandler(
     nameVisibility,
     displayName,
     displayNameVisibility,
+    bio,
+    bioVisibility,
   } = UpdateDisplaySchema.validateSync(req.body);
 
   await prisma.displayName.update({
@@ -87,6 +89,8 @@ export async function updateDisplayHandler(
       nameVisibility,
       displayName,
       displayNameVisibility,
+      bio,
+      bioVisibility,
     },
   });
 
