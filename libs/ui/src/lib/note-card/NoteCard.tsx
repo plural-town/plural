@@ -1,4 +1,4 @@
-import { Box, Card, CardBody, CardHeader, Flex, Heading, HStack, Link, Stack, Text } from "@chakra-ui/react";
+import { Box, Card, CardBody, CardHeader, CardProps, Flex, Heading, HStack, Link, Stack, Text } from "@chakra-ui/react";
 import { PublishedNote, PublishedNoteProfile } from "@plural/schema";
 import { useMemo } from "react";
 import NextLink from "next/link";
@@ -7,13 +7,14 @@ import NoteAvatar from "./note-avatar/NoteAvatar";
 
 function useProfileNames(profiles: PublishedNoteProfile[]) {
   const transformed = useMemo(() => {
-    const names: ({ type: "and" } | { type: "name", id: string, name: string, url: string })[] = [];
+    const names: ({ type: "and" } | { type: "name", id: string, name: string, username: string, url: string })[] = [];
     for (let i = 0; i < profiles.length; i++) {
       const feature = profiles[i];
       names.push({
         type: "name",
         id: feature.id,
         name: getDisplayName(feature.display) ?? feature.slug,
+        username: feature.fullUsername,
         url: feature.profileURL,
       });
       if(i < profiles.length - 1) {
@@ -26,7 +27,7 @@ function useProfileNames(profiles: PublishedNoteProfile[]) {
 }
 
 /* eslint-disable-next-line */
-export interface NoteCardProps extends PublishedNote {}
+export interface NoteCardProps extends PublishedNote, Omit<CardProps, "id"> {}
 
 /**
  * Renders a published note.
@@ -37,6 +38,7 @@ export function NoteCard({
   content,
   profile,
   profiles,
+  ...props
 }: NoteCardProps) {
   const ft = useMemo(() => profiles.filter(p => p.author === "FEATURED"), [profiles]);
   const by = useMemo(() => profiles.filter(p => p.author === "BYLINE"), [profiles]);
@@ -45,7 +47,7 @@ export function NoteCard({
   const byNames = useProfileNames(by);
 
   return (
-    <Card data-note data-note-id={id}>
+    <Card data-note data-note-id={id} {...props} bg="white">
       <CardHeader>
         <Flex direction="row">
           <NoteAvatar profiles={ft} />
@@ -66,11 +68,20 @@ export function NoteCard({
                 );
               })}
             </HStack>
-            <Box>
-              {profile && ft.map(f => f.id).includes(profile.id) && (
-                <Text>{ profile.fullUsername }</Text>
-              )}
-            </Box>
+            <HStack fontSize="sm">
+              { featuredNames.map(f => {
+                if(f.type === "and") {
+                  return (<Text>and</Text>);
+                }
+                return (
+                  <NextLink href={f.url} passHref legacyBehavior>
+                    <Link as="a">
+                      { f.username }
+                    </Link>
+                  </NextLink>
+                );
+              })}
+            </HStack>
           </Stack>
         </Flex>
         { by.length > 0 && (

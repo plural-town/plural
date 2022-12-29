@@ -75,7 +75,7 @@ export function ProfilePage({
         )}
         {
           profile.posts.map(post => (
-            <NoteCard key={post.id} {...post} />
+            <NoteCard key={post.id} {...post} my={4} />
           ))
         }
       </Container>

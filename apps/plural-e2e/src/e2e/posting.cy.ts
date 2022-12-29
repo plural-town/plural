@@ -1,17 +1,15 @@
+import { addDestinationToDraft, draftSetAsLatest, publishDraftToProfile } from "../support/compose.po";
+import { startDraftFromProfile, visitRootProfile } from "../support/profile.po";
+
 describe("posting e2e", () => {
 
   before(() => {
+    cy.viewport("macbook-15");
     cy.exec("yarn nx run models:reset");
   });
 
   it("can make a simple post", () => {
-    cy.viewport("macbook-15");
-    cy.visit("/login/");
-    cy.get("input[name='email']").type("test@example.com");
-    cy.get("input[name='password']").type("testing");
-    cy.get("button[type='submit']").click();
-
-    cy.contains("Plural Social");
+    cy.login("posting", "test@example.com", "testing");
 
     cy.visit("/@test/");
     cy.contains("Test System");
@@ -40,14 +38,27 @@ describe("posting e2e", () => {
     });
   });
 
-  it("can make a post on a system account as two alters", () => {
-    cy.viewport("macbook-15");
-    cy.visit("/login/");
-    cy.get("input[name='email']").type("test@example.com");
-    cy.get("input[name='password']").type("testing");
-    cy.get("button[type='submit']").click();
+  it("can mark the author of a post", () => {
+    cy.login("posting", "test@example.com", "testing");
+    visitRootProfile("@test", "Test System");
 
-    cy.contains("Plural Social");
+    startDraftFromProfile("#introductions #SystemIntro I'm Jay!", "Jay");
+
+    draftSetAsLatest();
+    addDestinationToDraft("Jay", "PUBLIC", "Byline");
+    publishDraftToProfile("systemProfile", "bylinePostId");
+
+    visitRootProfile("@test", "Test System");
+    cy.get("@bylinePostId").then(id => {
+      cy.get(`[data-note][data-note-id='${id}']`).should("have.length", 1);
+      cy.get(`[data-note-id='${id}'] [data-note-ft-author='systemProfile']`).should("have.length", 1);
+      cy.get(`[data-note-id='${id}'] [data-note-by-author='alter1']`).should("have.length", 1);
+      cy.contains("#introductions #SystemIntro I'm Jay!");
+    });
+  });
+
+  it("can make a post on a system account as two alters", () => {
+    cy.login("posting", "test@example.com", "testing");
 
     cy.visit("/@test/");
     cy.contains("Test System");
@@ -67,7 +78,7 @@ describe("posting e2e", () => {
     cy.get("[data-test-id='additional-destination'] select[name='noteAuthor']").select("Featured");
     cy.contains("Add Destination").click();
 
-    cy.get("textarea[name='content']").clear().type("Jay and Sam are fronting!");
+    cy.get("textarea[name='content']").clear().type("We're Jay and Sam!");
     cy.contains("Update Draft").click();
 
     // TODO: show indication of adding destination + updating draft
@@ -80,7 +91,7 @@ describe("posting e2e", () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(50);
 
-    cy.get("textarea[name='content']").should("have.value", "Jay and Sam are fronting!");
+    cy.get("textarea[name='content']").should("have.value", "We're Jay and Sam!");
 
     cy.get("[data-test-id='additional-destination'] select[name='profileId']").select("Sam Doe");
     cy.get("[data-test-id='additional-destination'] select[name='privacy']").select("PUBLIC");
@@ -110,7 +121,7 @@ describe("posting e2e", () => {
       cy.get(`[data-note][data-note-id='${id}']`).should("have.length", 1);
       cy.get(`[data-note-id='${id}'] [data-note-ft-author='alter1']`).should("have.length", 1);
       cy.get(`[data-note-id='${id}'] [data-note-ft-author='alter2']`).should("have.length", 1);
-      cy.contains("Jay and Sam are fronting!");
+      cy.contains("We're Jay and Sam!");
       cy.get(`[data-note-id='${id}'] [data-note-ft-author]`).should("have.length", 2);
     });
   });

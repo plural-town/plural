@@ -17,7 +17,7 @@ declare namespace Cypress {
      */
     clean(): void;
     apiSession(id: string, email: string, password: string): void;
-    login(email: string, password: string): void;
+    login(id: string, email: string, password: string): void;
     visitNoScript(route: string): void;
   }
 }
@@ -45,8 +45,14 @@ Cypress.Commands.add("apiSession", (id, email, password) => {
 
 //
 // -- This is a parent command --
-Cypress.Commands.add('login', (email, password) => {
-  console.log('Custom command example: Login', email, password);
+Cypress.Commands.add('login', (id, email, password) => {
+  cy.session(id, () => {
+    cy.visit("/login/");
+    cy.get("input[name='email']").type(email);
+    cy.get("input[name='password']").type(password);
+    cy.get("button[type='submit']").click();
+    cy.contains("Plural Social");
+  });
 });
 //
 // -- This is a child command --

@@ -47,6 +47,7 @@ export async function getProfileFeed(
       profile: {
         include: {
           display: true,
+          parent: true,
         },
       },
       note: {
@@ -60,6 +61,7 @@ export async function getProfileFeed(
               profile: {
                 include: {
                   display: true,
+                  parent: true,
                 },
               },
             },

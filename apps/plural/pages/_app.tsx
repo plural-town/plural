@@ -1,4 +1,5 @@
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import { mode } from "@chakra-ui/theme-tools";
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 
@@ -48,6 +49,13 @@ const theme = extendTheme({
     brand,
     secondary,
     accent,
+  },
+  styles: {
+    global: (props) => ({
+      body: {
+        bg: mode("gray.100", "gray.800")(props),
+      },
+    }),
   },
 });
 
