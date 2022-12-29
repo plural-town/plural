@@ -93,7 +93,5 @@ export async function getProfileFeed(
     }
   }
 
-  console.log(JSON.stringify(feed, undefined, 2));
-
   return feed;
 }
