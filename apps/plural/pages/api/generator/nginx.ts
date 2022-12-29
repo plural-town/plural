@@ -16,8 +16,9 @@ server {
   server_name ${process.env.BASE_DOMAIN};
 
   location / {
-    proxy_pass localhost:${process.env.PRODUCTION_PORT};
-    include proxy_params;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_pass http://localhost:${process.env.PRODUCTION_PORT};
   }
 }
 `;
