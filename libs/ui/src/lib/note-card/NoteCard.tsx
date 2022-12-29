@@ -65,7 +65,7 @@ export function NoteCard({
               })}
             </HStack>
             <Box>
-              {ft.map(f => f.id).includes(profile.id) && (
+              {profile && ft.map(f => f.id).includes(profile.id) && (
                 <Text>{ profile.fullUsername }</Text>
               )}
             </Box>

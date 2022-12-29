@@ -5,6 +5,8 @@ import { CreateNoteRequestSchema } from "@plural/schema";
 import { PrismaClient } from "@prisma/client";
 import { customAlphabet } from "nanoid";
 import { nolookalikesSafe } from "nanoid-dictionary";
+import { getAccountProfiles } from "@plural/db";
+import flatten from "lodash.flatten";
 
 const noteIdGenerator = customAlphabet(nolookalikesSafe, 16);
 
@@ -25,6 +27,8 @@ export async function startDraftHandler(
 
   const {
     identities,
+    content,
+    profiles,
   } = CreateNoteRequestSchema.validateSync(req.body);
 
   const prisma = new PrismaClient();
@@ -68,9 +72,35 @@ export async function startDraftHandler(
   const draft = await prisma.noteDraft.create({
     data: {
       noteId: note.id,
-      content: "",
+      content: content ?? "",
     },
   });
+
+  const accountProfiles = flatten(await Promise.all(users.map(u => getAccountProfiles(u.id, prisma))));
+
+  for (const profileId in profiles) {
+    if (Object.prototype.hasOwnProperty.call(profiles, profileId)) {
+      const profile = profiles[profileId];
+      if(!profile) {
+        continue;
+      }
+      const accountProfile = accountProfiles.find(p => p.id === profileId);
+      // TODO: Test permission check
+      if(!accountProfile) {
+        throw new Error(`No permission to access profile: ${profileId} (${accountProfiles.map(p => p.id).join(", ")})`);
+      }
+      await prisma.item.create({
+        data: {
+          profileId,
+          localOnly: false,
+          privacy: "PUBLIC",
+          type: "NOTE",
+          noteId: note.id,
+          noteAuthor: "FEATURED",
+        },
+      });
+    }
+  }
 
   return res.send({
     status: "ok",

@@ -2,6 +2,9 @@
   "name": "@plural/models",
   "version": "0.0.1",
   "type": "commonjs",
+  "prisma": {
+    "seed": "ts-node src/seed.ts"
+  },
   "dependencies": {
     "@prisma/client": "^4.8.0"
   }

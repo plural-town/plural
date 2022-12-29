@@ -16,6 +16,7 @@ declare namespace Cypress {
     visitNoScript(route: string): void;
   }
 }
+
 //
 // -- This is a parent command --
 Cypress.Commands.add('login', (email, password) => {

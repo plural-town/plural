@@ -21,6 +21,15 @@
         "lintFilePatterns": ["libs/models/**/*.ts"]
       }
     },
+
+    "reset": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "yarn prisma migrate reset -f --schema ./libs/models/src/schema.prisma"
+      }
+    },
+
     "migrate-up": {
       "executor": "nx:run-commands",
       "outputs": [],

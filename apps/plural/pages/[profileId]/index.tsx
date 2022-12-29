@@ -71,7 +71,7 @@ export function ProfilePage({
       <Container maxW="container.md">
         <ProfileCard BASE_URL={BASE_URL} profile={profile} />
         {requirePermission(highestRole, "POST") && (
-          <ProfileNoteComposer identities={identities} />
+          <ProfileNoteComposer profileId={profile.id} identities={identities} />
         )}
       </Container>
     </>

@@ -1,4 +1,4 @@
-import { Avatar, AvatarGroup, Card, CardBody, CardHeader, Container, Divider, Flex, Heading, Stack } from "@chakra-ui/react";
+import { Avatar, AvatarGroup, Box, Card, CardBody, CardHeader, Container, Divider, Flex, Heading, Stack } from "@chakra-ui/react";
 import { SESSION_OPTIONS } from "../../../../lib/session";
 import { withIronSessionSsr } from "iron-session/next";
 import { AuthorType, PrismaClient, Visibility } from "@prisma/client";
@@ -245,60 +245,62 @@ export function ComposeNotePage({
       <Heading as="h2" size="md">
         Additional Destination
       </Heading>
-      <Formik<AddNoteDestination>
-        initialValues={{
-          profileId: "",
-          localOnly: false,
-          privacy: "PUBLIC",
-          noteAuthor: "FEATURED",
-        }}
-        validationSchema={AddNoteDestinationSchema}
-        onSubmit={async (values) => {
-          const r = await fetch(`/api/note/${noteId}/destinations/add/`, {
-            method: "POST",
-            body: JSON.stringify(values),
-          });
-          const res = await r.json();
-          if(res.status === "ok") {
-            // TODO: do something?
-          }
-          return;
-        }}
-      >
-        <Form>
-          <ProfileSelectField
-            name="profileId"
-            profiles={profiles}
-            label="Profile"
-            placeholder="Select Profile"
-            field="id"
-          />
-          <CheckboxField
-            name="localOnly"
-            label="Local-Only Post"
-            text={`Display only on ${name}`}
-          />
-          <VisibilitySelectField
-            name="privacy"
-            label="Post Privacy"
-          />
-          <AuthorTypeSelectField
-            name="noteAuthor"
-            label="Author Display"
-          />
-          <SubmitButton colorScheme="purple">
-            Add Destination
-          </SubmitButton>
-          <Heading py={2} size="sm">
-            Preview
-          </Heading>
-          <NotePreview
-            destinations={destinations}
-            content={content}
-            profiles={profiles}
-          />
-        </Form>
-      </Formik>
+      <Box data-test-id="additional-destination">
+        <Formik<AddNoteDestination>
+          initialValues={{
+            profileId: "",
+            localOnly: false,
+            privacy: "PUBLIC",
+            noteAuthor: "FEATURED",
+          }}
+          validationSchema={AddNoteDestinationSchema}
+          onSubmit={async (values) => {
+            const r = await fetch(`/api/note/${noteId}/destinations/add/`, {
+              method: "POST",
+              body: JSON.stringify(values),
+            });
+            const res = await r.json();
+            if(res.status === "ok") {
+              // TODO: do something?
+            }
+            return;
+          }}
+        >
+          <Form>
+            <ProfileSelectField
+              name="profileId"
+              profiles={profiles}
+              label="Profile"
+              placeholder="Select Profile"
+              field="id"
+            />
+            <CheckboxField
+              name="localOnly"
+              label="Local-Only Post"
+              text={`Display only on ${name}`}
+            />
+            <VisibilitySelectField
+              name="privacy"
+              label="Post Privacy"
+            />
+            <AuthorTypeSelectField
+              name="noteAuthor"
+              label="Author Display"
+            />
+            <SubmitButton colorScheme="purple">
+              Add Destination
+            </SubmitButton>
+            <Heading py={2} size="sm">
+              Preview
+            </Heading>
+            <NotePreview
+              destinations={destinations}
+              content={content}
+              profiles={profiles}
+            />
+          </Form>
+        </Formik>
+      </Box>
     </Container>
   );
 }
