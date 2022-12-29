@@ -12,10 +12,36 @@
 declare namespace Cypress {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
+    /**
+     * Reset the entire database, and seed testing data
+     */
+    clean(): void;
+    apiSession(id: string, email: string, password: string): void;
     login(email: string, password: string): void;
     visitNoScript(route: string): void;
   }
 }
+
+Cypress.Commands.add("clean", () => {
+  cy.exec("yarn nx run models:reset");
+});
+
+Cypress.Commands.add("apiSession", (id, email, password) => {
+  cy.session(id, () => {
+    cy.request({
+      method: "POST",
+      url: "/api/login/",
+      body: {
+        email,
+        password,
+      },
+    });
+  }, {
+    validate() {
+      cy.getCookie("plural_social").should("exist");
+    },
+  });
+});
 
 //
 // -- This is a parent command --

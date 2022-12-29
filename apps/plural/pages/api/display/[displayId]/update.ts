@@ -64,9 +64,11 @@ export async function updateDisplayHandler(
   const identities = profileGrants.map(g => g.identity);
   const identityGrants = flatten(identities.map(i => i.grants));
 
-  // TODO: Test permissions.
   if(!existing || identityGrants.length < 1) {
-    throw new Error("Display not found.");
+    return res.status(404).send({
+      status: "failure",
+      error: "NOT_FOUND_NO_PERM",
+    });
   }
 
   const {

@@ -103,8 +103,12 @@ async function createProfile(
 
 async function main() {
   const [account] = await createAccount("test", "test@example.com", "testing");
+  await createAccount("other", "other@example.com", "testing");
 
-  const systemDisplay = await createDisplayName("Test", { displayName: "Test System" });
+  const systemDisplay = await createDisplayName("Test", {
+    id: "system-display",
+    displayName: "Test System",
+  });
   const [system] = await createIdentity("system", systemDisplay, account);
 
   const alter1Display = await createDisplayName("Jay");
