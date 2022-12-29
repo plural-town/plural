@@ -15,3 +15,4 @@ export * from "./SerializableDisplayName";
 export * from "./Session";
 export * from "./UpdateDisplay";
 export * from "./UpdateNoteContent";
+export * from "./UpdateNoteDestination";

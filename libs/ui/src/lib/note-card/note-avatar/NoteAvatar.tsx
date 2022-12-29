@@ -21,6 +21,7 @@ export function NoteAvatar({
     <AvatarGroup max={3} spacing="-6">
       {profiles.map(profile => (
         <Avatar
+          key={profile.id}
           src="https://bit.ly/ryan-florence"
           name={getDisplayName(profile.display) ?? ""}
         />

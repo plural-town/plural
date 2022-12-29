@@ -8,7 +8,7 @@ import { nolookalikesSafe } from "nanoid-dictionary";
 import { getAccountProfiles } from "@plural/db";
 import flatten from "lodash.flatten";
 
-const noteIdGenerator = customAlphabet(nolookalikesSafe, 16);
+const noteIdGenerator = customAlphabet(nolookalikesSafe, 12);
 
 export async function startDraftHandler(
   req: NextApiRequest,

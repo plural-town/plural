@@ -1,6 +1,7 @@
 import { ProfilePage } from "@plural/schema";
 import { DisplayName, Identity, Permission, PrismaClient, Profile, ProfileGrant } from "@prisma/client";
 import { summarizeProfile } from "../getAccountProfiles/getAccountProfiles";
+import { getProfileFeed } from "../getProfileFeed/getProfileFeed";
 import { permissionAbove } from "../util/permission-math";
 
 type FullProfile
@@ -68,12 +69,15 @@ export async function getProfilePage(
 
   const summary = summarizeProfile(profile);
 
+  const feed = await getProfileFeed(profile, permissionLevel, 20, 0, prisma);
+
   // TODO: Fetch stats
   // TODO: Check privacy before publishing stats
 
   const page: ProfilePage = {
     ...summary,
     highestRole: permissionLevel,
+    posts: feed,
     postCount: 0,
     followingCount: 0,
     followerCount: 0,

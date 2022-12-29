@@ -7,11 +7,12 @@ import NoteAvatar from "./note-avatar/NoteAvatar";
 
 function useProfileNames(profiles: PublishedNoteProfile[]) {
   const transformed = useMemo(() => {
-    const names: ({ type: "and" } | { type: "name", name: string, url: string })[] = [];
+    const names: ({ type: "and" } | { type: "name", id: string, name: string, url: string })[] = [];
     for (let i = 0; i < profiles.length; i++) {
       const feature = profiles[i];
       names.push({
         type: "name",
+        id: feature.id,
         name: getDisplayName(feature.display) ?? feature.slug,
         url: feature.profileURL,
       });
@@ -32,6 +33,7 @@ export interface NoteCardProps extends PublishedNote {}
  * (also used for previews)
  */
 export function NoteCard({
+  id,
   content,
   profile,
   profiles,
@@ -43,7 +45,7 @@ export function NoteCard({
   const byNames = useProfileNames(by);
 
   return (
-    <Card>
+    <Card data-note data-note-id={id}>
       <CardHeader>
         <Flex direction="row">
           <NoteAvatar profiles={ft} />
@@ -56,7 +58,7 @@ export function NoteCard({
                 return (
                   <Heading size="sm">
                     <NextLink href={f.url} passHref legacyBehavior>
-                      <Link as="a">
+                      <Link as="a" data-note-ft-author={f.id}>
                         { f.name }
                       </Link>
                     </NextLink>
@@ -81,7 +83,7 @@ export function NoteCard({
                 }
                 return (
                   <NextLink href={b.url} passHref legacyBehavior>
-                    <Link as="a">{ b.name }</Link>
+                    <Link as="a" data-note-by-author={b.id}>{ b.name }</Link>
                   </NextLink>
                 );
               })}

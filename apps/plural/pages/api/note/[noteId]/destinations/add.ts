@@ -5,6 +5,10 @@ import { canAccountEditNote, getAccountProfiles } from "@plural/db";
 import { PrismaClient } from "@prisma/client";
 import { AddNoteDestinationSchema } from "@plural/schema";
 import flatten from "lodash.flatten";
+import { customAlphabet } from "nanoid";
+import { nolookalikesSafe } from "nanoid-dictionary";
+
+const itemIdGenerator = customAlphabet(nolookalikesSafe, 11);
 
 export async function addNoteDestinationHandler(
   req: NextApiRequest,
@@ -56,6 +60,7 @@ export async function addNoteDestinationHandler(
 
   const item = await prisma.item.create({
     data: {
+      id: itemIdGenerator(),
       profileId,
       localOnly,
       privacy,

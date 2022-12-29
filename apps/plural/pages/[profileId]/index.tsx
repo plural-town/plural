@@ -5,7 +5,7 @@ import { getProfilePage, requirePermission, summarizeIdentity } from "@plural/db
 import { PrismaClient } from "@prisma/client";
 import { InferGetServerSidePropsType } from "next";
 import Head from "next/head";
-import { ProfileCard, ProfileNoteComposer, SiteHeader, useDisplayName } from "@plural/ui";
+import { NoteCard, ProfileCard, ProfileNoteComposer, SiteHeader, useDisplayName } from "@plural/ui";
 
 export const getServerSideProps = withIronSessionSsr(async ({ query, req, res }) => {
   const { users } = req.session;
@@ -73,6 +73,11 @@ export function ProfilePage({
         {requirePermission(highestRole, "POST") && (
           <ProfileNoteComposer profileId={profile.id} identities={identities} />
         )}
+        {
+          profile.posts.map(post => (
+            <NoteCard key={post.id} {...post} />
+          ))
+        }
       </Container>
     </>
   );

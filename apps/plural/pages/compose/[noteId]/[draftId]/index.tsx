@@ -1,15 +1,15 @@
-import { Avatar, AvatarGroup, Box, Card, CardBody, CardHeader, Container, Divider, Flex, Heading, Stack } from "@chakra-ui/react";
+import { Box, Container, Divider, Heading } from "@chakra-ui/react";
 import { SESSION_OPTIONS } from "../../../../lib/session";
 import { withIronSessionSsr } from "iron-session/next";
-import { AuthorType, PrismaClient, Visibility } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { InferGetServerSidePropsType } from "next";
-import { Form, Formik, useFormikContext } from "formik";
+import { Form, Formik } from "formik";
 import { AuthorTypeSelectField, CheckboxField, InputField, ProfileSelectField, SubmitButton, VisibilitySelectField } from "@plural/form";
 import { getAccountProfiles, summarizeProfile } from "@plural/db";
 import flatten from "lodash.flatten";
 import uniqBy from "lodash.uniqby";
-import React, { useMemo } from "react";
-import { AddNoteDestination, AddNoteDestinationSchema, ProfileSummary, PublishedNoteProfile } from "@plural/schema";
+import React, { useMemo, useState } from "react";
+import { AddNoteDestination, AddNoteDestinationSchema, PublishedNoteProfile } from "@plural/schema";
 import { NoteCard, PostDestinationForm } from "@plural/ui";
 
 export const getServerSideProps = withIronSessionSsr(async ({ query, req, res }) => {
@@ -104,60 +104,6 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
   };
 }, SESSION_OPTIONS);
 
-const NotePreview: React.FC<{
-  profiles: ProfileSummary[];
-  content: string;
-  destinations: {
-    id: string,
-    profile: ProfileSummary,
-    localOnly: boolean;
-    privacy: Visibility;
-    noteAuthor?: AuthorType;
-  }[];
-}> = ({ profiles, content, destinations }) => {
-  const { values } = useFormikContext<AddNoteDestination>();
-  const { profileId, noteAuthor } = values;
-
-  const profile = profiles.find(p => p.id === profileId);
-
-  const ft = destinations.filter(dest => dest.noteAuthor === "FEATURED");
-
-  return (
-    <Card>
-      <CardHeader>
-        <Flex direction="row">
-          <AvatarGroup mr={3}>
-            { ft.map(item => (
-              <Avatar
-                key={item.id}
-                name={item.profile.display.displayName ?? item.profile.display.displayName}
-                src="https://bit.ly/ryan-florence"
-              />
-            ))}
-            { noteAuthor === "FEATURED" && profile && (
-              <Avatar
-                name={profile.display.displayName ?? profile.display.name}
-                src="https://bit.ly/ryan-florence"
-              />
-            )}
-          </AvatarGroup>
-          <Stack>
-            <Heading size="sm">
-              { profile && (profile.display.displayName ?? profile.display.name) }
-            </Heading>
-            <Heading size="sm" fontWeight="normal">
-              { profile && `@${profile.slug}`}
-            </Heading>
-          </Stack>
-        </Flex>
-      </CardHeader>
-      <CardBody>
-        { content }
-      </CardBody>
-    </Card>
-  );
-};
-
 export function ComposeNotePage({
   noteId,
   draftId,
@@ -167,6 +113,7 @@ export function ComposeNotePage({
   authors,
   destinations,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const [isStableDraft, setIsStableDraft] = useState(false);
   const previewProfile = useMemo<PublishedNoteProfile | null>(() => {
     if(destinations.length < 1) {
       return null;
@@ -217,6 +164,27 @@ export function ComposeNotePage({
           </SubmitButton>
         </Form>
       </Formik>
+      <Formik
+        initialValues={{}}
+        onSubmit={async (values) => {
+          const r = await fetch(`/api/note/draft/${draftId}/publish/`);
+          const res = await r.json();
+          if(res.status === "ok") {
+            setIsStableDraft(true);
+          }
+        }}
+      >
+        <Form method="GET" action={`/api/note/draft/${draftId}/publish/`}>
+          <SubmitButton color="blue">
+            Set as latest draft
+          </SubmitButton>
+        </Form>
+      </Formik>
+      { isStableDraft && (
+        <Box>
+          This note has been published as the latest stable draft.
+        </Box>
+      )}
       <Heading as="h2" size="md" my={3}>
         Preview
       </Heading>
@@ -290,14 +258,6 @@ export function ComposeNotePage({
             <SubmitButton colorScheme="purple">
               Add Destination
             </SubmitButton>
-            <Heading py={2} size="sm">
-              Preview
-            </Heading>
-            <NotePreview
-              destinations={destinations}
-              content={content}
-              profiles={profiles}
-            />
           </Form>
         </Formik>
       </Box>

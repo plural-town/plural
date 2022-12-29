@@ -1,11 +1,10 @@
 import { SESSION_OPTIONS } from "../../../../../lib/session";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiRequest, NextApiResponse } from "next";
-import { UpdateNoteContentSchema } from "@plural/schema";
 import { PrismaClient } from "@prisma/client";
 import { canAccountEditNote } from "@plural/db";
 
-export async function updateNoteDraftHandler(
+export async function publishDraftHandler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
@@ -19,10 +18,6 @@ export async function updateNoteDraftHandler(
     throw new Error("Invalid draft ID parameter.");
   }
 
-  const {
-    content,
-  } = UpdateNoteContentSchema.validateSync(req.body);
-
   const prisma = new PrismaClient();
 
   const draft = await prisma.noteDraft.findUnique({
@@ -31,20 +26,17 @@ export async function updateNoteDraftHandler(
     },
   });
 
-  // TODO: Test permissions
   const note = await canAccountEditNote(users.map(u => u.id), draft?.noteId ?? "", prisma);
   if(!note) {
     throw new Error("You do not have permission to access this note.");
   }
 
-  // TODO: Prevent changing a published draft
-
-  await prisma.noteDraft.update({
+  await prisma.note.update({
     where: {
-      id: draftId,
+      id: note.id,
     },
     data: {
-      content,
+      stableId: draftId,
     },
   });
 
@@ -53,4 +45,4 @@ export async function updateNoteDraftHandler(
   });
 }
 
-export default withIronSessionApiRoute(updateNoteDraftHandler, SESSION_OPTIONS);
+export default withIronSessionApiRoute(publishDraftHandler, SESSION_OPTIONS);
