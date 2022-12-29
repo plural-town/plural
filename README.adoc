@@ -8,19 +8,19 @@ based on ActivityPub (so users can interact with any Mastodon server).
 == Features/Use Cases
 
 Plural Systems::
-Create one system account (`plural.gg/@sys`)
+Create one system account (`plural.town/@sys`)
 and member accounts
-(either `plural.gg/@sys/@member` or `sys.plural.gg/@member`)
+(either `plural.town/@sys/@member` or `sys.plural.town/@member`)
 
 Post Categories::
 Our social media has multiple categories:
 +
-- `plural.gg/@plural/@changelog`
-- `plural.gg/@plural/@support`
-- `plural.gg/@plural/@tips`
+- `plural.town/@plural/@changelog`
+- `plural.town/@plural/@support`
+- `plural.town/@plural/@tips`
 +
 which can be viewed (/subscribed to) individually,
-or merged together under `plural.gg/@plural`
+or merged together under `plural.town/@plural`
 
 == Development
 
