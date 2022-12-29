@@ -64,11 +64,15 @@ export async function getAccountProfiles(
   const grants = await prisma.identityGrant.findMany({
     where: {
       accountId,
+      permission: { in: [ "OWNER", "ADMIN" ] },
     },
     include: {
       identity: {
         include: {
           profiles: {
+            where: {
+              permission: { in: [ "OWNER", "ADMIN" ] },
+            },
             include: {
               profile: {
                 include: {

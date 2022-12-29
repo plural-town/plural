@@ -103,7 +103,6 @@ async function createProfile(
 
 async function main() {
   const [account] = await createAccount("test", "test@example.com", "testing");
-  await createAccount("other", "other@example.com", "testing");
 
   const systemDisplay = await createDisplayName("Test", {
     id: "system-display",
@@ -130,7 +129,64 @@ async function main() {
     parentId: systemProfile.id,
   });
 
-  console.log(alter1Profile, alter2Profile);
+  const note = await prisma.note.create({
+    data: {
+      id: "note1",
+    },
+  });
+
+  await prisma.noteAuthor.create({
+    data: {
+      noteId: note.id,
+      authorId: system.id,
+    },
+  });
+
+  const draft = await prisma.noteDraft.create({
+    data: {
+      id: "draft1",
+      content: "Hello World",
+      noteId: note.id,
+    },
+  });
+
+  const systemItem = await prisma.item.create({
+    data: {
+      id: "systemItem1",
+      profileId: systemProfile.id,
+      localOnly: false,
+      privacy: "PUBLIC",
+      type: "NOTE",
+      noteId: note.id,
+      noteAuthor: "FEATURED",
+    },
+  });
+
+  const [other] = await createAccount("other", "other@example.com", "testing");
+  const otherDisplay = await createDisplayName("other");
+  const [otherIdentity] = await createIdentity("other", otherDisplay, other);
+  const [otherProfile] = await createProfile("other", "other", otherDisplay, otherIdentity);
+
+  const [shared] = await createAccount("shared", "shared@example.com", "testing");
+  const sharedDisplay = await createDisplayName("shared");
+  const [sharedIdentity] = await createIdentity("shared", sharedDisplay, shared);
+  await prisma.identityGrant.create({
+    data: {
+      accountId: account.id,
+      identityId: sharedIdentity.id,
+      permission: "VIEW",
+    },
+  });
+  const [sharedProfile] = await createProfile("shared", "shared", sharedDisplay, sharedIdentity);
+  await prisma.profileGrant.create({
+    data: {
+      identityId: system.id,
+      profileId: sharedProfile.id,
+      permission: "VIEW",
+    },
+  });
+
+  console.log(alter1Profile, alter2Profile, draft, systemItem, otherProfile);
 }
 
 main()

@@ -12,7 +12,10 @@ export async function addNoteDestinationHandler(
 ) {
   const { users } = req.session;
   if(!users) {
-    throw new Error("Not logged in.");
+    return res.status(401).send({
+      status: "failed",
+      error: "NO_LOGIN",
+    });
   }
 
   const { noteId } = req.query;
@@ -32,16 +35,21 @@ export async function addNoteDestinationHandler(
   const profiles = flatten(await Promise.all(users.map(u => getAccountProfiles(u.id, prisma))));
   const profile = profiles.find(p => p.id === profileId);
 
-  // TODO: Test permissions 1: does it restrict users
-  // TODO: Test permissions 2: does it require you to own the profile?
   if(!profile) {
-    throw new Error("You do not have permission to publish to the profile.");
+    return res.status(404).send({
+      status: "failure",
+      error: "NOT_FOUND_NO_PERM",
+      resourceType: "profile",
+    });
   }
 
   const note = await canAccountEditNote(users.map(u => u.id), noteId, prisma);
-  // TODO: Test permissions
   if(!note) {
-    throw new Error("You do not have permission to access this note.");
+    return res.status(404).send({
+      status: "failure",
+      error: "NOT_FOUND_NO_PERM",
+      resourceType: "note",
+    });
   }
 
   const item = await prisma.item.create({
