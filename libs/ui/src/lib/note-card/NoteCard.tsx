@@ -1,4 +1,4 @@
-import { Box, Card, CardBody, CardFooter, CardHeader, Flex, Heading, HStack, Link, Spacer, Stack, Text } from "@chakra-ui/react";
+import { Box, Card, CardBody, CardHeader, Flex, Heading, HStack, Link, Stack, Text } from "@chakra-ui/react";
 import { PublishedNote, PublishedNoteProfile } from "@plural/schema";
 import { useMemo } from "react";
 import NextLink from "next/link";
