@@ -7,8 +7,10 @@ import { Form, Formik, useFormikContext } from "formik";
 import { AuthorTypeSelectField, CheckboxField, InputField, ProfileSelectField, SubmitButton, VisibilitySelectField } from "@plural/form";
 import { getAccountProfiles, summarizeProfile } from "@plural/db";
 import flatten from "lodash.flatten";
-import React from "react";
-import { AddNoteDestination, ProfileSummary } from "@plural/schema";
+import uniqBy from "lodash.uniqby";
+import React, { useMemo } from "react";
+import { AddNoteDestination, AddNoteDestinationSchema, ProfileSummary, PublishedNoteProfile } from "@plural/schema";
+import { NoteCard, PostDestinationForm } from "@plural/ui";
 
 export const getServerSideProps = withIronSessionSsr(async ({ query, req, res }) => {
   const name = process.env.SITE_NAME;
@@ -17,16 +19,10 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
   const id = typeof noteId === "string" ? noteId : "";
 
   if(!users) {
-    res.setHeader("location", "/login/");
-    res.statusCode = 302;
-    res.end();
     return {
-      props: {
-        name,
-        profiles: [],
-        content: "",
-        authors: [],
-        destinations: [],
+      redirect: {
+        destination: "/login/",
+        permanent: false,
       },
     };
   }
@@ -34,8 +30,13 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
 
   const prisma = new PrismaClient();
 
-  // TODO: Only include profiles of current authors
-  const profiles = flatten(await Promise.all(userIds.map(id => getAccountProfiles(id, prisma))));
+  // TODO: Only include profiles of current authors (aka filter by fronting)
+  const profiles = uniqBy(
+    flatten(await Promise.all(userIds.map(id => getAccountProfiles(id, prisma)))),
+    i => i.id,
+  );
+
+  // TODO: Permission check?
 
   const note = await prisma.note.findUniqueOrThrow({
     where: {
@@ -92,6 +93,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
 
   return {
     props: {
+      noteId: note.id,
       name,
       profiles,
       content,
@@ -152,18 +154,39 @@ const NotePreview: React.FC<{
         { content }
       </CardBody>
     </Card>
-  )
+  );
 };
 
 export function ComposeNotePage({
+  noteId,
   name,
   profiles,
   content,
   authors,
   destinations,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+
+  const previewProfile = useMemo<PublishedNoteProfile | null>(() => {
+    if(destinations.length < 1) {
+      return null;
+    }
+    const dest = destinations[0];
+    const profile: PublishedNoteProfile = {
+      ...dest.profile,
+      author: dest.noteAuthor,
+    };
+    return profile;
+  }, [destinations]);
+
+  const previewProfiles = useMemo<PublishedNoteProfile[]>(() => {
+    return destinations.map<PublishedNoteProfile>(dest => ({
+      ...dest.profile,
+      author: dest.noteAuthor,
+    }));
+  }, [destinations]);
+
   return (
-    <Container>
+    <Container maxW="container.lg">
       <Heading as="h1">
         Compose
       </Heading>
@@ -186,33 +209,50 @@ export function ComposeNotePage({
           </SubmitButton>
         </Form>
       </Formik>
-      <Heading as="h2" size="md">
+      <Heading as="h2" size="md" my={3}>
+        Preview
+      </Heading>
+      <Container maxW="container.sm">
+        <NoteCard
+          id=""
+          profile={previewProfile}
+          profiles={previewProfiles}
+        />
+      </Container>
+      <Heading as="h2" size="md" my={3}>
         Authors
       </Heading>
-      <Heading as="h2" size="md">
+      <Heading as="h2" size="md" my={3}>
         Destinations
       </Heading>
       {destinations.map(item => (
-        <Card key={item.id}>
-          <CardHeader>
-            <Heading size="sm">
-              { item.id }
-            </Heading>
-          </CardHeader>
-        </Card>
+        <PostDestinationForm
+          key={item.id}
+          noteId={noteId}
+          destination={item}
+        />
       ))}
       <Divider mt={4} mb={4} />
       <Heading as="h2" size="md">
         Additional Destination
       </Heading>
-      <Formik
+      <Formik<AddNoteDestination>
         initialValues={{
           profileId: "",
           localOnly: false,
           privacy: "PUBLIC",
           noteAuthor: "FEATURED",
         }}
+        validationSchema={AddNoteDestinationSchema}
         onSubmit={async (values) => {
+          const r = await fetch(`/api/note/${noteId}/destinations/add/`, {
+            method: "POST",
+            body: JSON.stringify(values),
+          });
+          const res = await r.json();
+          if(res.status === "ok") {
+            // TODO: do something?
+          }
           return;
         }}
       >

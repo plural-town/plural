@@ -1,3 +1,4 @@
+export * from "./lib/canAccountEditNote/canAccountEditNote";
 export * from "./lib/getAccountIdentities/getAccountIdentities";
 export * from "./lib/getAccountProfiles/getAccountProfiles";
 export * from "./lib/getNamespace/getNamespace";

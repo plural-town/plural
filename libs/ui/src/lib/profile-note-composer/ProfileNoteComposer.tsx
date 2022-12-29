@@ -1,15 +1,23 @@
 import { Box, Card, CardBody, CardFooter } from "@chakra-ui/react";
 import { IdentitySelectField, InputField, SubmitButton } from "@plural/form";
-import { IdentitySummary } from "@plural/schema";
+import { CreateNoteRequest, IdentitySummary } from "@plural/schema";
 import { Form, Formik } from "formik";
+import { useRouter } from "next/router";
 
 export interface ProfileNoteComposerProps {
+  profileId: string;
   identities: IdentitySummary[];
 }
 
+/**
+ * A form (in a card) for composing notes inside a profile's timeline.
+ */
 export function ProfileNoteComposer({
+  profileId,
   identities,
 }: ProfileNoteComposerProps) {
+  const router = useRouter();
+
   return (
     <Formik
       initialValues={{
@@ -17,7 +25,23 @@ export function ProfileNoteComposer({
         author: "",
       }}
       onSubmit={async (values) => {
-        return;
+        const draft: CreateNoteRequest = {
+          identities: {
+            [values.author]: true,
+          },
+          content: values.content,
+          profiles: {
+            [profileId]: true,
+          },
+        };
+        const r = await fetch("/api/note/start/", {
+          method: "POST",
+          body: JSON.stringify(draft),
+        });
+        const res = await r.json();
+        if(res.status === "ok") {
+          router.push(`/compose/${res.note}/${res.draft}`);
+        }
       }}
     >
       <Form>
