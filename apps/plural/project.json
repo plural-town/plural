@@ -33,8 +33,7 @@
         },
         "production": {
           "buildTarget": "plural:build:production",
-          "dev": false,
-          "port": 80
+          "dev": false
         }
       }
     },
