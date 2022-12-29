@@ -21,6 +21,7 @@ export function summarizeIdentity(
     display: {
       name: display?.name ?? null,
       displayName: display?.displayName ?? null,
+      bio: display?.bio ?? null,
     },
   };
 }
