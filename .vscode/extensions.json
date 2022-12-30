@@ -4,6 +4,11 @@
     "esbenp.prettier-vscode",
     "firsttris.vscode-jest-runner",
     "dbaeumer.vscode-eslint",
-    "Prisma.prisma"
+    "prisma.prisma",
+    "fabiospampinato.vscode-todo-plus",
+    "asciidoctor.asciidoctor-vscode",
+    "streetsidesoftware.code-spell-checker",
+    "editorconfig.editorconfig",
+    "redhat.vscode-yaml"
   ]
 }

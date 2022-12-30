@@ -1,0 +1,20 @@
+Instead of committing a standard changelog, PluralTown maintains a list
+of features that have been implemented.
+
+This should help any forks - users can compare your list of features to the
+upstream PluralTown feature list, and releases to forks can be diff'd to find
+all new features, whether sync'd from upstream or implemented locally.
+
+Each completed item is tagged with the repository that added the feature
+(e.g. ' @PluralTown ') and when the feature was released (' @done ').
+
+Registration:
+
+  Authentication Methods:
+    ☐ Email
+
+  ✔ Disableable registration @PluralTown @done(22-12-30 01:27)
+  ☐ Registration request form
+
+Administration:
+  ☐ Registration approval interface
