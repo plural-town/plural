@@ -12,7 +12,7 @@ After=network.target
 
 [Service]
 Type=simple
-User=mastodon
+User=plural
 WorkingDirectory=/home/plural/${process.env.SITE_DIRECTORY}
 ExecStart=/home/plural/${process.env.SITE_DIRECTORY}/node_modules/.bin/nx run plural:serve:production
 TimeoutSec=15
