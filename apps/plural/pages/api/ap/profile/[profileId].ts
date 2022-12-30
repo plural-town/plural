@@ -1,3 +1,4 @@
+import { createProfileURL } from "@plural/db";
 import { getLogger } from "@plural/log";
 import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -7,6 +8,7 @@ export default async function actorHandler(
   res: NextApiResponse,
 ) {
   const log = getLogger("apActor");
+
   const BASE_DOMAIN = process.env.BASE_DOMAIN;
   const { profileId } = req.query;
 
@@ -22,11 +24,21 @@ export default async function actorHandler(
     where: {
       id: profileId,
     },
+    include: {
+      display: true,
+      parent: true,
+    },
   });
 
   if(!profile) {
     res.status(404).send({});
     log.warn({ req, res, profileId }, "User requested unknown profile.");
+    return;
+  }
+
+  if(req.headers.accept !== "application/json") {
+    res.redirect(createProfileURL(profile));
+    log.info({ req, res, profileId }, "Redirecting non-API to profile");
     return;
   }
 

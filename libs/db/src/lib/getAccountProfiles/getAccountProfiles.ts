@@ -3,6 +3,19 @@ import { Account, DisplayName, PrismaClient, Profile } from "@prisma/client";
 import flatten from "lodash.flatten";
 import uniq from "lodash.uniq";
 
+export function createProfileURL(profile: Profile & { parent?: Profile | null }) {
+  const UNIVERSAL_SUBDOMAIN = process.env["UNIVERSAL_SUBDOMAIN"] === "true";
+  const HTTP_PROTOCOL = process.env["HTTP_PROTOCOL"];
+  const BASE_DOMAIN = process.env["BASE_DOMAIN"];
+  const BASE_URL = process.env["BASE_URL"];
+
+  return ("parent" in profile && !!profile.parent)
+    ? (UNIVERSAL_SUBDOMAIN || profile.parent.subdomain)
+      ? `${HTTP_PROTOCOL}://${profile.parent.slug}.${BASE_DOMAIN}/@${profile.slug}/`
+      : `${BASE_URL}/@${profile.parent.slug}/@${profile.slug}/`
+    : `${BASE_URL}/@${profile.slug}/`;
+}
+
 export function summarizeProfile(
   profile: Profile & { display: DisplayName, parent?: Profile | null },
 ): ProfileSummary;
@@ -15,9 +28,7 @@ export function summarizeProfile(
   display?: DisplaySummary,
 ): ProfileSummary {
   const UNIVERSAL_SUBDOMAIN = process.env["UNIVERSAL_SUBDOMAIN"] === "true";
-  const HTTP_PROTOCOL = process.env["HTTP_PROTOCOL"];
   const BASE_DOMAIN = process.env["BASE_DOMAIN"];
-  const BASE_URL = process.env["BASE_URL"];
   const SUBACCOUNT_CHARACTER = process.env["SUBACCOUNT_CHARACTER"];
 
   const {
@@ -28,11 +39,7 @@ export function summarizeProfile(
 
   // TODO: Allow for 3+ levels of nesting
 
-  const profileURL = ("parent" in profile && !!profile.parent)
-    ? (UNIVERSAL_SUBDOMAIN || profile.parent.subdomain)
-      ? `${HTTP_PROTOCOL}://${profile.parent.slug}.${BASE_DOMAIN}/@${profile.slug}/`
-      : `${BASE_URL}/@${profile.parent.slug}/@${profile.slug}/`
-    : `${BASE_URL}/@${profile.slug}/`;
+  const profileURL = createProfileURL(profile);
 
   const fullUsername = ("parent" in profile && !!profile.parent)
     ? (UNIVERSAL_SUBDOMAIN || profile.parent.subdomain)
