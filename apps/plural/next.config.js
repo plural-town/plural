@@ -21,6 +21,10 @@ const nextConfig = {
         source: "/.well-known/webfinger",
         destination: "/api/.well-known/webfinger",
       },
+      {
+        source: "/:tag(\\@[a-zA-Z-_]+)",
+        destination: "/profile/:tag",
+      },
     ];
   },
 };

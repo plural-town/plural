@@ -1,19 +1,24 @@
 import { Container } from "@chakra-ui/react";
-import { SESSION_OPTIONS } from "../../lib/session";
+import { SESSION_OPTIONS } from "../../../lib/session";
 import { withIronSessionSsr } from "iron-session/next";
 import { getProfilePage, requirePermission, summarizeIdentity } from "@plural/db";
+import { getLogger } from "@plural/log";
 import { PrismaClient } from "@prisma/client";
 import { InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import { NoteCard, ProfileCard, ProfileNoteComposer, SiteHeader, useDisplayName } from "@plural/ui";
 
 export const getServerSideProps = withIronSessionSsr(async ({ query, req, res }) => {
+  const log = getLogger("ProfilePage.getServerSideProps");
   const { users } = req.session;
   const userIds = (users ?? []).map(u => u.id);
   const BASE_URL = process.env.BASE_URL;
   const { profileId } = query;
   if(typeof profileId !== "string" || profileId[0] !== "@") {
-    throw new Error("Incorrect format for profile ID.");
+    log.warn({ req, res, query }, "invalid profile ID");
+    return {
+      notFound: true,
+    };
   }
 
   const BASE_DOMAIN = process.env.BASE_DOMAIN;
