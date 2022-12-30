@@ -3,6 +3,7 @@ import { Box, Button, Center, Container, Flex, Heading, Image, Link, Stack, Text
 import { GetStaticProps, InferGetStaticPropsType } from "next";
 import { NoteCard, SiteHeader } from "@plural/ui";
 import { PublishedNoteProfile } from "@plural/schema";
+import Head from "next/head";
 
 export const getStaticProps: GetStaticProps = async (context) => {
   return {
@@ -173,7 +174,9 @@ export function Index({
 
   return (
     <>
-      <title>{ name }</title>
+      <Head>
+        <title>{ name }</title>
+      </Head>
       <SiteHeader siteName={name} />
       <Container maxW="7xl">
         <Stack
