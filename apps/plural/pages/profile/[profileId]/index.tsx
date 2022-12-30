@@ -13,6 +13,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
   const { users } = req.session;
   const userIds = (users ?? []).map((u) => u.id);
   const BASE_URL = process.env.BASE_URL;
+  const SITE_NAME = process.env.SITE_NAME;
   const { profileId } = query;
   if (typeof profileId !== "string" || profileId[0] !== "@") {
     log.warn({ req, res, query }, "invalid profile ID");
@@ -52,6 +53,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
 
   return {
     props: {
+      SITE_NAME,
       BASE_URL,
       identities: identitySummaries,
       profile,
@@ -60,6 +62,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
 }, SESSION_OPTIONS);
 
 export function ProfilePage({
+  SITE_NAME,
   BASE_URL,
   identities,
   profile,
@@ -72,7 +75,7 @@ export function ProfilePage({
       <Head>
         <title>{`${displayName} - ${fullUsername}`}</title>
       </Head>
-      <SiteHeader />
+      <SiteHeader siteName={SITE_NAME} />
       <Container maxW="container.md">
         <ProfileCard BASE_URL={BASE_URL} profile={profile} />
         {requirePermission(highestRole, "POST") && (

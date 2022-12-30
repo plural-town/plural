@@ -3,10 +3,13 @@ import { useScroll } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import NextLink from "next/link";
 
-/* eslint-disable-next-line */
-export interface SiteHeaderProps {}
+export interface SiteHeaderProps {
+  siteName: string;
+}
 
-export function SiteHeader(props: SiteHeaderProps) {
+export function SiteHeader({
+  siteName,
+}: SiteHeaderProps) {
   const ref = useRef<null | HTMLElement>(null);
   const height = ref.current ? ref.current.getBoundingClientRect() : 0;
   const [y, setY] = useState(0);
@@ -34,7 +37,7 @@ export function SiteHeader(props: SiteHeaderProps) {
             <Flex align="center">
               <NextLink href="/" passHref legacyBehavior>
                 {/* TODO: Add logo */}
-                <Link as="a">Plural</Link>
+                <Link as="a">{ siteName }</Link>
               </NextLink>
             </Flex>
 
