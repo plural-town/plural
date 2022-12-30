@@ -1,3 +1,4 @@
+import { getLogger } from "@plural/log";
 import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -5,11 +6,14 @@ export default async function actorHandler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  const log = getLogger("apActor");
   const BASE_DOMAIN = process.env.BASE_DOMAIN;
   const { profileId } = req.query;
 
   if(typeof profileId !== "string") {
-    throw new Error("Malformed profile ID.");
+    res.status(500).send("Failed to process query.");
+    log.error({ req, res }, "User endpoint failed to parse 'profileId'");
+    return;
   }
 
   const prisma = new PrismaClient();
@@ -21,12 +25,13 @@ export default async function actorHandler(
   });
 
   if(!profile) {
-    return res.status(404).send({});
+    res.status(404).send({});
+    log.warn({ req, res, profileId }, "User requested unknown profile.");
   }
 
   // TODO: Handle profile visibility/privacy
 
-  return {
+  res.send({
     "@context": [
       "https://www.w3.org/ns/activitystreams",
       "https://w3id.org/security/v1",
@@ -44,5 +49,6 @@ export default async function actorHandler(
       // TODO: Return PEM
       publicKeyPem: "",
     },
-  };
+  });
+  log.trace({ req, res }, "Handled actor page.");
 }
