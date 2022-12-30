@@ -4,22 +4,19 @@ import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 
 function nonempty(val: string) {
-  if(val.length > 0) {
+  if (val.length > 0) {
     return val;
   }
   return null;
 }
 
-export default async function actorHandler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export default async function actorHandler(req: NextApiRequest, res: NextApiResponse) {
   const log = getLogger("apActor");
 
   const BASE_DOMAIN = process.env.BASE_DOMAIN;
   const { profileId } = req.query;
 
-  if(typeof profileId !== "string") {
+  if (typeof profileId !== "string") {
     res.status(500).send("Failed to process query.");
     log.error({ req, res }, "User endpoint failed to parse 'profileId'");
     return;
@@ -37,7 +34,7 @@ export default async function actorHandler(
     },
   });
 
-  if(!profile) {
+  if (!profile) {
     res.status(404).send({});
     log.warn({ req, res, profileId }, "User requested unknown profile.");
     return;
@@ -46,7 +43,7 @@ export default async function actorHandler(
   const activity = req.headers.accept.includes("application/activity+json");
   const ld = req.headers.accept.includes("application/ld+json");
 
-  if(!activity && !ld) {
+  if (!activity && !ld) {
     res.redirect(createProfileURL(profile));
     log.info({ req, res, profileId, accept: req.headers.accept }, "Redirecting non-API to profile");
     return;
@@ -55,10 +52,7 @@ export default async function actorHandler(
   // TODO: Handle profile visibility/privacy
 
   res.send({
-    "@context": [
-      "https://www.w3.org/ns/activitystreams",
-      "https://w3id.org/security/v1",
-    ],
+    "@context": ["https://www.w3.org/ns/activitystreams", "https://w3id.org/security/v1"],
 
     id: `https://${BASE_DOMAIN}/api/ap/profile/${profileId}`,
     type: "Person",
