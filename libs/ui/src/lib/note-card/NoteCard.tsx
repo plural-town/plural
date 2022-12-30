@@ -53,12 +53,12 @@ export function NoteCard({
           <NoteAvatar profiles={ft} />
           <Stack flex="1" mx={3}>
             <HStack>
-              { featuredNames.map(f => {
+              { featuredNames.map((f, i) => {
                 if(f.type === "and") {
-                  return (<Text>and</Text>);
+                  return (<Text key={i}>and</Text>);
                 }
                 return (
-                  <Heading size="sm">
+                  <Heading key={f.id} size="sm">
                     <NextLink href={f.url} passHref legacyBehavior>
                       <Link as="a" data-note-ft-author={f.id}>
                         { f.name }
@@ -69,12 +69,12 @@ export function NoteCard({
               })}
             </HStack>
             <HStack fontSize="sm">
-              { featuredNames.map(f => {
+              { featuredNames.map((f, i) => {
                 if(f.type === "and") {
-                  return (<Text>and</Text>);
+                  return (<Text key={i}>and</Text>);
                 }
                 return (
-                  <NextLink href={f.url} passHref legacyBehavior>
+                  <NextLink key={f.id} href={f.url} passHref legacyBehavior>
                     <Link as="a">
                       { f.username }
                     </Link>
@@ -88,12 +88,12 @@ export function NoteCard({
           <Box mt={4}>
             <HStack fontSize="sm" mx={5}>
               <Text>By</Text>
-              { byNames.map(b => {
+              { byNames.map((b, i) => {
                 if(b.type === "and") {
-                  return (<Text>and</Text>);
+                  return (<Text key={i}>and</Text>);
                 }
                 return (
-                  <NextLink href={b.url} passHref legacyBehavior>
+                  <NextLink key={b.id} href={b.url} passHref legacyBehavior>
                     <Link as="a" data-note-by-author={b.id}>{ b.name }</Link>
                   </NextLink>
                 );
