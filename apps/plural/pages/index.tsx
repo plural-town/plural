@@ -4,17 +4,21 @@ import { GetStaticProps, InferGetStaticPropsType } from "next";
 import { NoteCard, SiteHeader } from "@plural/ui";
 import { PublishedNoteProfile } from "@plural/schema";
 import Head from "next/head";
+import React from "react";
 
 export const getStaticProps: GetStaticProps = async (context) => {
   return {
     props: {
       name: process.env.SITE_NAME ?? "Untitled Social",
       BASE_DOMAIN: process.env.BASE_DOMAIN,
+      REGISTRATION_ENABLED: process.env.REGISTRATION_ENABLED === "true",
     },
   } as const;
 };
 
-function CTAButtons() {
+const CTAButtons: React.FC<{
+  REGISTRATION_ENABLED: boolean,
+}> = ({ REGISTRATION_ENABLED }) => {
   return (
     <Stack
       spacing={{ base: 4, sm: 6 }}
@@ -30,6 +34,7 @@ function CTAButtons() {
           colorScheme="red"
           bg="red.400"
           _hover={{ bg: "red.500" }}
+          disabled={!REGISTRATION_ENABLED}
         >
           Create Account
         </Button>
@@ -52,6 +57,7 @@ function CTAButtons() {
 export function Index({
   name,
   BASE_DOMAIN,
+  REGISTRATION_ENABLED,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const podcast: PublishedNoteProfile = {
     id: "",
@@ -204,7 +210,7 @@ export function Index({
             <Heading as="h1">
               { name }
             </Heading>
-            <CTAButtons />
+            <CTAButtons REGISTRATION_ENABLED={REGISTRATION_ENABLED} />
           </Stack>
           <Flex
             flex="1"
