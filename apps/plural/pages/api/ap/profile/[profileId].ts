@@ -3,6 +3,13 @@ import { getLogger } from "@plural/log";
 import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 
+function nonempty(val: string) {
+  if(val.length > 0) {
+    return val;
+  }
+  return null;
+}
+
 export default async function actorHandler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -56,6 +63,9 @@ export default async function actorHandler(
     id: `https://${BASE_DOMAIN}/api/ap/profile/${profileId}`,
     type: "Person",
     preferredUsername: profile.slug,
+    name: nonempty(profile.display.displayName) ?? nonempty(profile.display.name) ?? profile.slug,
+    summary: profile.display.bio,
+    url: createProfileURL(profile),
     inbox: `https://${BASE_DOMAIN}/api/ap/inbox`,
 
     publicKey: {
