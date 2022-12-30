@@ -27,6 +27,7 @@ export default async function actorHandler(
   if(!profile) {
     res.status(404).send({});
     log.warn({ req, res, profileId }, "User requested unknown profile.");
+    return;
   }
 
   // TODO: Handle profile visibility/privacy
