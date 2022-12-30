@@ -21,6 +21,13 @@
         "lintFilePatterns": ["libs/models/**/*.ts"]
       }
     },
+    "deploy": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "yarn prisma migrate deploy --schema ./libs/models/src/schema.prisma"
+      }
+    },
 
     "reset": {
       "executor": "nx:run-commands",

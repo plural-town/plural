@@ -1,5 +1,5 @@
 import { Box, Button, chakra, Flex, HStack, Link, useColorModeValue } from "@chakra-ui/react";
-import { useViewportScroll } from "framer-motion";
+import { useScroll } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import NextLink from "next/link";
 
@@ -10,7 +10,7 @@ export function SiteHeader(props: SiteHeaderProps) {
   const ref = useRef<null | HTMLElement>(null);
   const height = ref.current ? ref.current.getBoundingClientRect() : 0;
   const [y, setY] = useState(0);
-  const { scrollY } = useViewportScroll();
+  const { scrollY } = useScroll();
   const bg = useColorModeValue("accent.200", "accent.800");
 
   useEffect(() => {
@@ -29,28 +29,16 @@ export function SiteHeader(props: SiteHeaderProps) {
         w="full"
         overflowY="hidden"
       >
-        <chakra.div
-          h="4.5rem"
-          mx="auto"
-          maxW="1200px"
-        >
+        <chakra.div h="4.5rem" mx="auto" maxW="1200px">
           <Flex w="full" h="full" px="6" align="center" justify="space-between">
             <Flex align="center">
               <NextLink href="/" passHref legacyBehavior>
                 {/* TODO: Add logo */}
-                <Link as="a">
-                  Plural
-                </Link>
+                <Link as="a">Plural</Link>
               </NextLink>
             </Flex>
 
-            <Flex
-              justify="flex-end"
-              w="full"
-              maxW="824px"
-              align="center"
-              color="gray.400"
-            >
+            <Flex justify="flex-end" w="full" maxW="824px" align="center" color="gray.400">
               <HStack spacing="5" display={{ base: "none", md: "flex" }}>
                 {/* TODO: add links? */}
               </HStack>

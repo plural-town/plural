@@ -1,0 +1,6 @@
+= Configuration Generators
+
+These scripts will build configuration files for the server,
+filling out templates using values from the site configuration.
+
+These generators can only be run in development mode.

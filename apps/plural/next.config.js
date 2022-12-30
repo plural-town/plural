@@ -1,7 +1,7 @@
 //@ts-check
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { withNx } = require('@nrwl/next/plugins/with-nx');
+const { withNx } = require("@nrwl/next/plugins/with-nx");
 
 /**
  * @type {import('@nrwl/next/plugins/with-nx').WithNxOptions}
@@ -20,6 +20,10 @@ const nextConfig = {
       {
         source: "/.well-known/webfinger",
         destination: "/api/.well-known/webfinger",
+      },
+      {
+        source: "/:tag(\\@[a-zA-Z-_]+)",
+        destination: "/profile/:tag",
       },
     ];
   },

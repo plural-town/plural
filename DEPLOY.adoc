@@ -1,0 +1,208 @@
+= Deployment Guide
+
+== Machine
+
+This guide assumes you are running Ubuntu 22.04 LTS.
+
+We recommend creating a Linux user per-installation,
+on each machine that will have code deployed to it.
+
+[source,sh]
+----
+adduser --disabled-login plural
+----
+
+(You may hit `<enter>` repeatedly to use the default answers)
+
+2GB of RAM is _highly_ recommended during the compilation process.
+
+=== Installation
+
+[source,sh]
+----
+apt update
+apt install -y nginx
+----
+
+== Database
+
+Plural requires a PostgreSQL database.
+
+=== PostgreSQL Installation
+
+[source,sh]
+----
+wget -O /usr/share/keyrings/postgresql.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+echo "deb [signed-by=/usr/share/keyrings/postgresql.asc] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/postgresql.list
+
+sudo apt-get update
+sudo apt-get install -y postgresql
+----
+
+=== PostgreSQL Setup
+
+Create a user and database for the server.
+
+[source,sh]
+----
+sudo -u postgres psql
+----
+
+[source,sql]
+----
+CREATE USER plural CREATEDB;
+ALTER USER plural WITH PASSWORD '<password>';
+\q
+----
+
+== Server Setup
+
+Installing from source requires more resources when downloading and building the server,
+but provides all the tools needed to adjust the database, and makes it easy to switch between forks.
+
+=== Dependencies
+
+==== Install Git
+
+[source,sh]
+----
+apt install -y git
+----
+
+==== Install Node.js
+
+[source,sh]
+----
+curl -sL https://deb.nodesource.com/setup_16.x | bash -
+apt install -y nodejs
+----
+
+==== Install Yarn
+
+Install Yarn, used to install Node.JS dependencies.
+
+[source,sh]
+----
+corepack enable
+yarn set version classic
+----
+
+=== Cloning Source
+
+Switch into the user for the server, created earlier:
+
+[source,sh]
+----
+su - plural
+----
+
+Checkout the code via `git`.
+
+- If you are using a fork, use it's URL instead of `plural-social/plural`
+- If you will be deploying multiple sites, replace `"plural"` with a descriptive name
+
+[source,sh]
+----
+git clone https://github.com/plural-social/plural plural
+cd plural
+git checkout main # alternatively, specify a version branch
+----
+
+=== Install Dependencies
+
+[source,sh]
+----
+yarn install --frozen-lockfile
+----
+
+=== Build Database Schema
+
+[source,sh]
+----
+yarn nx run models:generate
+----
+
+=== Build Server
+
+[source,sh]
+----
+yarn nx run plural:build:production
+----
+
+== Deploy Database Schema
+
+[source,sh]
+----
+export DATABASE_URL="postgres://plural:<password>@localhost:5432/plural"
+yarn nx run models:deploy
+----
+
+== Configuration
+
+Create `apps/plural/.env.local` to configure the server -
+you can override any settings from `.env` and `.env.production`.
+
+[source,sh]
+----
+DATABASE_URL="postgres://plural:<password>@localhost:5432/plural"
+DOMAIN="my-site.com"
+SITE_NAME="My Site"
+PRODUCTION_PORT=5400
+
+COOKIE_PASSWORD="some_secure_secret_that_is_32_characters_or_more"
+----
+
+== Generating Configuration Files
+
+Plural includes templates to create Nginx and service configurations.
+
+The Plural server will fill the templates out for you,
+using the values from `.env.local`.
+
+Run the Plural server in development mode to enable the generators.
+
+The development server runs on a different port, so you can even use it
+while the production server is running.
+
+[source,sh]
+----
+yarn nx run plural:serve:development &
+curl http://localhost:4200/api/generator/nginx/ > dist/nginx
+curl http://localhost:4200/api/generator/systemd/ > dist/service
+----
+
+Once you have downloaded the files with `curl`,
+use `fg` to bring the server into context, and stop it with `control-c`.
+
+== Install Server Service
+
+[source,sh]
+----
+cp /home/plural/plural/dist/service /etc/systemd/system/plural.service
+systemctl daemon-reload
+systemctl enable --now plural
+----
+
+== Nginx
+
+=== Installation
+
+[source,sh]
+----
+apt update
+apt install -y nginx
+----
+
+=== Configuration
+
+[source,sh]
+----
+cp /home/plural/plural/dist/nginx /etc/nginx/sites-available/plural
+ln -s /etc/nginx/sites-available/plural /etc/nginx/sites-enabled
+
+# Test:
+nginx -t
+
+# Reload:
+systemctl reload nginx
+----
