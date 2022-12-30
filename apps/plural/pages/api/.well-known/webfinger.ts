@@ -1,10 +1,12 @@
 import { PrismaClient } from "@prisma/client";
+import { getLogger } from "@plural/log";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  const log = getLogger("webfinger");
   const SUB = process.env.SUBACCOUNT_CHARACTER;
   const USERNAME = process.env.USERNAME_REGEX;
   const SUBDOMAIN_ACCOUNTS = process.env.SUBDOMAIN_ACCOUNTS === "true";
@@ -14,7 +16,9 @@ export default async function handler(
   const { resource } = req.query;
 
   if(!resource || typeof resource !== "string") {
-    throw new Error("Must request a 'resource'");
+    res.status(500).send("Must request a 'resource'");
+    log.warn({ resource, req, res }, ".webfinger lacks 'resource'");
+    return;
   }
 
   const ACCOUNT_RESOURCE = new RegExp(`acct:(${USERNAME})@${BASE_DOMAIN}`);
@@ -38,7 +42,9 @@ export default async function handler(
     });
 
     if(!profile) {
-      return res.status(404).json({});
+      res.status(404).json("Profile not found.");
+      log.warn({ req, res, subject }, "webfinger requested non-existent user.");
+      return;
     }
 
     // TODO: Handle profile visibility/privacy
@@ -62,6 +68,8 @@ export default async function handler(
         },
       ],
     });
+    log.trace({ req, res, subject }, "webfinger found profile");
+    return;
   } else if(subAccount) {
     const subject = subAccount[1];
     const profile = subAccount[2];
@@ -84,6 +92,8 @@ export default async function handler(
         },
       ],
     });
+    log.trace({ req, res, subject }, "webfinger found sub-account");
+    return;
   } else if(SUBDOMAIN_ACCOUNTS && subdomainAccount) {
     const subject = subdomainAccount[2];
     const profile = subdomainAccount[1];
@@ -106,9 +116,11 @@ export default async function handler(
         },
       ],
     });
+    log.trace({ req, res, subject }, "webfinger found sub-account (as subdomain)");
+    return;
   } else {
-    throw new Error("Unknown resource format");
+    res.status(400).send("Unknown resource format.");
+    log.warn({ req, res, resource }, "webfinger submitted an unsupported resource format");
+    return;
   }
-
-  res.status(200).json({ name: "John Doe", host });
 }
