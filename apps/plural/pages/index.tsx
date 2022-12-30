@@ -1,5 +1,5 @@
 import NextLink from "next/link";
-import { Box, Button, Center, Container, Flex, Heading, Image, Link, Stack, Text } from "@chakra-ui/react";
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button, Center, Container, Flex, Heading, Image, Link, Stack, Text } from "@chakra-ui/react";
 import { GetStaticProps, InferGetStaticPropsType } from "next";
 import { NoteCard, SiteHeader } from "@plural/ui";
 import { PublishedNoteProfile } from "@plural/schema";
@@ -178,6 +178,21 @@ export function Index({
         <title>{ name }</title>
       </Head>
       <SiteHeader siteName={name} />
+
+      <Container maxW="container.sm" my={5}>
+        <Alert status="info" variant="solid">
+          <AlertIcon />
+          <Box>
+            <AlertTitle>Under Active Development</AlertTitle>
+            <AlertDescription>
+              { name } is running <Link href="https://software.plural.town/">PluralTown</Link>,
+              which is under active development and only supports a very basic set of features
+              in it&apos;s current state.
+            </AlertDescription>
+          </Box>
+        </Alert>
+      </Container>
+
       <Container maxW="7xl">
         <Stack
           align="center"
@@ -284,7 +299,23 @@ export function Index({
             </Box>
           </Flex>
         </Container>
+
+        <Center mt={10}>
+          <Heading as="h2" size="xl">
+            Features
+          </Heading>
+        </Center>
+
+        <Container maxW="container.md">
+          <Heading as="h3" size="md" textDecoration="line-through">
+            ActivityPub Support
+          </Heading>
+          <Text>
+            PluralTown is <Text display="inline" color="orange.700">(partially, under development)</Text> compatible with Mastodon, Hometown, and many other ActivityPub servers on the Fediverse!
+          </Text>
+        </Container>
       </Container>
+      <Box mb={20}></Box>
     </>
   );
 }
