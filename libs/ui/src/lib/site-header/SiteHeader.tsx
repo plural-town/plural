@@ -1,5 +1,5 @@
 import { Box, Button, chakra, Flex, HStack, Link, useColorModeValue } from "@chakra-ui/react";
-import { useViewportScroll } from "framer-motion";
+import { useScroll } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import NextLink from "next/link";
 
@@ -10,7 +10,7 @@ export function SiteHeader(props: SiteHeaderProps) {
   const ref = useRef<null | HTMLElement>(null);
   const height = ref.current ? ref.current.getBoundingClientRect() : 0;
   const [y, setY] = useState(0);
-  const { scrollY } = useViewportScroll();
+  const { scrollY } = useScroll();
   const bg = useColorModeValue("accent.200", "accent.800");
 
   useEffect(() => {
