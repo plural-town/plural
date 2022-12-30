@@ -39,9 +39,9 @@ export default async function actorHandler(
   const activity = req.headers.accept.includes("application/activity+json");
   const ld = req.headers.accept.includes("application/ld+json");
 
-  if(activity || ld) {
+  if(!activity && !ld) {
     res.redirect(createProfileURL(profile));
-    log.info({ req, res, profileId, accept: req.headers.accept, activity, ld, acceptType: typeof req.headers.accept }, "Redirecting non-API to profile");
+    log.info({ req, res, profileId, accept: req.headers.accept }, "Redirecting non-API to profile");
     return;
   }
 
