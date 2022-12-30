@@ -2,10 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { getLogger } from "@plural/log";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const log = getLogger("webfinger");
   const SUB = process.env.SUBACCOUNT_CHARACTER;
   const USERNAME = process.env.USERNAME_REGEX;
@@ -15,7 +12,7 @@ export default async function handler(
   const host = req.headers.host;
   const { resource } = req.query;
 
-  if(!resource || typeof resource !== "string") {
+  if (!resource || typeof resource !== "string") {
     res.status(500).send("Must request a 'resource'");
     log.warn({ resource, req, res }, ".webfinger lacks 'resource'");
     return;
@@ -31,7 +28,7 @@ export default async function handler(
 
   const prisma = new PrismaClient();
 
-  if(directAccount) {
+  if (directAccount) {
     const subject = directAccount[1];
 
     const profile = await prisma.profile.findFirst({
@@ -41,7 +38,7 @@ export default async function handler(
       },
     });
 
-    if(!profile) {
+    if (!profile) {
       res.status(404).json("Profile not found.");
       log.warn({ req, res, subject }, "webfinger requested non-existent user.");
       return;
@@ -70,7 +67,7 @@ export default async function handler(
     });
     log.trace({ req, res, subject }, "webfinger found profile");
     return;
-  } else if(subAccount) {
+  } else if (subAccount) {
     const subject = subAccount[1];
     const profile = subAccount[2];
     res.status(200).json({
@@ -94,7 +91,7 @@ export default async function handler(
     });
     log.trace({ req, res, subject }, "webfinger found sub-account");
     return;
-  } else if(SUBDOMAIN_ACCOUNTS && subdomainAccount) {
+  } else if (SUBDOMAIN_ACCOUNTS && subdomainAccount) {
     const subject = subdomainAccount[2];
     const profile = subdomainAccount[1];
     res.status(200).json({

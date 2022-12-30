@@ -2,15 +2,12 @@ import { IdentitySummary } from "@plural/schema";
 import { Account, DisplayName, Identity, PrismaClient } from "@prisma/client";
 
 export function summarizeIdentity(identity: Identity & { display: DisplayName }): IdentitySummary;
-export function summarizeIdentity(
-  identity: Identity,
-  display: DisplayName,
-): IdentitySummary;
+export function summarizeIdentity(identity: Identity, display: DisplayName): IdentitySummary;
 export function summarizeIdentity(
   identity: Identity | (Identity & { display: DisplayName }),
   display?: DisplayName,
 ): IdentitySummary {
-  if("display" in identity) {
+  if ("display" in identity) {
     display = identity.display;
   }
 
@@ -45,7 +42,7 @@ export async function getAccountIdentities(
     },
   });
 
-  const identities = grants.map(grant => summarizeIdentity(grant.identity));
+  const identities = grants.map((grant) => summarizeIdentity(grant.identity));
 
   return identities;
 }

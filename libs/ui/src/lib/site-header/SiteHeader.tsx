@@ -29,28 +29,16 @@ export function SiteHeader(props: SiteHeaderProps) {
         w="full"
         overflowY="hidden"
       >
-        <chakra.div
-          h="4.5rem"
-          mx="auto"
-          maxW="1200px"
-        >
+        <chakra.div h="4.5rem" mx="auto" maxW="1200px">
           <Flex w="full" h="full" px="6" align="center" justify="space-between">
             <Flex align="center">
               <NextLink href="/" passHref legacyBehavior>
                 {/* TODO: Add logo */}
-                <Link as="a">
-                  Plural
-                </Link>
+                <Link as="a">Plural</Link>
               </NextLink>
             </Flex>
 
-            <Flex
-              justify="flex-end"
-              w="full"
-              maxW="824px"
-              align="center"
-              color="gray.400"
-            >
+            <Flex justify="flex-end" w="full" maxW="824px" align="center" color="gray.400">
               <HStack spacing="5" display={{ base: "none", md: "flex" }}>
                 {/* TODO: add links? */}
               </HStack>

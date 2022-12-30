@@ -1,10 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
-export function nginxGenerator(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  if(process.env.NODE_ENV !== "development") {
+export function nginxGenerator(req: NextApiRequest, res: NextApiResponse) {
+  if (process.env.NODE_ENV !== "development") {
     res.status(404).send("");
   }
 

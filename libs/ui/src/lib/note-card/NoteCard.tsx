@@ -1,4 +1,16 @@
-import { Box, Card, CardBody, CardHeader, CardProps, Flex, Heading, HStack, Link, Stack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Card,
+  CardBody,
+  CardHeader,
+  CardProps,
+  Flex,
+  Heading,
+  HStack,
+  Link,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import { PublishedNote, PublishedNoteProfile } from "@plural/schema";
 import { useMemo } from "react";
 import NextLink from "next/link";
@@ -7,7 +19,16 @@ import NoteAvatar from "./note-avatar/NoteAvatar";
 
 function useProfileNames(profiles: PublishedNoteProfile[]) {
   const transformed = useMemo(() => {
-    const names: ({ type: "and" } | { type: "name", id: string, name: string, username: string, url: string })[] = [];
+    const names: (
+      | { type: "and" }
+      | {
+          type: "name";
+          id: string;
+          name: string;
+          username: string;
+          url: string;
+        }
+    )[] = [];
     for (let i = 0; i < profiles.length; i++) {
       const feature = profiles[i];
       names.push({
@@ -17,7 +38,7 @@ function useProfileNames(profiles: PublishedNoteProfile[]) {
         username: feature.fullUsername,
         url: feature.profileURL,
       });
-      if(i < profiles.length - 1) {
+      if (i < profiles.length - 1) {
         names.push({ type: "and" });
       }
     }
@@ -33,15 +54,9 @@ export interface NoteCardProps extends PublishedNote, Omit<CardProps, "id"> {}
  * Renders a published note.
  * (also used for previews)
  */
-export function NoteCard({
-  id,
-  content,
-  profile,
-  profiles,
-  ...props
-}: NoteCardProps) {
-  const ft = useMemo(() => profiles.filter(p => p.author === "FEATURED"), [profiles]);
-  const by = useMemo(() => profiles.filter(p => p.author === "BYLINE"), [profiles]);
+export function NoteCard({ id, content, profile, profiles, ...props }: NoteCardProps) {
+  const ft = useMemo(() => profiles.filter((p) => p.author === "FEATURED"), [profiles]);
+  const by = useMemo(() => profiles.filter((p) => p.author === "BYLINE"), [profiles]);
 
   const featuredNames = useProfileNames(ft);
   const byNames = useProfileNames(by);
@@ -53,15 +68,15 @@ export function NoteCard({
           <NoteAvatar profiles={ft} />
           <Stack flex="1" mx={3}>
             <HStack>
-              { featuredNames.map((f, i) => {
-                if(f.type === "and") {
-                  return (<Text key={i}>and</Text>);
+              {featuredNames.map((f, i) => {
+                if (f.type === "and") {
+                  return <Text key={i}>and</Text>;
                 }
                 return (
                   <Heading key={f.id} size="sm">
                     <NextLink href={f.url} passHref legacyBehavior>
                       <Link as="a" data-note-ft-author={f.id}>
-                        { f.name }
+                        {f.name}
                       </Link>
                     </NextLink>
                   </Heading>
@@ -69,32 +84,32 @@ export function NoteCard({
               })}
             </HStack>
             <HStack fontSize="sm">
-              { featuredNames.map((f, i) => {
-                if(f.type === "and") {
-                  return (<Text key={i}>and</Text>);
+              {featuredNames.map((f, i) => {
+                if (f.type === "and") {
+                  return <Text key={i}>and</Text>;
                 }
                 return (
                   <NextLink key={f.id} href={f.url} passHref legacyBehavior>
-                    <Link as="a">
-                      { f.username }
-                    </Link>
+                    <Link as="a">{f.username}</Link>
                   </NextLink>
                 );
               })}
             </HStack>
           </Stack>
         </Flex>
-        { by.length > 0 && (
+        {by.length > 0 && (
           <Box mt={4}>
             <HStack fontSize="sm" mx={5}>
               <Text>By</Text>
-              { byNames.map((b, i) => {
-                if(b.type === "and") {
-                  return (<Text key={i}>and</Text>);
+              {byNames.map((b, i) => {
+                if (b.type === "and") {
+                  return <Text key={i}>and</Text>;
                 }
                 return (
                   <NextLink key={b.id} href={b.url} passHref legacyBehavior>
-                    <Link as="a" data-note-by-author={b.id}>{ b.name }</Link>
+                    <Link as="a" data-note-by-author={b.id}>
+                      {b.name}
+                    </Link>
                   </NextLink>
                 );
               })}
@@ -103,7 +118,9 @@ export function NoteCard({
         )}
       </CardHeader>
       <CardBody>
-        <Text fontSize="xl" mx={4}>{ content }</Text>
+        <Text fontSize="xl" mx={4}>
+          {content}
+        </Text>
       </CardBody>
     </Card>
   );
