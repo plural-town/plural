@@ -55,6 +55,26 @@ ALTER USER plural WITH PASSWORD '<password>';
 \q
 ----
 
+== Redis Installation
+
+PluralTown is architected so much of the server work can be done in the background
+by a distributed task queue that is designed to horizontally scale.
+
+These jobs are powered by Redis.
+
+If PluralTown does not have a background queue, it can run everything
+in the foreground, however this can lead to decreased performance and errors.
+
+[source,sh]
+----
+curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
+
+echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
+
+apt update
+apt install -y redis
+----
+
 == Server Setup
 
 Installing from source requires more resources when downloading and building the server,

@@ -10,8 +10,8 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 
   return {
     props: {
-      email,
-      code,
+      email: email ?? null,
+      code: code ?? null,
     },
   };
 };
@@ -39,8 +39,8 @@ export function ConfirmEmailPage({
       </Text>
       <Formik
         initialValues={{
-          email,
-          code,
+          email: email ?? "",
+          code: code ?? "",
         }}
         onSubmit={async ({ email, code }) => {
           const r = await fetch("/api/account/confirm", {

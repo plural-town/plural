@@ -1,11 +1,14 @@
 {
   "cSpell.words": [
+    "backoff",
+    "bullmq",
     "chakra",
     "Formik",
     "macbook",
     "nolookalikesSafe",
     "nrwl",
     "SUBACCOUNT",
+    "Upstash",
     "webfinger"
   ]
 }
