@@ -12,7 +12,7 @@ export async function confirmEmail(
   const auth = await prisma.email.findFirst({
     where: {
       email,
-      code: password,
+      code: password.trim(),
       verifiedAt: null,
     },
   });
