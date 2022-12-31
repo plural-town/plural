@@ -317,7 +317,7 @@ export function Index({
             ActivityPub Support
           </Heading>
           <Text>
-            PluralTown is <Text display="inline" color="orange.700">(partially, under development)</Text> compatible with Mastodon, Hometown, and many other ActivityPub servers on the Fediverse!
+            PluralTown is <Text as="span" display="inline" color="orange.700">(partially, under development)</Text> compatible with Mastodon, Hometown, and many other ActivityPub servers on the Fediverse!
           </Text>
         </Container>
       </Container>
