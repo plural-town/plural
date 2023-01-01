@@ -15,7 +15,11 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@plural-town/exec-queue": ["libs/queue/exec/src/index.ts"],
+      "@plural-town/queue-core": ["libs/queue/core/src/index.ts"],
+      "@plural-town/queue-worker": ["libs/queue/worker/src/index.ts"],
       "@plural/db": ["libs/db/src/index.ts"],
+      "@plural/email-tasks": ["libs/tasks/email/src/index.ts"],
       "@plural/form": ["libs/form/src/index.ts"],
       "@plural/log": ["libs/log/src/index.ts"],
       "@plural/models": ["libs/models/src/index.ts"],
