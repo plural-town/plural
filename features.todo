@@ -67,3 +67,10 @@ Background Task System:
     ✔ Separate retry queues @PluralTown <VERSION> @done(<BRANCH>)
     ☐ Queues/priorities can be easily configured @est(1d)
     ☐ Workers can be remotely paused @est(2d)
+  ☐ Registration approval interface
+
+Development:
+  Workflow/CI:
+    ✔ Lint/test in CI @PluralTown <VERSION> @done(<BRANCH>)
+    ✔ Automated releases @PluralTown <VERSION> @done(<BRANCH>)
+    ☐ Cypress E2E tests in CI
