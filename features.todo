@@ -22,5 +22,5 @@ Administration:
 Development:
   Workflow/CI:
     ✔ Lint/test in CI @PluralTown <VERSION> @done(<BRANCH>)
-    ✔ Automated releases @PluralTown <VERSON> @done(<BRANCH>)
+    ✔ Automated releases @PluralTown <VERSION> @done(<BRANCH>)
     ☐ Cypress E2E tests in CI
