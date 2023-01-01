@@ -3,6 +3,10 @@ on:
   push:
     branches:
       - main
+      - alpha
+      - beta
+      - "1.**"
+      - "2.**"
   pull_request:
 
 jobs:
