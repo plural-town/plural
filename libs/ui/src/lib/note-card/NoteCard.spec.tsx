@@ -1,7 +1,7 @@
-import { PublishedNoteProfile } from '@plural/schema';
-import { render } from '@testing-library/react';
+import { PublishedNoteProfile } from "@plural/schema";
+import { render } from "@testing-library/react";
 
-import NoteCard from './NoteCard';
+import NoteCard from "./NoteCard";
 
 const LIBRARY: PublishedNoteProfile = {
   id: "library",
@@ -37,14 +37,16 @@ const DIRECTOR: PublishedNoteProfile = {
   parent: "",
 };
 
-describe('NoteCard', () => {
-  it('should render successfully', () => {
-    const { baseElement } = render(<NoteCard
-      id="test1234"
-      content="Hello World"
-      profile={LIBRARY}
-      profiles={[LIBRARY, DIRECTOR]}
-    />);
+describe("NoteCard", () => {
+  it("should render successfully", () => {
+    const { baseElement } = render(
+      <NoteCard
+        id="test1234"
+        content="Hello World"
+        profile={LIBRARY}
+        profiles={[LIBRARY, DIRECTOR]}
+      />,
+    );
     expect(baseElement).toBeTruthy();
   });
 });
