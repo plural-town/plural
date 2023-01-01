@@ -1,21 +1,8 @@
 import path = require("path");
-import * as dotenv from "dotenv";
-dotenv.config({
-  path: path.join(__dirname, "../../../apps/plural/.env.local"),
-});
-if(process.env.NODE_ENV === "development") {
-  dotenv.config({
-    path: path.join(__dirname, "../../../apps/plural/.env.development"),
-  });
-}
-if(process.env.NODE_ENV === "production") {
-  dotenv.config({
-    path: path.join(__dirname, "../../../apps/plural/.env.production"),
-  });
-}
-dotenv.config({
-  path: path.join(__dirname, "../../../apps/plural/.env"),
-});
+import { loadEnvConfig } from "@next/env";
+
+loadEnvConfig(path.join(__dirname, "../../../apps/plural"));
+
 import { TaskQueueWorker, TaskServer } from "@plural-town/queue-worker";
 import { connection } from "./environments/environment";
 
