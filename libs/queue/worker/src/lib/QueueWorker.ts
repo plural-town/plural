@@ -1,10 +1,15 @@
-import { Job, JobsOptions, Processor, Queue, RedisConnection, UnrecoverableError, Worker, WorkerOptions } from "bullmq";
+import { BackoffOptions, Job, Processor, Queue, RedisConnection, UnrecoverableError, Worker, WorkerOptions } from "bullmq";
+import { Duration } from "luxon";
+
+export interface RetryQueueBackoffOptions extends Omit<BackoffOptions, "delay"> {
+  delay?: number | Duration;
+}
 
 export interface RetryQueueOptions {
   name: string;
   attempts?: number;
-  delay?: number;
-  backoff?: JobsOptions["backoff"];
+  delay?: number | Duration;
+  backoff?: number | RetryQueueBackoffOptions;
   options?: WorkerOptions;
 }
 
@@ -39,7 +44,7 @@ export class QueueWorker<DataType, ResultType, NameType extends string> {
   public constructor(
     public readonly name: string,
     private readonly processor: Processor<DataType, ResultType, NameType>,
-    opts?: QueueWorkerOptions,
+    public readonly opts?: QueueWorkerOptions,
   ) {
     const retryQueues = opts?.retryQueues ?? [];
     this.primary = new Worker<DataType, ResultType, NameType>(
@@ -85,8 +90,12 @@ export class QueueWorker<DataType, ResultType, NameType extends string> {
         if(nextQueue && nextQueueOptions) {
           await nextQueue.add(job.name, job.data, {
             attempts: nextQueueOptions.attempts,
-            delay: nextQueueOptions.delay,
-            backoff: nextQueueOptions.backoff,
+            delay: Duration.isDuration(nextQueueOptions.delay) ? nextQueueOptions.delay.toMillis() : nextQueueOptions.delay,
+            backoff: typeof nextQueueOptions.backoff === "object"
+              ? {
+                type: nextQueueOptions.backoff.type,
+                delay: Duration.isDuration(nextQueueOptions.backoff.delay) ? nextQueueOptions.backoff.delay.toMillis() : nextQueueOptions.backoff.delay,
+              } : nextQueueOptions.backoff,
           });
           throw e;
         }

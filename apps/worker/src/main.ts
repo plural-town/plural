@@ -6,14 +6,15 @@ dotenv.config({
 dotenv.config({
   path: path.join(__dirname, "../../../apps/plural/.env"),
 });
-import { TaskQueueWorker } from "@plural-town/queue-worker";
+import { TaskQueueWorker, TaskServer } from "@plural-town/queue-worker";
 import { connection } from "./environments/environment";
 
 import {
   SendEmailConfirmationCode,
 } from "@plural/email-tasks";
+import { Duration } from "luxon";
 
-new TaskQueueWorker("sendEmailConfirmationCode", SendEmailConfirmationCode, {
+const sendEmailConfirmationCode = new TaskQueueWorker("sendEmailConfirmationCode", SendEmailConfirmationCode, {
   primaryOptions: {
     connection,
     concurrency: 10,
@@ -21,11 +22,11 @@ new TaskQueueWorker("sendEmailConfirmationCode", SendEmailConfirmationCode, {
   retryQueues: [
     {
       name: "retry",
-      attempts: 2,
+      attempts: 5,
       delay: 5 * 60 * 1000,
       backoff: {
         type: "exponential",
-        delay: 60 * 1000,
+        delay: Duration.fromObject({ minutes: 15 }),
       },
       options: {
         connection,
@@ -35,10 +36,10 @@ new TaskQueueWorker("sendEmailConfirmationCode", SendEmailConfirmationCode, {
     {
       name: "last_chance",
       attempts: 5,
-      delay: 60 * 60 * 1000,
+      delay: Duration.fromObject({ hours: 4 }),
       backoff: {
         type: "exponential",
-        delay: 20 * 60 * 1000,
+        delay: Duration.fromObject({ hours: 6 }),
       },
       options: {
         connection,
@@ -47,3 +48,8 @@ new TaskQueueWorker("sendEmailConfirmationCode", SendEmailConfirmationCode, {
     },
   ],
 });
+
+const server = new TaskServer([
+  sendEmailConfirmationCode,
+]);
+server.printWorkers();
