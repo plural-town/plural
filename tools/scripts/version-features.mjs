@@ -1,10 +1,9 @@
 import { readFileSync, writeFileSync } from "fs";
-import path from "path";
 
 // Execute with: node path/to/version-features.mjs {target release}
 const [, , version] = process.argv;
 
-const file = path.join(__dirname, "../../features.todo");
+const file = "features.todo";
 
 const existing = readFileSync(file, "utf8");
 
