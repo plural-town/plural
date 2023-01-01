@@ -1,4 +1,5 @@
 import { runTask } from "@plural-town/exec-queue";
+import { TaskQueue } from "@plural-town/queue-worker";
 import { SendEmailConfirmationCode } from "@plural/email-tasks";
 import { getLogger } from "@plural/log";
 import { NewEmailRequestSchema } from "@plural/schema";
@@ -75,13 +76,23 @@ export async function createAccountHandler(
       }
     }
 
-    // TODO: Queue job
+    log.info({ req, res, email }, "Using job queue to send confirmation code.");
+    const queue = new TaskQueue<SendEmailConfirmationCode>("sendEmailConfirmationCode", {
+      connection: {
+        host: process.env.REDIS_HOST,
+        port: parseInt(process.env.REDIS_PORT, 10),
+      },
+    });
+    const job = await queue.add(`confirmation${email}`, {
+      arg: [email, code, `${process.env.BASE_URL}/register/email/confirm/`],
+    });
+    await queue.close();
 
     return res.send({
       status: "ok",
       account: user.id,
       emailSent: "queued",
-      // TODO: Include identifier so client can lookup job status
+      jobId: job.id,
     });
   } else {
     log.info({ req, res, email }, "Email disabled; bypassing sending confirmation code.");
