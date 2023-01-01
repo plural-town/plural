@@ -23,7 +23,5 @@
       }
     ]
   ],
-  "gitAssets": [
-    "features.todo"
-  ]
+  "gitAssets": ["features.todo"]
 }
