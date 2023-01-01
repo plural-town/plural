@@ -1,3 +1,6 @@
 export const environment = {
-  production: true,
+  connection: {
+    host: "localhost",
+    port: 6379,
+  },
 };

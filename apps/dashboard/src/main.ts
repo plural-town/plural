@@ -1,8 +1,3 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
 import * as express from "express";
 import * as path from "path";
 import { BullMQAdapter, createBullBoard, ExpressAdapter } from "@bull-board/express";
