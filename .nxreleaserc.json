@@ -1,0 +1,23 @@
+{
+  "changelog": false,
+  "npm": true,
+  "github": true,
+  "repositoryUrl": "https://github.com/plural-town/plural",
+  "branches": [
+    "+([0-9])?(.{+([0-9]),x}).x",
+    "main",
+    {
+      "name": "beta",
+      "prerelease": true
+    },
+    {
+      "name": "alpha",
+      "prerelease": true
+    }
+  ],
+  "plugins": [
+    ["@semantic-release/exec", {
+      "prepareCmd": "node tools/scripts/version-features.mjs"
+    }]
+  ]
+}
