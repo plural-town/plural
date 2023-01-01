@@ -1,0 +1,37 @@
+name: Release
+on:
+  push:
+    branches:
+      - main
+      - alpha
+      - beta
+      - '1.**'
+      - '2.**'
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: "yarn"
+
+      - uses: nrwl/nx-set-shas@v3
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile --immutable
+
+      - name: Release 'plural'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: yarn nx run plural:semantic-release
