@@ -16,8 +16,11 @@
     }
   ],
   "plugins": [
-    ["@semantic-release/exec", {
-      "prepareCmd": "node tools/scripts/version-features.mjs"
-    }]
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "node tools/scripts/version-features.mjs"
+      }
+    ]
   ]
 }
