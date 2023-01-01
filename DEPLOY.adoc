@@ -147,6 +147,7 @@ yarn nx run models:generate
 [source,sh]
 ----
 yarn nx run plural:build:production
+yarn nx run worker:build:production
 ----
 
 == Deploy Database Schema
@@ -170,6 +171,10 @@ SITE_NAME="My Site"
 PRODUCTION_PORT=5400
 
 COOKIE_PASSWORD="some_secure_secret_that_is_32_characters_or_more"
+
+BACKGROUND=true
+REDIS_HOST=localhost
+REDIS_PORT=6379
 ----
 
 == Generating Configuration Files
@@ -188,19 +193,21 @@ while the production server is running.
 ----
 yarn nx run plural:serve:development &
 curl http://localhost:4200/api/generator/nginx/ > dist/nginx
-curl http://localhost:4200/api/generator/systemd/ > dist/service
+curl http://localhost:4200/api/generator/systemd/ > dist/plural-web.service
+curl http://localhost:4200/api/generator/worker/ > dist/plural-worker.service
 ----
 
 Once you have downloaded the files with `curl`,
 use `fg` to bring the server into context, and stop it with `control-c`.
 
-== Install Server Service
+== Install Server and Worker Services
 
 [source,sh]
 ----
-cp /home/plural/plural/dist/service /etc/systemd/system/plural.service
+cp /home/plural/plural/dist/plural-web.service /home/plural/plural/dist/plural-worker.service /etc/systemd/system/
 systemctl daemon-reload
-systemctl enable --now plural
+systemctl enable --now plural-web
+systemctl enable --now plural-worker
 ----
 
 == Nginx
