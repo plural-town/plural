@@ -1,5 +1,10 @@
 import { QueueEvents } from "bullmq";
 
+const connection = {
+  host: process.env["REDIS_HOST"] ?? "localhost",
+  port: parseInt(process.env["REDIS_PORT"] ?? "6379", 10),
+} as const;
+
 export interface WaitForQueueOptions {
   /**
    * Resolve after this number of completed jobs.
@@ -15,10 +20,7 @@ export function waitForQueue(
   queueName: string,
   options: WaitForQueueOptions | number = 1,
   events: QueueEvents = new QueueEvents(queueName, {
-    connection: {
-      host: "localhost",
-      port: 6379,
-    },
+    connection,
   }),
 ) {
   const opt =

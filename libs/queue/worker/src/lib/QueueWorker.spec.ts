@@ -3,8 +3,8 @@ import { Job, Queue } from "bullmq";
 import { waitForQueue } from "../test/support/waitForQueue";
 
 const connection = {
-  host: "localhost",
-  port: 6379,
+  host: process.env["REDIS_HOST"] ?? "localhost",
+  port: parseInt(process.env["REDIS_PORT"] ?? "6379", 10),
 } as const;
 
 describe("QueueWorker", () => {
