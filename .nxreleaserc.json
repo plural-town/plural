@@ -22,5 +22,8 @@
         "prepareCmd": "node tools/scripts/version-features.mjs"
       }
     ]
+  ],
+  "gitAssets": [
+    "features.todo"
   ]
 }
