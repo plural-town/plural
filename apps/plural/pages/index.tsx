@@ -66,7 +66,7 @@ export function Index({
   REGISTRATION_ENABLED,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const podcast: PublishedNoteProfile = {
-    id: "",
+    id: "podcast",
     author: "FEATURED",
     display: {
       name: "RandomPod",
@@ -83,7 +83,7 @@ export function Index({
   };
 
   const inventor: PublishedNoteProfile = {
-    id: "",
+    id: "inventor",
     author: "FEATURED",
     display: {
       name: "Inventor",
@@ -117,7 +117,7 @@ export function Index({
   };
 
   const jay: PublishedNoteProfile = {
-    id: "",
+    id: "jay",
     author: "FEATURED",
     display: {
       name: "Jay",
@@ -134,7 +134,7 @@ export function Index({
   };
 
   const sam: PublishedNoteProfile = {
-    id: "",
+    id: "sam",
     author: "FEATURED",
     display: {
       name: "Sam Doe",
