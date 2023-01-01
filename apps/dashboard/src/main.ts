@@ -11,28 +11,30 @@ import { Queue } from "bullmq";
 
 const { connection } = environment;
 
-function retryQueues(
-  name: string,
-  ...retryQueues: string[]
-) {
+function retryQueues(name: string, ...retryQueues: string[]) {
   const primary = new Queue(name, { connection });
-  const retries = retryQueues.map(q => new Queue(`${name}_${q}`, { connection }));
+  const retries = retryQueues.map((q) => new Queue(`${name}_${q}`, { connection }));
   const queues = [primary, ...retries];
-  const adapted = queues.map(q => new BullMQAdapter(q));
+  const adapted = queues.map((q) => new BullMQAdapter(q));
   return [adapted, queues] as const;
 }
 
-const [sendEmailConfirmationCode] = retryQueues("sendEmailConfirmationCode", "retry", "last_chance");
+const [sendEmailConfirmationCode] = retryQueues(
+  "sendEmailConfirmationCode",
+  "retry",
+  "last_chance",
+);
 
-const [sendDuplicateRegistrationEmail] = retryQueues("sendDuplicateRegistrationEmail", "retry", "last_chance");
+const [sendDuplicateRegistrationEmail] = retryQueues(
+  "sendDuplicateRegistrationEmail",
+  "retry",
+  "last_chance",
+);
 
 const serverAdapter = new ExpressAdapter();
 
 createBullBoard({
-  queues: [
-    ...sendEmailConfirmationCode,
-    ...sendDuplicateRegistrationEmail,
-  ],
+  queues: [...sendEmailConfirmationCode, ...sendDuplicateRegistrationEmail],
   serverAdapter,
 });
 

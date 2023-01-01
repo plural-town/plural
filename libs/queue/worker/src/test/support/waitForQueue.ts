@@ -21,27 +21,30 @@ export function waitForQueue(
     },
   }),
 ) {
-  const opt = typeof options !== "number" ? options : {
-    completed: options,
-  };
+  const opt =
+    typeof options !== "number"
+      ? options
+      : {
+          completed: options,
+        };
   return new Promise<void>((resolve, reject) => {
     let finished = false;
     let completed = 0;
     events.on("completed", () => {
-      if(finished) {
+      if (finished) {
         return;
       }
       completed += 1;
-      if(opt.completed !== 0 && completed === (opt.completed ?? 1)) {
+      if (opt.completed !== 0 && completed === (opt.completed ?? 1)) {
         finished = true;
         events.removeAllListeners();
         events.close();
         resolve();
       }
     });
-    if(opt.allowFailure !== true) {
+    if (opt.allowFailure !== true) {
       events.on("failed", (job) => {
-        if(finished) {
+        if (finished) {
           return;
         }
         finished = true;

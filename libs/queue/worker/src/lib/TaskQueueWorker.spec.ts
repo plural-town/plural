@@ -16,21 +16,22 @@ class TestTask extends Task<TestTask> {
 }
 
 describe("TaskQueueWorker", () => {
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let worker: TaskQueueWorker<any> | undefined;
   let queues: Queue[] = [];
 
   afterEach(async () => {
-    if(worker) {
+    if (worker) {
       await worker.close();
       worker = undefined;
     }
-    await Promise.all(queues.map(async (queue) => {
-      await queue.obliterate();
-      await queue.close();
-      await queue.disconnect();
-    }));
+    await Promise.all(
+      queues.map(async (queue) => {
+        await queue.obliterate();
+        await queue.close();
+        await queue.disconnect();
+      }),
+    );
     queues = [];
   });
 
@@ -42,9 +43,9 @@ describe("TaskQueueWorker", () => {
     const done = waitForQueue("task_test");
     queues = [queue];
 
-    await new Promise(res => setTimeout(res, 100));
+    await new Promise((res) => setTimeout(res, 100));
 
-    await queue.add("job", { arg: [ "Jay Doe" ]});
+    await queue.add("job", { arg: ["Jay Doe"] });
 
     await done;
     expect(await queue.getJobCounts()).toStrictEqual({
@@ -57,7 +58,6 @@ describe("TaskQueueWorker", () => {
       "waiting-children": 0,
     });
 
-    await new Promise(res => setTimeout(res, 200));
+    await new Promise((res) => setTimeout(res, 200));
   });
-
 });

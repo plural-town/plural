@@ -1,5 +1,20 @@
 import NextLink from "next/link";
-import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button, Center, Container, Flex, Heading, Image, Link, Stack, Text } from "@chakra-ui/react";
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Box,
+  Button,
+  Center,
+  Container,
+  Flex,
+  Heading,
+  Image,
+  Link,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import { GetStaticProps, InferGetStaticPropsType } from "next";
 import { NoteCard, SiteHeader } from "@plural/ui";
 import { PublishedNoteProfile } from "@plural/schema";
@@ -17,13 +32,10 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 const CTAButtons: React.FC<{
-  REGISTRATION_ENABLED: boolean,
+  REGISTRATION_ENABLED: boolean;
 }> = ({ REGISTRATION_ENABLED }) => {
   return (
-    <Stack
-      spacing={{ base: 4, sm: 6 }}
-      direction={{ base: "column", sm: "row" }}
-    >
+    <Stack spacing={{ base: 4, sm: 6 }} direction={{ base: "column", sm: "row" }}>
       <NextLink href="/register/email/" passHref legacyBehavior>
         <Button
           as="a"
@@ -40,19 +52,13 @@ const CTAButtons: React.FC<{
         </Button>
       </NextLink>
       <NextLink href="/login/" passHref legacyBehavior>
-        <Button
-          as="a"
-          rounded="full"
-          size="lg"
-          fontWeight="normal"
-          px={6}
-        >
+        <Button as="a" rounded="full" size="lg" fontWeight="normal" px={6}>
           Login
         </Button>
       </NextLink>
     </Stack>
   );
-}
+};
 
 export function Index({
   name,
@@ -181,7 +187,7 @@ export function Index({
   return (
     <>
       <Head>
-        <title>{ name }</title>
+        <title>{name}</title>
       </Head>
       <SiteHeader siteName={name} />
 
@@ -191,9 +197,9 @@ export function Index({
           <Box>
             <AlertTitle>Under Active Development</AlertTitle>
             <AlertDescription>
-              { name } is running <Link href="https://software.plural.town/">PluralTown</Link>,
-              which is under active development and only supports a very basic set of features
-              in it&apos;s current state.
+              {name} is running <Link href="https://software.plural.town/">PluralTown</Link>, which
+              is under active development and only supports a very basic set of features in
+              it&apos;s current state.
             </AlertDescription>
           </Box>
         </Alert>
@@ -207,18 +213,10 @@ export function Index({
           direction={{ base: "column", md: "row" }}
         >
           <Stack flex={1} spacing={{ base: 5, md: 10 }}>
-            <Heading as="h1">
-              { name }
-            </Heading>
+            <Heading as="h1">{name}</Heading>
             <CTAButtons REGISTRATION_ENABLED={REGISTRATION_ENABLED} />
           </Stack>
-          <Flex
-            flex="1"
-            justify="center"
-            align="center"
-            position="relative"
-            w="full"
-          >
+          <Flex flex="1" justify="center" align="center" position="relative" w="full">
             <Box
               position="relative"
               height="300px"
@@ -240,34 +238,35 @@ export function Index({
         </Stack>
         <Center>
           <Heading as="h2" size="xl">
-            One person, one profile?  Not so fast.
+            One person, one profile? Not so fast.
           </Heading>
         </Center>
         <Center my={2}>
           <Text fontSize="lg">
-            Software often assumes that each person needs one, and exactly one, profile.
-            This <Link href="https://xeiaso.net/blog/identity-model-software-2021-01-31" isExternal>can be difficult for many people</Link>.
+            Software often assumes that each person needs one, and exactly one, profile. This{" "}
+            <Link href="https://xeiaso.net/blog/identity-model-software-2021-01-31" isExternal>
+              can be difficult for many people
+            </Link>
+            .
           </Text>
         </Center>
         <Center my={2}>
-          <Text fontSize="xl">
-            { name } offers several ways to fix this!
-          </Text>
+          <Text fontSize="xl">{name} offers several ways to fix this!</Text>
         </Center>
         <Container maxW="container.xl">
-          <Heading as="h3" size="lg" mt={8}>Co-Posting</Heading>
+          <Heading as="h3" size="lg" mt={8}>
+            Co-Posting
+          </Heading>
           <Text fontSize="md" pt={1} pb={3}>
             If multiple entities authored a post, list them all!
           </Text>
-          <Flex
-            direction={{ base: "column", md: "row" }}
-          >
+          <Flex direction={{ base: "column", md: "row" }}>
             <Box flex={{ md: 1 }} mx={2}>
               <NoteCard
                 id=""
                 content="The Ficticious Inventor was on Our Randomly Named Postcast this week!"
                 profile={podcast}
-                profiles={[ podcast, inventor ]}
+                profiles={[podcast, inventor]}
               />
             </Box>
             <Box flex={{ md: 1 }} mx={2}>
@@ -275,24 +274,31 @@ export function Index({
                 id=""
                 content="It's time for a #plural #system #introduction!  We're Jay and Sam!"
                 profile={jay}
-                profiles={[ jay, sam ]}
+                profiles={[jay, sam]}
               />
             </Box>
           </Flex>
 
-          <Heading as="h3" size="lg" mt={8}>Bylines</Heading>
+          <Heading as="h3" size="lg" mt={8}>
+            Bylines
+          </Heading>
           <Text fontSize="md" pt={1} pb={3}>
             Credit one or more authors for a post!
           </Text>
-          <Flex
-            direction={{ base: "column", md: "row" }}
-          >
+          <Flex direction={{ base: "column", md: "row" }}>
             <Box flex={{ md: 1 }} mx={2}>
               <NoteCard
                 id=""
                 content="Hey all, I'm Jay and I figured I'd do a #introduction!"
                 profile={system}
-                profiles={[ system, {...jay, display: { ...jay.display, displayName: "Jay (Example System)"}, author: "BYLINE" } ]}
+                profiles={[
+                  system,
+                  {
+                    ...jay,
+                    display: { ...jay.display, displayName: "Jay (Example System)" },
+                    author: "BYLINE",
+                  },
+                ]}
               />
             </Box>
             <Box flex={{ md: 1 }} mx={2}>
@@ -300,7 +306,7 @@ export function Index({
                 id=""
                 content="I'm always struck by how amazing all of our staff, volunteers, and patrons are.  It was amazing to see so many people at our holiday party!"
                 profile={library}
-                profiles={[ library, director ]}
+                profiles={[library, director]}
               />
             </Box>
           </Flex>
@@ -317,7 +323,11 @@ export function Index({
             ActivityPub Support
           </Heading>
           <Text>
-            PluralTown is <Text as="span" display="inline" color="orange.700">(partially, under development)</Text> compatible with Mastodon, Hometown, and many other ActivityPub servers on the Fediverse!
+            PluralTown is{" "}
+            <Text as="span" display="inline" color="orange.700">
+              (partially, under development)
+            </Text>{" "}
+            compatible with Mastodon, Hometown, and many other ActivityPub servers on the Fediverse!
           </Text>
         </Container>
       </Container>

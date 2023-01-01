@@ -2,10 +2,7 @@ import { NewEmailRequestSchema } from "@plural/schema";
 import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export async function confirmEmail(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export async function confirmEmail(req: NextApiRequest, res: NextApiResponse) {
   const { email, password } = NewEmailRequestSchema.validateSync(req.body);
 
   const prisma = new PrismaClient();
@@ -17,7 +14,7 @@ export async function confirmEmail(
     },
   });
 
-  if(!auth) {
+  if (!auth) {
     throw new Error("Email not found");
   }
 

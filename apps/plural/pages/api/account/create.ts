@@ -12,19 +12,13 @@ import { NextApiRequest, NextApiResponse } from "next";
 const codeGenerator = customAlphabet(nolookalikesSafe, 6);
 const accountGenerator = customAlphabet(nolookalikesSafe, 10);
 
-export async function createAccountHandler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export async function createAccountHandler(req: NextApiRequest, res: NextApiResponse) {
   const log = getLogger("createAccountHandler");
   const registrationOpen = process.env.REGISTRATION_ENABLED === "true";
   const emailEnabled = process.env.EMAIL_ENABLED !== "false";
-  const {
-    email,
-    password,
-  } = NewEmailRequestSchema.validateSync(req.body);
+  const { email, password } = NewEmailRequestSchema.validateSync(req.body);
 
-  if(!registrationOpen) {
+  if (!registrationOpen) {
     return res.status(500).send({
       status: "failure",
       error: "REG_CLOSED",
@@ -42,9 +36,9 @@ export async function createAccountHandler(
     },
   });
 
-  if(existingVerified) {
+  if (existingVerified) {
     log.info({ req, res, email }, "User attempted to register with a duplicate email.");
-    if(!emailEnabled) {
+    if (!emailEnabled) {
       // "break the fourth wall" - can't email about a duplicate registration,
       // so assume we can relax security a little to let the user know.
       // TODO: Display warning in UI
@@ -54,13 +48,16 @@ export async function createAccountHandler(
       });
     }
 
-    if(process.env.BACKGROUND === "true") {
-      const queue = new TaskQueue<SendDuplicateRegistrationEmail>("sendDuplicateRegistrationEmail", {
-        connection: {
-          host: process.env.REDIS_HOST,
-          port: parseInt(process.env.REDIS_PORT, 10),
+    if (process.env.BACKGROUND === "true") {
+      const queue = new TaskQueue<SendDuplicateRegistrationEmail>(
+        "sendDuplicateRegistrationEmail",
+        {
+          connection: {
+            host: process.env.REDIS_HOST,
+            port: parseInt(process.env.REDIS_PORT, 10),
+          },
         },
-      });
+      );
       const job = await queue.add(`duplicate_${email}`, {
         arg: [email],
       });
@@ -108,11 +105,15 @@ export async function createAccountHandler(
     },
   });
 
-  if(emailEnabled) {
-    if(process.env.BACKGROUND !== "true") {
+  if (emailEnabled) {
+    if (process.env.BACKGROUND !== "true") {
       log.trace({ req, res, email }, "Sending confirmation code directly.");
       try {
-        const sent = await runTask(SendEmailConfirmationCode, [email, code, `${process.env.BASE_URL}/register/email/confirm/`]);
+        const sent = await runTask(SendEmailConfirmationCode, [
+          email,
+          code,
+          `${process.env.BASE_URL}/register/email/confirm/`,
+        ]);
         log.info({ req, res, email, sent }, "Sent email via SMTP.");
         // TODO: Display "sent" dialog to user
         return res.send({

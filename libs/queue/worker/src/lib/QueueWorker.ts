@@ -1,4 +1,13 @@
-import { BackoffOptions, Job, Processor, Queue, RedisConnection, UnrecoverableError, Worker, WorkerOptions } from "bullmq";
+import {
+  BackoffOptions,
+  Job,
+  Processor,
+  Queue,
+  RedisConnection,
+  UnrecoverableError,
+  Worker,
+  WorkerOptions,
+} from "bullmq";
 import { Duration } from "luxon";
 
 export interface RetryQueueBackoffOptions extends Omit<BackoffOptions, "delay"> {
@@ -36,7 +45,6 @@ export interface QueueWorkerOptions {
 }
 
 export class QueueWorker<DataType, ResultType, NameType extends string> {
-
   private readonly primary: Worker<DataType, ResultType, NameType>;
   private readonly retry: Worker<DataType, ResultType, NameType>[];
   private readonly retryQueues: Queue<DataType, ResultType, NameType>[];
@@ -58,7 +66,7 @@ export class QueueWorker<DataType, ResultType, NameType extends string> {
     this.retry = retryQueues.map((retryQueueOptions, i) => {
       return new Worker<DataType, ResultType, NameType>(
         `${name}_${retryQueueOptions.name}`,
-        (retryQueues.length > i)
+        retryQueues.length > i
           ? (job, token) => this.process(job, token, this.retryQueues[i + 1], retryQueues[i + 1])
           : (job, token) => this.process(job, token),
         retryQueueOptions.options ?? opts?.options,
@@ -83,19 +91,25 @@ export class QueueWorker<DataType, ResultType, NameType extends string> {
     try {
       return await this.processor(job, token);
     } catch (e) {
-      if(e instanceof UnrecoverableError) {
+      if (e instanceof UnrecoverableError) {
         throw e;
       }
-      if(job.attemptsMade >= (job.opts.attempts ?? 0)) {
-        if(nextQueue && nextQueueOptions) {
+      if (job.attemptsMade >= (job.opts.attempts ?? 0)) {
+        if (nextQueue && nextQueueOptions) {
           await nextQueue.add(job.name, job.data, {
             attempts: nextQueueOptions.attempts,
-            delay: Duration.isDuration(nextQueueOptions.delay) ? nextQueueOptions.delay.toMillis() : nextQueueOptions.delay,
-            backoff: typeof nextQueueOptions.backoff === "object"
-              ? {
-                type: nextQueueOptions.backoff.type,
-                delay: Duration.isDuration(nextQueueOptions.backoff.delay) ? nextQueueOptions.backoff.delay.toMillis() : nextQueueOptions.backoff.delay,
-              } : nextQueueOptions.backoff,
+            delay: Duration.isDuration(nextQueueOptions.delay)
+              ? nextQueueOptions.delay.toMillis()
+              : nextQueueOptions.delay,
+            backoff:
+              typeof nextQueueOptions.backoff === "object"
+                ? {
+                    type: nextQueueOptions.backoff.type,
+                    delay: Duration.isDuration(nextQueueOptions.backoff.delay)
+                      ? nextQueueOptions.backoff.delay.toMillis()
+                      : nextQueueOptions.backoff.delay,
+                  }
+                : nextQueueOptions.backoff,
           });
           throw e;
         }
@@ -107,9 +121,8 @@ export class QueueWorker<DataType, ResultType, NameType extends string> {
   public async close() {
     return Promise.all([
       this.primary.close(),
-      ...(this.retry.map(r => r.close())),
-      ...(this.retryQueues.map(r => r.close())),
+      ...this.retry.map((r) => r.close()),
+      ...this.retryQueues.map((r) => r.close()),
     ]);
   }
-
 }

@@ -8,24 +8,25 @@ const connection = {
 } as const;
 
 describe("QueueWorker", () => {
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let worker: QueueWorker<any, any, string> | undefined;
   let queues: Queue[] = [];
 
   afterEach(async () => {
-    if(worker) {
+    if (worker) {
       await worker.close();
       worker = undefined;
     }
-    await Promise.all(queues.map(async (queue) => {
-      try {
-        await queue.obliterate({ force: true });
-      } catch (e) {
-        console.error(`Could not obliterate queue ${queue.name}`, e);
-      }
-      await queue.close();
-    }));
+    await Promise.all(
+      queues.map(async (queue) => {
+        try {
+          await queue.obliterate({ force: true });
+        } catch (e) {
+          console.error(`Could not obliterate queue ${queue.name}`, e);
+        }
+        await queue.close();
+      }),
+    );
     queues = [];
   });
 
@@ -54,7 +55,7 @@ describe("QueueWorker", () => {
     const done = waitForQueue("failure_last_chance");
 
     const processor = jest.fn((job: Job) => {
-      if(job.queueName === "failure_last_chance") {
+      if (job.queueName === "failure_last_chance") {
         return Promise.resolve("ok!");
       }
       return Promise.reject(new Error());
@@ -81,5 +82,4 @@ describe("QueueWorker", () => {
     expect(await lastChance.getFailedCount()).toBe(0);
     expect(await lastChance.getCompletedCount()).toBe(1);
   });
-
 });

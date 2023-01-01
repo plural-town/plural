@@ -3,13 +3,8 @@ import { createTransport } from "nodemailer";
 import * as SMTPTransport from "nodemailer/lib/smtp-transport";
 
 export class SendEmailConfirmationCode extends Task<SendEmailConfirmationCode> {
-
-  public override async execute(
-    emailAddress: string,
-    code: string,
-    href: string,
-  ) {
-    if(process.env["EMAIL_ENABLED"] !== "true") {
+  public override async execute(emailAddress: string, code: string, href: string) {
+    if (process.env["EMAIL_ENABLED"] !== "true") {
       throw new Error("Email is not enabled.");
     }
 
@@ -38,5 +33,4 @@ export class SendEmailConfirmationCode extends Task<SendEmailConfirmationCode> {
 
     return info;
   }
-
 }

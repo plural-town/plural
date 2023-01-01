@@ -20,7 +20,6 @@ class AttemptTableRow {
 }
 
 export class TaskServer {
-
   public constructor(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private readonly workers: QueueWorker<any, any, string>[],
@@ -32,21 +31,23 @@ export class TaskServer {
       console.info(`\n==== ${name} Queue ====`);
       let _delay = Duration.fromMillis(0);
       let attempt = 1;
-      const table: AttemptTableRow[] = [
-        new AttemptTableRow(attempt, _delay, "Primary", _delay),
-      ];
-      const { retryQueues } = (opts ?? {});
-      for (const queue of (retryQueues ?? [])) {
+      const table: AttemptTableRow[] = [new AttemptTableRow(attempt, _delay, "Primary", _delay)];
+      const { retryQueues } = opts ?? {};
+      for (const queue of retryQueues ?? []) {
         const { name, attempts, delay, backoff } = queue;
         let roundDelay = Duration.fromMillis(0);
         for (let i = 0; i < (attempts ?? 1); i++) {
-          if(i === 0) {
+          if (i === 0) {
             roundDelay = Duration.isDuration(delay) ? delay : Duration.fromMillis(delay ?? 0);
-          } else if(typeof backoff === "object" && backoff.type === "fixed") {
-            roundDelay = Duration.isDuration(backoff.delay) ? backoff.delay : Duration.fromMillis(backoff.delay ?? 0);
-          } else if(typeof backoff === "object" || typeof backoff === "number") {
+          } else if (typeof backoff === "object" && backoff.type === "fixed") {
+            roundDelay = Duration.isDuration(backoff.delay)
+              ? backoff.delay
+              : Duration.fromMillis(backoff.delay ?? 0);
+          } else if (typeof backoff === "object" || typeof backoff === "number") {
             const durationValue = typeof backoff === "object" ? backoff.delay : backoff;
-            const backoffDuration = Duration.isDuration(durationValue) ? durationValue : Duration.fromMillis(durationValue ?? 0);
+            const backoffDuration = Duration.isDuration(durationValue)
+              ? durationValue
+              : Duration.fromMillis(durationValue ?? 0);
             const ms = backoffDuration.toMillis();
             const scaled = Math.pow(2, i - 1) * ms;
             const backoffTime = Duration.fromMillis(scaled);
@@ -59,5 +60,4 @@ export class TaskServer {
       console.table(table, ["sinceStart", "Attempt", "Queue", "Delay"]);
     }
   }
-
 }

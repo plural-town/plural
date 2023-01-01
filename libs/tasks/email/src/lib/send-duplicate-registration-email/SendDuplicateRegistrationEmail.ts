@@ -6,11 +6,8 @@ import SMTPTransport = require("nodemailer/lib/smtp-transport");
  * Warn an existing user that someone has tried to register with their existing email.
  */
 export class SendDuplicateRegistrationEmail extends Task<SendDuplicateRegistrationEmail> {
-
-  public override async execute(
-    emailAddress: string,
-  ) {
-    if(process.env["EMAIL_ENABLED"] !== "true") {
+  public override async execute(emailAddress: string) {
+    if (process.env["EMAIL_ENABLED"] !== "true") {
       throw new Error("Email is not enabled.");
     }
 
@@ -49,10 +46,9 @@ export class SendDuplicateRegistrationEmail extends Task<SendDuplicateRegistrati
         <p>
           If you need to reset your password, please visit
           <a href="${forgot}">${forgot}</a>.
-        </p>`
+        </p>`,
     });
 
     return info;
   }
-
 }
