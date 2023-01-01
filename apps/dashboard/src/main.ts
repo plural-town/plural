@@ -24,11 +24,14 @@ function retryQueues(
 
 const [sendEmailConfirmationCode] = retryQueues("sendEmailConfirmationCode", "retry", "last_chance");
 
+const [sendDuplicateRegistrationEmail] = retryQueues("sendDuplicateRegistrationEmail", "retry", "last_chance");
+
 const serverAdapter = new ExpressAdapter();
 
 createBullBoard({
   queues: [
     ...sendEmailConfirmationCode,
+    ...sendDuplicateRegistrationEmail,
   ],
   serverAdapter,
 });
