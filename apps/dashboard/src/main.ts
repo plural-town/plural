@@ -7,21 +7,28 @@ import * as express from "express";
 import * as path from "path";
 import { BullMQAdapter, createBullBoard, ExpressAdapter } from "@bull-board/express";
 import { environment } from "./environments/environment";
-import { TaskQueue } from "@plural-town/queue-worker";
-import { SendEmailConfirmationCode } from "@plural/email-tasks";
+import { Queue } from "bullmq";
 
 const { connection } = environment;
 
-const sendEmailConfirmationCode = new TaskQueue<SendEmailConfirmationCode>(
-  "sendEmailConfirmationCode",
-  { connection },
-);
+function retryQueues(
+  name: string,
+  ...retryQueues: string[]
+) {
+  const primary = new Queue(name, { connection });
+  const retries = retryQueues.map(q => new Queue(`${name}_${q}`, { connection }));
+  const queues = [primary, ...retries];
+  const adapted = queues.map(q => new BullMQAdapter(q));
+  return [adapted, queues] as const;
+}
+
+const [sendEmailConfirmationCode] = retryQueues("sendEmailConfirmationCode", "retry", "last_chance");
 
 const serverAdapter = new ExpressAdapter();
 
-const { addQueue } = createBullBoard({
+createBullBoard({
   queues: [
-    new BullMQAdapter(sendEmailConfirmationCode),
+    ...sendEmailConfirmationCode,
   ],
   serverAdapter,
 });
