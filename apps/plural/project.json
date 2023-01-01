@@ -58,6 +58,15 @@
       "options": {
         "lintFilePatterns": ["apps/plural/**/*.{ts,tsx,js,jsx}"]
       }
+    },
+    "semantic-release": {
+      "executor": "@theunderscorer/nx-semantic-release:semantic-release",
+      "options": {
+        "changelog": false,
+        "github": true,
+        "npm": false,
+        "tagFormat": "plural-v${VERSION}"
+      }
     }
   },
   "tags": []
