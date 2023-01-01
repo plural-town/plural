@@ -1,6 +1,6 @@
 import { Task } from "@plural-town/queue-core";
 import { createTransport } from "nodemailer";
-import SMTPTransport = require("nodemailer/lib/smtp-transport");
+import * as SMTPTransport from "nodemailer/lib/smtp-transport";
 
 /**
  * Warn an existing user that someone has tried to register with their existing email.
