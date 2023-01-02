@@ -1,6 +1,8 @@
 {
   "cSpell.words": [
+    "activitypub",
     "backoff",
+    "blocklisting",
     "bullmq",
     "chakra",
     "Formik",
