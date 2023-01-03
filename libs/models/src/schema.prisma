@@ -37,6 +37,34 @@ enum Visibility {
   PRIVATE
 }
 
+enum Protocol {
+  ACTIVITYSTREAMS
+  MASTODON
+}
+
+enum TaskStatus {
+  PENDING // queued
+  RUNNING // actively running
+  SUCCESS // has data
+  FAILED  // may or may not retry
+}
+
+enum RemoteEntityType {
+  PERSON
+  NOTE
+  HASHTAG
+}
+
+enum RemoteField {
+  NAME
+  SUMMARY
+  PREFERRED_USERNAME
+}
+
+enum FieldLanguage {
+  EN
+}
+
 model Email {
   id              Int         @id @default(autoincrement())
   email           String
@@ -139,6 +167,77 @@ model Note {
   authors         NoteAuthor[]
   publishes       Item[]      @relation(name: "author")
   drafts          NoteDraft[]
+}
+
+model RemoteEntity {
+  id              String      @id @default(cuid())
+  url             String      @unique
+  protocol        Protocol
+  type            RemoteEntityType
+  firstSeenAt     DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  profile         RemoteProfile?
+  note            RemoteNote?
+  queries         RemoteQuery[]
+  fields          REField[]
+}
+
+// Remote Entity FIELD
+model REField {
+  id              String      @id @default(cuid())
+  entityId        String
+  field           RemoteField
+  lang            FieldLanguage?
+  verified        Boolean
+  value           String
+  entity          RemoteEntity @relation(fields: [entityId], references: [id])
+
+  @@index([entityId, field, lang])
+}
+
+// A specific query for a remote entity.
+// May not turn out to be a relevant `RemoteEntity`, or may resolve/redirect
+// to an already known entity.
+model RemoteQuery {
+  id              String      @id @default(cuid())
+  url             String
+  status          TaskStatus  @default(PENDING)
+  authoritative   Boolean?
+  entityId        String?
+  entity          RemoteEntity? @relation(fields: [entityId], references: [id])
+  createdAt       DateTime    @default(now())
+  successAt       DateTime?
+  failedAt        DateTime?   // the first failure - may have/will retry
+}
+
+model RemoteProfile {
+  id              String      @id @default(cuid())
+  entityId        String      @unique
+  entity          RemoteEntity @relation(fields: [entityId], references: [id])
+  server          String
+  username        String
+  notes           RemoteNoteAuthor[]
+
+  @@index([server, username])
+}
+
+model RemoteNoteAuthor {
+  id              String      @id @default(cuid())
+  profileId       String
+  profile         RemoteProfile @relation(fields: [profileId], references: [id])
+  noteId          String
+  note            RemoteNote  @relation(fields: [noteId], references: [id])
+}
+
+model RemoteNote {
+  id              String      @id @default(cuid())
+  entityId        String      @unique
+  entity          RemoteEntity @relation(fields: [entityId], references: [id])
+  authorId        String
+  postId          String
+  authors         RemoteNoteAuthor[]
+
+  @@index([authorId, postId])
 }
 
 model Item {
