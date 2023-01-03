@@ -6,4 +6,5 @@ export {
   CollectionType,
   Image,
   Note,
+  Person,
 } from "./lib/Object";

@@ -64,3 +64,7 @@ export class Link extends ASLink<"Link"> {
   }
 
 }
+
+export type AnyLink
+  = ASLink<string>
+  | Link;

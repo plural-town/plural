@@ -2,7 +2,7 @@ import { Equals, IsMimeType, IsObject, IsOptional, IsRFC3339, IsString, isURL, I
 import { instanceToPlain, Transform, TransformationType, TransformFnParams } from "class-transformer";
 import { transformAndValidateSync } from "class-transformer-validator";
 import { NotLiteral } from "./util/types";
-import { ASLink, Link } from "./Link";
+import { AnyLink, Link } from "./Link";
 
 export type CollectionType
   = "Collection"
@@ -120,18 +120,15 @@ export class ASObject<Type extends string> {
 
   @IsOptional()
   @Transform(t({ str: "url" }))
-  // TODO: include any Link
-  attachment?: NotLiteral<string | ASObject<string> | ASLink>;
+  attachment?: NotLiteral<string | AnyObject | AnyLink>;
 
   @IsOptional()
   @Transform(t({ str: "url" }))
-  // TODO: include any Link
-  attributedTo?: NotLiteral<string | ASObject<string> | ASLink>;
+  attributedTo?: NotLiteral<string | AnyObject | AnyLink>;
 
   @IsOptional()
   @Transform(t({ str: "url" }))
-  // TODO: Include any Link
-  audience?: NotLiteral<string | ASObject<string> | ASLink>;
+  audience?: NotLiteral<string | AnyObject | AnyLink>;
 
   @IsOptional()
   @IsString()
@@ -144,8 +141,7 @@ export class ASObject<Type extends string> {
 
   @IsOptional()
   @Transform(t({ str: "url" }))
-  // TODO: Include any Link
-  context?: NotLiteral<string | ASObject<string>>;
+  context?: NotLiteral<string | AnyObject | AnyLink>;
 
   @IsOptional()
   @IsString()
@@ -162,12 +158,11 @@ export class ASObject<Type extends string> {
 
   @IsOptional()
   @Transform(t({ str: "url" }))
-  generator?: NotLiteral<string | ASObject<string>>;
+  generator?: NotLiteral<string | AnyObject>;
 
   @IsOptional()
   @Transform(t({ str: "url", allowed: [ "Image", "Link", "Mention" ]}))
-  // TODO: Include any Link
-  icon?: NotLiteral<string | Image>;
+  icon?: NotLiteral<string | Image | AnyLink>;
 
   @IsOptional()
   @Transform(t({ str: "url", anyDocument: true }))
@@ -175,18 +170,15 @@ export class ASObject<Type extends string> {
 
   @IsOptional()
   @Transform(t({ str: "url" }))
-  // TODO: include any Link
-  inReplyTo?: NotLiteral<string | ASObject<string>>;
+  inReplyTo?: NotLiteral<string | AnyObject | AnyLink>;
 
   @IsOptional()
   @Transform(t({ str: "url" }))
-  // TODO: Include any Link
-  location?: NotLiteral<string | ASObject<string>>;
+  location?: NotLiteral<string | AnyObject | AnyLink>;
 
   @IsOptional()
   @Transform(t({ str: "url" }))
-  // TODO: Include any Link
-  preview?: NotLiteral<string | ASObject<string>>;
+  preview?: NotLiteral<string | AnyObject | AnyLink>;
 
   @IsOptional()
   @IsRFC3339()
@@ -211,8 +203,7 @@ export class ASObject<Type extends string> {
 
   @IsOptional()
   @Transform(t({ str: "url" }))
-  // TODO: Include any Link
-  tag?: NotLiteral<string | ASObject<string>>;
+  tag?: NotLiteral<string | AnyObject | AnyLink>;
 
   @IsOptional()
   @IsRFC3339()
@@ -220,27 +211,23 @@ export class ASObject<Type extends string> {
 
   @IsOptional()
   @Transform(t({ str: "url" }))
-  url?: NotLiteral<string | ASLink>;
+  url?: NotLiteral<string | AnyLink>;
 
   @IsOptional()
   @Transform(t({ str: "url" }))
-  // TODO: Include any Link
-  to?: NotLiteral<string | ASObject<string>>;
+  to?: NotLiteral<string | AnyObject | AnyLink>;
 
   @IsOptional()
   @Transform(t({ str: "url" }))
-  // TODO: Include any Link
-  bto?: NotLiteral<string | ASObject<string>>;
+  bto?: NotLiteral<string | AnyObject | AnyLink>;
 
   @IsOptional()
   @Transform(t({ str: "url" }))
-  // TODO: Include any Link
-  cc?: NotLiteral<string | ASObject<string>>;
+  cc?: NotLiteral<string | AnyObject | AnyLink>;
 
   @IsOptional()
   @Transform(t({ str: "url" }))
-  // TODO: Include any Link
-  bcc?: NotLiteral<string | ASObject<string>>;
+  bcc?: NotLiteral<string | AnyObject | AnyLink>;
 
   @IsOptional()
   @IsMimeType()
@@ -273,6 +260,18 @@ export class Note extends ASObject<"Note"> {
   }
 }
 
+export class Person extends ASObject<"Person"> {
+
+  @Equals("Person")
+  public override readonly type: "Person";
+
+  public constructor() {
+    super("Person");
+    this.type = "Person";
+  }
+
+}
+
 export class ASDocument<
   Type extends "Document" | "Audio" | "Image" | "Video" | "Page",
 > extends ASObject<Type> {}
@@ -292,3 +291,9 @@ export class Image extends ASDocument<"Image"> {
 export class ASCollection<
   Type extends CollectionType = CollectionType,
 > extends ASObject<Type> {}
+
+export type AnyObject
+  = ASObject<string>
+  | Note
+  | Person
+  | Image;
