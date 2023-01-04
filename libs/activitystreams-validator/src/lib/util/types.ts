@@ -1,3 +1,1 @@
-export type NotLiteral<T>
-  = T
-  | T[];
+export type NotLiteral<T> = T | T[];

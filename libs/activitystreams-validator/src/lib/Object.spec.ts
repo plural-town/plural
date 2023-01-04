@@ -2,7 +2,7 @@ import { transformAndValidate } from "class-transformer-validator";
 import { readFile } from "fs/promises";
 import path = require("path");
 import { Link } from "./Link";
-import { Image, Note } from "./Object";
+import { Image, Note, Person } from "./Object";
 
 const SIMPLE_NOTE = {
   "@context": "https://www.w3.org/ns/activitystreams",
@@ -20,11 +20,31 @@ const SIMPLE_ICON = {
 };
 
 describe("Object types", () => {
-
   describe("transformAndValidate", () => {
+    describe("Person", () => {
+      // TODO: Figure out how to make inbox required only for activitypub.
+      // Adding '@IsDefined({ groups })` made it required for all.
+      it.skip("requires inbox if using activitypub", async () => {
+        const transform = transformAndValidate(
+          Person,
+          {
+            type: "Person",
+            id: "https://example.com/user/test",
+          },
+          {
+            transformer: {
+              groups: ["activitypub-actor"],
+            },
+            validator: {
+              groups: ["activitypub-actor"],
+            },
+          },
+        );
+        await expect(transform).rejects.toHaveProperty("message", "asdf");
+      });
+    });
 
     describe("Note", () => {
-
       it("validates simple notes", async () => {
         const note = await transformAndValidate(Note, SIMPLE_NOTE);
         expect(note).toBeInstanceOf(Note);
@@ -61,7 +81,9 @@ describe("Object types", () => {
         expect(note).toBeInstanceOf(Note);
         expect(note.attachment).toHaveLength(3);
         const attachments = note.attachment ?? [];
-        if(!Array.isArray(attachments)) { throw new Error("not array"); }
+        if (!Array.isArray(attachments)) {
+          throw new Error("not array");
+        }
         expect(attachments[0]).toBeInstanceOf(Note);
         expect(attachments[1]).toBeInstanceOf(Note);
         expect(attachments[2]).toBe("http://example.com/note/1234");
@@ -77,22 +99,26 @@ describe("Object types", () => {
       });
 
       it("rejects Note icon", () => {
-        expect(transformAndValidate(Note, {
-          ...SIMPLE_NOTE,
-          icon: SIMPLE_NOTE,
-        })).rejects.toHaveProperty("message", "Field is not allowed to be a Note.");
+        expect(
+          transformAndValidate(Note, {
+            ...SIMPLE_NOTE,
+            icon: SIMPLE_NOTE,
+          }),
+        ).rejects.toHaveProperty("message", "Field is not allowed to be a Note.");
       });
 
       it("allows document images", async () => {
         const note = await transformAndValidate(Note, {
           ...SIMPLE_NOTE,
           // TODO: Add additional document examples
-          image: [ SIMPLE_ICON ],
+          image: [SIMPLE_ICON],
         });
         expect(note).toBeInstanceOf(Note);
         expect(note.image).toHaveLength(1);
         const images = note.image ?? [];
-        if(!Array.isArray(images)) { throw new Error("not array"); }
+        if (!Array.isArray(images)) {
+          throw new Error("not array");
+        }
         expect(images[0]).toBeInstanceOf(Image);
       });
 
@@ -116,7 +142,7 @@ describe("Object types", () => {
         expect(note).toBeInstanceOf(Note);
         expect(note.url).toBeInstanceOf(Link);
         const url = note.url;
-        if(typeof url !== "object" || Array.isArray(url)) {
+        if (typeof url !== "object" || Array.isArray(url)) {
           throw new Error("URL isn't object");
         }
         expect(url.type).toBe("Link");
@@ -134,28 +160,26 @@ describe("Object types", () => {
         });
         expect(note.url).toBeInstanceOf(Link);
         const url = note.url;
-        if(typeof url !== "object" || Array.isArray(url)) {
+        if (typeof url !== "object" || Array.isArray(url)) {
           throw new Error("URL isn't object");
         }
         expect(url.preview).toBeInstanceOf(Note);
       });
 
       describe("parses real examples", () => {
-
         it.each([
           // https://mastodon.social/@Gargron/109610768945818122
           ["Mastodon post", "109610768945818122.json"],
         ])("parses %p (%p)", async (desc, filename) => {
-          const file = await readFile(path.join(__dirname, "../test/fixtures/note", filename), "utf8");
+          const file = await readFile(
+            path.join(__dirname, "../test/fixtures/note", filename),
+            "utf8",
+          );
           const data = JSON.parse(file);
           const note = await transformAndValidate(Note, data);
           expect(note).toBeInstanceOf(Note);
         });
-
       });
-
     });
-
   });
-
 });

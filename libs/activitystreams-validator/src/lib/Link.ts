@@ -1,10 +1,18 @@
 import { Transform } from "class-transformer";
-import { Equals, IsMimeType, IsNumber, IsObject, IsOptional, IsString, IsUrl, Min } from "class-validator";
+import {
+  Equals,
+  IsMimeType,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+  IsUrl,
+  Min,
+} from "class-validator";
 import { ASObject, t } from "./Object";
 import { NotLiteral } from "./util/types";
 
 export class ASLink<Type extends string = string> {
-
   @IsString()
   public readonly type: string;
 
@@ -50,11 +58,9 @@ export class ASLink<Type extends string = string> {
   public constructor(type: Type) {
     this.type = type;
   }
-
 }
 
 export class Link extends ASLink<"Link"> {
-
   @Equals("Link")
   public override readonly type: "Link";
 
@@ -62,9 +68,6 @@ export class Link extends ASLink<"Link"> {
     super("Link");
     this.type = "Link";
   }
-
 }
 
-export type AnyLink
-  = ASLink<string>
-  | Link;
+export type AnyLink = ASLink<string> | Link;

@@ -1,11 +1,25 @@
-import { Equals, IsMimeType, IsObject, IsOptional, IsRFC3339, IsString, isURL, IsUrl } from "class-validator";
-import { instanceToPlain, Transform, TransformationType, TransformFnParams } from "class-transformer";
+import {
+  Equals,
+  IsMimeType,
+  IsObject,
+  IsOptional,
+  IsRFC3339,
+  IsString,
+  isURL,
+  IsUrl,
+} from "class-validator";
+import {
+  instanceToPlain,
+  Transform,
+  TransformationType,
+  TransformFnParams,
+} from "class-transformer";
 import { transformAndValidateSync } from "class-transformer-validator";
 import { NotLiteral } from "./util/types";
 import { AnyLink, Link } from "./Link";
 
-export type CollectionType
-  = "Collection"
+export type CollectionType =
+  | "Collection"
   | "OrderedCollection"
   | "CollectionPage"
   | "OrderedCollectionPage";
@@ -44,37 +58,47 @@ interface ObjectTransformationOptions {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function plainToClass(options: ObjectTransformationOptions, value: any, { key }: TransformFnParams) {
-  if(value === null) {
-    if(options.notNullable === true) {
+function plainToClass(
+  options: ObjectTransformationOptions,
+  value: any,
+  { key }: TransformFnParams,
+) {
+  if (value === null) {
+    if (options.notNullable === true) {
       throw new Error(`Failed to parse - '${key}' not allowed to be null`);
     }
     return value;
   }
-  if(typeof value === "string") {
-    if(options.str === "url") {
-      if(!isURL(value)) {
+  if (typeof value === "string") {
+    if (options.str === "url") {
+      if (!isURL(value)) {
         throw new Error("Value must be a URL (or Object/Link)");
       }
       return value;
     }
-    if(options.str !== true) {
+    if (options.str !== true) {
       throw new Error("Object cannot be a string");
     }
     return value;
   }
-  if(typeof value !== "object" || !value || !("type" in value) || typeof value.type !== "string") {
+  if (typeof value !== "object" || !value || !("type" in value) || typeof value.type !== "string") {
     throw new Error(`Failed to parse '${key}': value is not an Object`);
   }
   const { type } = value;
   let allowed: undefined | string[] = options.allowed;
-  if(options.anyDocument) {
+  if (options.anyDocument) {
     allowed = [...(allowed ?? []), "Document", "Audio", "Image", "Video", "Page"];
   }
-  if(options.anyCollection) {
-    allowed = [...(allowed ?? []), "Collection", "OrderedCollection", "CollectionPage", "OrderedCollectionPage"];
+  if (options.anyCollection) {
+    allowed = [
+      ...(allowed ?? []),
+      "Collection",
+      "OrderedCollection",
+      "CollectionPage",
+      "OrderedCollectionPage",
+    ];
   }
-  if(Array.isArray(allowed) && !allowed.includes(type)) {
+  if (Array.isArray(allowed) && !allowed.includes(type)) {
     throw new Error(`Field is not allowed to be a ${type}.`);
   }
   switch (type) {
@@ -84,6 +108,10 @@ function plainToClass(options: ObjectTransformationOptions, value: any, { key }:
       return transformAndValidateSync(Link, value);
     case "Note":
       return transformAndValidateSync(Note, value);
+    case "OrderedCollection":
+      return transformAndValidateSync(OrderedCollection, value);
+    case "Person":
+      return transformAndValidateSync(Person, value);
     default:
       return transformAndValidateSync(ASObject, value);
   }
@@ -92,26 +120,30 @@ function plainToClass(options: ObjectTransformationOptions, value: any, { key }:
 export function t(options: ObjectTransformationOptions) {
   return function objectTransformationFunction(params: TransformFnParams) {
     const { type, value } = params;
-    if(params.type === TransformationType.PLAIN_TO_CLASS) {
-      if(Array.isArray(value)) {
-        if(options.functional === true) {
+    if (params.type === TransformationType.PLAIN_TO_CLASS) {
+      if (Array.isArray(value)) {
+        if (options.functional === true) {
           throw new Error("Cannot provide an array of values.");
         }
-        return value.map(v => plainToClass(options, v, params));
+        return value.map((v) => plainToClass(options, v, params));
       }
       return plainToClass(options, value, params);
-    } else if(type === TransformationType.CLASS_TO_PLAIN) {
+    } else if (type === TransformationType.CLASS_TO_PLAIN) {
       return instanceToPlain(value);
     } else {
       throw new Error(`Unsupported transformation ${type}`);
     }
-  }
+  };
 }
 
 export class ASObject<Type extends string> {
-
   @IsString()
   public readonly type: Type;
+
+  /*
+   * The following fields are defined by ActivityStreams:
+   * https://www.w3.org/TR/activitystreams-vocabulary/#dfn-object
+   */
 
   @IsOptional()
   @IsString()
@@ -161,7 +193,7 @@ export class ASObject<Type extends string> {
   generator?: NotLiteral<string | AnyObject>;
 
   @IsOptional()
-  @Transform(t({ str: "url", allowed: [ "Image", "Link", "Mention" ]}))
+  @Transform(t({ str: "url", allowed: ["Image", "Link", "Mention"] }))
   icon?: NotLiteral<string | Image | AnyLink>;
 
   @IsOptional()
@@ -243,14 +275,70 @@ export class ASObject<Type extends string> {
   @IsString()
   duration?: string;
 
+  /*
+   * The following fields are defined by ActivityPub:
+   * https://www.w3.org/TR/activitypub/#actor-objects
+   */
+
+  @IsOptional({
+    groups: ["activitypub-actor", "activitypub"],
+  })
+  @Transform(t({ str: "url", allowed: ["OrderedCollection"], functional: true }), {
+    groups: ["activitypub", "activitypub-actor"],
+  })
+  inbox?: string | OrderedCollection;
+
+  @IsOptional({
+    groups: ["activitypub-actor", "activitypub"],
+  })
+  @Transform(t({ str: "url", allowed: ["OrderedCollection"], functional: true }), {
+    groups: ["activitypub", "activitypub-actor"],
+  })
+  outbox?: string | OrderedCollection;
+
+  @IsOptional({
+    groups: ["activitypub"],
+  })
+  @Transform(t({ str: "url", anyCollection: true, functional: true }), {
+    groups: ["activitypub"],
+  })
+  following?: string | AnyCollection;
+
+  @IsOptional({
+    groups: ["activitypub"],
+  })
+  @Transform(t({ str: "url", anyCollection: true, functional: true }), {
+    groups: ["activitypub"],
+  })
+  followers?: string | AnyCollection;
+
+  @IsOptional({
+    groups: ["activitypub"],
+  })
+  @Transform(t({ str: "url", anyCollection: true, functional: true }), {
+    groups: ["activitypub"],
+  })
+  liked?: string | AnyCollection;
+
+  @IsOptional({
+    groups: ["activitypub"],
+  })
+  @IsString({ groups: ["activitypub"] })
+  preferredUsername?: string;
+
+  @IsOptional({
+    groups: ["activitypub"],
+  })
+  @IsObject({ groups: ["activitypub"] })
+  // TODO: validate
+  preferredUsernameMap?: Record<string, string>;
+
   public constructor(type: Type) {
     this.type = type;
   }
-
 }
 
 export class Note extends ASObject<"Note"> {
-
   @Equals("Note")
   public override readonly type: "Note";
 
@@ -261,7 +349,6 @@ export class Note extends ASObject<"Note"> {
 }
 
 export class Person extends ASObject<"Person"> {
-
   @Equals("Person")
   public override readonly type: "Person";
 
@@ -269,7 +356,6 @@ export class Person extends ASObject<"Person"> {
     super("Person");
     this.type = "Person";
   }
-
 }
 
 export class ASDocument<
@@ -277,7 +363,6 @@ export class ASDocument<
 > extends ASObject<Type> {}
 
 export class Image extends ASDocument<"Image"> {
-
   @Equals("Image")
   public override readonly type: "Image";
 
@@ -285,15 +370,19 @@ export class Image extends ASDocument<"Image"> {
     super("Image");
     this.type = "Image";
   }
-
 }
 
-export class ASCollection<
-  Type extends CollectionType = CollectionType,
-> extends ASObject<Type> {}
+export class ASCollection<Type extends CollectionType = CollectionType> extends ASObject<Type> {}
 
-export type AnyObject
-  = ASObject<string>
-  | Note
-  | Person
-  | Image;
+export class OrderedCollection extends ASCollection<"OrderedCollection"> {
+  public override readonly type: "OrderedCollection";
+
+  public constructor() {
+    super("OrderedCollection");
+    this.type = "OrderedCollection";
+  }
+}
+
+export type AnyCollection = ASCollection<CollectionType> | OrderedCollection;
+
+export type AnyObject = ASObject<string> | Note | Person | Image | OrderedCollection;
