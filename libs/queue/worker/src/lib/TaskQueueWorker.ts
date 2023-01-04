@@ -1,4 +1,4 @@
-import { Task } from "@plural-town/queue-core";
+import { Task, TaskContext } from "@plural-town/queue-core";
 import { Job } from "bullmq";
 import { QueueWorker, QueueWorkerOptions } from "./QueueWorker";
 
@@ -19,7 +19,7 @@ export class TaskQueueWorker<
 > {
   public constructor(
     name: string,
-    private readonly TaskInstance: { new (): Instance },
+    private readonly TaskInstance: { new (ctx: TaskContext): Instance },
     opts?: QueueWorkerOptions,
   ) {
     super(name, (job, token) => this.execute(job, token), opts);
@@ -34,8 +34,17 @@ export class TaskQueueWorker<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     token: string | undefined,
   ): Promise<Awaited<ReturnType<Instance["execute"]>>> {
-    console.log(`Executing ${job.name}`);
-    const task = new this.TaskInstance();
+    this.bunyan.trace({ job }, "Executing Task");
+    const logger = this.bunyan.child({
+      task: this.TaskInstance.name,
+      queueName: job.queueName,
+      runId: job.id,
+    });
+    const task = new this.TaskInstance({
+      error: logger.error.bind(logger),
+      trace: logger.trace.bind(logger),
+      warn: logger.warn.bind(logger),
+    });
     const { arg } = job.data;
     const result = await task.execute(...arg);
     return result;

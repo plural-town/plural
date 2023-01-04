@@ -8,6 +8,7 @@ import {
   Worker,
   WorkerOptions,
 } from "bullmq";
+import bunyan from "bunyan";
 import { Duration } from "luxon";
 
 export interface RetryQueueBackoffOptions extends Omit<BackoffOptions, "delay"> {
@@ -42,18 +43,35 @@ export interface QueueWorkerOptions {
   primaryOptions?: WorkerOptions;
 
   retryQueues?: RetryQueueOptions[];
+
+  /**
+   * A bunyan instance - otherwise a new Bunyan instance will be created.
+   *
+   * A child will be automatically created with the QueueWorker name,
+   * and subsequent children will be created for each task.
+   */
+  bunyan?: bunyan;
 }
 
 export class QueueWorker<DataType, ResultType, NameType extends string> {
   private readonly primary: Worker<DataType, ResultType, NameType>;
   private readonly retry: Worker<DataType, ResultType, NameType>[];
   private readonly retryQueues: Queue<DataType, ResultType, NameType>[];
+  protected readonly bunyan: bunyan;
 
   public constructor(
     public readonly name: string,
     private readonly processor: Processor<DataType, ResultType, NameType>,
     public readonly opts?: QueueWorkerOptions,
   ) {
+    const baseLogger =
+      opts?.bunyan ??
+      bunyan.createLogger({
+        name: "QueueWorker",
+      });
+    this.bunyan = baseLogger.child({
+      queue: name,
+    });
     const retryQueues = opts?.retryQueues ?? [];
     this.primary = new Worker<DataType, ResultType, NameType>(
       name,
