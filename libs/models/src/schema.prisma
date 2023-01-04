@@ -59,6 +59,8 @@ enum RemoteField {
   NAME
   SUMMARY
   PREFERRED_USERNAME
+  CONTENT
+  URL
 }
 
 enum FieldLanguage {
@@ -233,11 +235,8 @@ model RemoteNote {
   id              String      @id @default(cuid())
   entityId        String      @unique
   entity          RemoteEntity @relation(fields: [entityId], references: [id])
-  authorId        String
   postId          String
   authors         RemoteNoteAuthor[]
-
-  @@index([authorId, postId])
 }
 
 model Item {
