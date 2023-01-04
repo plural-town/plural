@@ -52,6 +52,9 @@ Browsing:
   Local Feed:
     ☐ Displays content from any profile on the server @est(3d)
 
+  Search:
+    ☐ Searching for a URL fetches ActivityPub from a remote server @est(4d) @started(23-01-01)
+
 Administration:
 
   Moderation:
