@@ -57,9 +57,9 @@ interface ObjectTransformationOptions {
   notNullable?: true;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function plainToClass(
   options: ObjectTransformationOptions,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
   { key }: TransformFnParams,
 ) {
