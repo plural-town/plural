@@ -101,7 +101,6 @@ export async function createAccountHandler(req: NextApiRequest, res: NextApiResp
       email,
       code,
       accountId: user.id,
-      verifiedAt: emailEnabled ? undefined : new Date(),
     },
   });
 
