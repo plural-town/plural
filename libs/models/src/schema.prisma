@@ -8,6 +8,13 @@ generator client {
   //output = "../../node_modules/.prisma/client"
 }
 
+enum Role {
+  USER
+  MOD
+  ADMIN
+  OWNER
+}
+
 enum Permission {
   VIEW
   POST
@@ -100,6 +107,7 @@ model DisplayName {
 
 model Identity {
   id              String      @id
+  role            Role        @default(USER)
   displayId       String
   display         DisplayName @relation(fields: [displayId], references: [id])
   createdAt       DateTime    @default(now())
