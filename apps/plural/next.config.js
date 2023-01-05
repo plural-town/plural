@@ -25,6 +25,10 @@ const nextConfig = {
         source: "/:tag(\\@[a-zA-Z-_]+)",
         destination: "/profile/:tag",
       },
+      {
+        source: "/:username(\\@[a-zA-Z-_]+):server(\\@[a-zA-Z-_.0-9]+)",
+        destination: "/remote/byServer/:server/byUser/:username",
+      },
     ];
   },
 };

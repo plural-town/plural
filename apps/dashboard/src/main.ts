@@ -26,10 +26,12 @@ const [sendDuplicateRegistrationEmail] = retryQueues(
   "last_chance",
 );
 
+const [queryURL] = retryQueues("queryURL", "retry", "last_chance");
+
 const serverAdapter = new ExpressAdapter();
 
 createBullBoard({
-  queues: [...sendEmailConfirmationCode, ...sendDuplicateRegistrationEmail],
+  queues: [...sendEmailConfirmationCode, ...sendDuplicateRegistrationEmail, ...queryURL],
   serverAdapter,
 });
 
