@@ -15,8 +15,9 @@ import {
   TransformFnParams,
 } from "class-transformer";
 import { transformAndValidateSync } from "class-transformer-validator";
-import { NotLiteral } from "./util/types";
-import { AnyLink, Link } from "./Link";
+import type { NotLiteral } from "./util/types";
+import { Link } from "./Link";
+import type { AnyLink } from "./Link";
 
 export type CollectionType =
   | "Collection"

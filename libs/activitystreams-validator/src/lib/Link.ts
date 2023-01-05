@@ -10,7 +10,7 @@ import {
   Min,
 } from "class-validator";
 import { ASObject, t } from "./Object";
-import { NotLiteral } from "./util/types";
+import type { NotLiteral } from "./util/types";
 
 export class ASLink<Type extends string = string> {
   @IsString()
