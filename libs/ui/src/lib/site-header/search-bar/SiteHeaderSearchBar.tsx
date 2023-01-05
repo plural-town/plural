@@ -34,7 +34,7 @@ export function SiteHeaderSearchBar(props: SiteHeaderSearchBarProps) {
     queryFn: async () => {
       const res = await fetch(`/api/search/import-status?search=${taskId}`);
       const data = (await res.json()) as ImportStatusResponse;
-      if (data.status === "ok" && !data.queued && data.entityFound) {
+      if (data.status === "ok" && data.queued === false && data.entityFound === true) {
         setSearching(false);
         setSearchQueued(false);
         router.push(data.url);
@@ -90,14 +90,14 @@ export function SiteHeaderSearchBar(props: SiteHeaderSearchBarProps) {
             return;
           }
 
-          if (data.queued) {
+          if (data.queued === true) {
             setSearchQueued(true);
             setTaskId(data.query);
             setQueueStart(DateTime.now());
             return;
           }
 
-          if (!data.entityFound) {
+          if (data.entityFound === false) {
             setSearching(false);
             toast({
               title: "Entity not found",
