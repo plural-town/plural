@@ -1,5 +1,6 @@
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { mode } from "@chakra-ui/theme-tools";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 
@@ -59,6 +60,8 @@ const theme = extendTheme({
   },
 });
 
+const queryClient = new QueryClient();
+
 function CustomApp({ Component, pageProps }: AppProps) {
   return (
     <>
@@ -70,9 +73,11 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <style>{ "body { display: block }" }</style>
       </Head>
       <main>
-        <ChakraProvider theme={theme}>
-          <Component {...pageProps} />
-        </ChakraProvider>
+        <QueryClientProvider client={queryClient}>
+          <ChakraProvider theme={theme}>
+            <Component {...pageProps} />
+          </ChakraProvider>
+        </QueryClientProvider>
       </main>
     </>
   );

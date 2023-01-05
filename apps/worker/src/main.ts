@@ -8,6 +8,7 @@ import { connection } from "./environments/environment";
 
 import { SendDuplicateRegistrationEmail, SendEmailConfirmationCode } from "@plural/email-tasks";
 import { Duration } from "luxon";
+import { QueryURL } from "@plural/tasks/fetch";
 
 const sendEmailConfirmationCode = new TaskQueueWorker(
   "sendEmailConfirmationCode",
@@ -111,5 +112,52 @@ const sendDuplicateRegistrationEmail = new TaskQueueWorker(
   },
 );
 
-const server = new TaskServer([sendEmailConfirmationCode, sendDuplicateRegistrationEmail]);
+const queryURL = new TaskQueueWorker("queryURL", QueryURL, {
+  primaryOptions: {
+    concurrency: 10,
+    connection,
+    limiter: {
+      max: 120,
+      duration: Duration.fromObject({ minutes: 1 }).toMillis(),
+    },
+  },
+  retryQueues: [
+    {
+      name: "retry",
+      attempts: 10,
+      delay: Duration.fromObject({ minutes: 1 }),
+      backoff: {
+        type: "exponential",
+        delay: Duration.fromObject({ minutes: 4 }),
+      },
+      options: {
+        connection,
+        concurrency: 5,
+        limiter: {
+          max: 60,
+          duration: Duration.fromObject({ minutes: 1 }).toMillis(),
+        },
+      },
+    },
+    {
+      name: "last_chance",
+      attempts: 14,
+      delay: Duration.fromObject({ days: 1 }),
+      backoff: {
+        type: "fixed",
+        delay: Duration.fromObject({ days: 2 }).toMillis(),
+      },
+      options: {
+        connection,
+        concurrency: 2,
+        limiter: {
+          max: 5,
+          duration: Duration.fromObject({ minutes: 1 }).toMillis(),
+        },
+      },
+    },
+  ],
+});
+
+const server = new TaskServer([sendEmailConfirmationCode, sendDuplicateRegistrationEmail, queryURL]);
 server.printWorkers();
