@@ -1,4 +1,11 @@
-import { Input, InputGroup, InputLeftElement, Progress, useInterval, useToast } from "@chakra-ui/react";
+import {
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Progress,
+  useInterval,
+  useToast,
+} from "@chakra-ui/react";
 import { ImportResponse, ImportResponseSchema, ImportStatusResponse } from "@plural/schema";
 import { useQuery } from "@tanstack/react-query";
 import { Field, FieldProps, Form, Formik } from "formik";
@@ -26,8 +33,8 @@ export function SiteHeaderSearchBar(props: SiteHeaderSearchBarProps) {
     queryKey: ["entitySearchStatus", taskId],
     queryFn: async () => {
       const res = await fetch(`/api/search/import-status?search=${taskId}`);
-      const data = await res.json() as ImportStatusResponse;
-      if(data.status === "ok" && !data.queued && data.entityFound) {
+      const data = (await res.json()) as ImportStatusResponse;
+      if (data.status === "ok" && !data.queued && data.entityFound) {
         setSearching(false);
         setSearchQueued(false);
         router.push(data.url);
@@ -37,28 +44,32 @@ export function SiteHeaderSearchBar(props: SiteHeaderSearchBarProps) {
     refetchInterval: searchQueued ? STATUS_REFRESH_INTERVAL : false,
   });
 
-  useInterval(() => {
-    if(queueStart === false) {
-      return;
-    }
-    const elapsed = DateTime.now().diff(queueStart);
-    if(elapsed > TIMEOUT) {
-      toast({
-        title: "Import still queued",
-        // TODO: better description
-        // TODO: Link to "More Info" (in documentation)
-        description: "The server has a long queue of content it is trying to fetch. The URL submitted will be fetched when the server has a chance, but that is taking longer than expected. Please try again later.",
-        status: "warning",
-        position: "top-right",
-        isClosable: true,
-      });
-      setQueueElapsed(Duration.fromMillis(0));
-      setSearchQueued(false);
-      setSearching(false);
-      return;
-    }
-    setQueueElapsed(elapsed);
-  }, searchQueued ? 25 : null);
+  useInterval(
+    () => {
+      if (queueStart === false) {
+        return;
+      }
+      const elapsed = DateTime.now().diff(queueStart);
+      if (elapsed > TIMEOUT) {
+        toast({
+          title: "Import still queued",
+          // TODO: better description
+          // TODO: Link to "More Info" (in documentation)
+          description:
+            "The server has a long queue of content it is trying to fetch. The URL submitted will be fetched when the server has a chance, but that is taking longer than expected. Please try again later.",
+          status: "warning",
+          position: "top-right",
+          isClosable: true,
+        });
+        setQueueElapsed(Duration.fromMillis(0));
+        setSearchQueued(false);
+        setSearching(false);
+        return;
+      }
+      setQueueElapsed(elapsed);
+    },
+    searchQueued ? 25 : null,
+  );
 
   return (
     <Formik
@@ -73,20 +84,20 @@ export function SiteHeaderSearchBar(props: SiteHeaderSearchBarProps) {
             method: "POST",
             body: JSON.stringify({ url: q }),
           });
-          const data = await ImportResponseSchema.validate(await res.json()) as ImportResponse;
-          if(data.status === "failure") {
+          const data = (await ImportResponseSchema.validate(await res.json())) as ImportResponse;
+          if (data.status === "failure") {
             setSearching(false);
             return;
           }
 
-          if(data.queued) {
+          if (data.queued) {
             setSearchQueued(true);
             setTaskId(data.query);
             setQueueStart(DateTime.now());
             return;
           }
 
-          if(!data.entityFound) {
+          if (!data.entityFound) {
             setSearching(false);
             toast({
               title: "Entity not found",
@@ -98,12 +109,12 @@ export function SiteHeaderSearchBar(props: SiteHeaderSearchBarProps) {
             return;
           }
 
-          if(data.entityType === "NOTE") {
+          if (data.entityType === "NOTE") {
             setSearching(false);
             router.push(data.url);
             return;
           }
-          if(data.entityType === "PERSON") {
+          if (data.entityType === "PERSON") {
             setSearching(false);
             router.push(data.url);
             return;
@@ -131,7 +142,7 @@ export function SiteHeaderSearchBar(props: SiteHeaderSearchBarProps) {
             </InputGroup>
           )}
         </Field>
-        { searching && (
+        {searching && (
           <Progress
             isIndeterminate={!searchQueued}
             size="xs"

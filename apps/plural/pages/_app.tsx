@@ -1,8 +1,8 @@
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { mode } from "@chakra-ui/theme-tools";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AppProps } from 'next/app';
-import Head from 'next/head';
+import { AppProps } from "next/app";
+import Head from "next/head";
 
 // https://coolors.co/870058-f2d0a4-a4303f-ffeccc-c8d6af
 
@@ -16,7 +16,7 @@ const brand = {
   "600": "#CC0085",
   "700": "#990064",
   "800": "#660042",
-  "900": "#330021"
+  "900": "#330021",
 };
 
 const secondary = {
@@ -29,7 +29,7 @@ const secondary = {
   "600": "#9E2E3D",
   "700": "#76232D",
   "800": "#4F171E",
-  "900": "#270C0F"
+  "900": "#270C0F",
 };
 
 const accent = {
@@ -42,7 +42,7 @@ const accent = {
   "600": "#B2701A",
   "700": "#865413",
   "800": "#59380D",
-  "900": "#2D1C06"
+  "900": "#2D1C06",
 };
 
 const theme = extendTheme({
@@ -70,7 +70,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/favicon-32.png" sizes="32x32" />
         <link rel="icon" href="/favicon-128.png" sizes="128x128" />
         <link rel="icon" href="/favicon-192.png" sizes="192x192" />
-        <style>{ "body { display: block }" }</style>
+        <style>{"body { display: block }"}</style>
       </Head>
       <main>
         <QueryClientProvider client={queryClient}>

@@ -8,7 +8,7 @@ import Head from "next/head";
 export const getServerSideProps: GetServerSideProps = async ({ query, req, res }) => {
   const { server, username } = query;
 
-  if(typeof server !== "string" || typeof username !== "string") {
+  if (typeof server !== "string" || typeof username !== "string") {
     return {
       notFound: true,
     };
@@ -29,14 +29,14 @@ export const getServerSideProps: GetServerSideProps = async ({ query, req, res }
     },
   });
 
-  if(!profile) {
+  if (!profile) {
     return {
       notFound: true,
     };
   }
 
   const fields = profile.entity.fields;
-  const nameField = fields.find(f => f.field === "NAME");
+  const nameField = fields.find((f) => f.field === "NAME");
   const name = nameField ? nameField.value : "";
 
   const render: ProfilePage = {

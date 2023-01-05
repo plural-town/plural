@@ -1,14 +1,25 @@
 import { SESSION_OPTIONS } from "../../../lib/session";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiRequest, NextApiResponse } from "next";
-import { ImportCompleteNoteResponse, ImportCompletePersonResponse, ImportInvalidLoginResponse, ImportInvalidResponse, ImportQueuedResponse, ImportRequestSchema, ImportResponse } from "@plural/schema";
+import {
+  ImportCompleteNoteResponse,
+  ImportCompletePersonResponse,
+  ImportInvalidLoginResponse,
+  ImportInvalidResponse,
+  ImportQueuedResponse,
+  ImportRequestSchema,
+  ImportResponse,
+} from "@plural/schema";
 import { TaskQueue } from "@plural-town/queue-worker";
 import { PrismaClient } from "@prisma/client";
 import { runTask } from "@plural-town/exec-queue";
 import { getLogger } from "@plural/log";
 import { QueryURL } from "@plural/tasks/fetch";
 
-export async function importContentHandler(req: NextApiRequest, res: NextApiResponse): Promise<ImportResponse> {
+export async function importContentHandler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+): Promise<ImportResponse> {
   const log = getLogger("importContentHandler");
   const users = req.session.users;
 
@@ -40,7 +51,7 @@ export async function importContentHandler(req: NextApiRequest, res: NextApiResp
     },
   });
 
-  if(process.env.BACKGROUND === "true") {
+  if (process.env.BACKGROUND === "true") {
     const queue = new TaskQueue("queryURL", {
       connection: {
         host: process.env.REDIS_HOST,
@@ -79,7 +90,7 @@ export async function importContentHandler(req: NextApiRequest, res: NextApiResp
       },
     });
 
-    if(complete && complete.entity) {
+    if (complete && complete.entity) {
       const { entity } = complete;
       const baseReply = {
         status: "ok",
@@ -89,7 +100,7 @@ export async function importContentHandler(req: NextApiRequest, res: NextApiResp
         entityId: entity.id,
       } as const;
 
-      if(entity.type === "PERSON" && entity.profile) {
+      if (entity.type === "PERSON" && entity.profile) {
         // fetched a genuine profile
         const person: ImportCompletePersonResponse = {
           ...baseReply,
@@ -98,7 +109,7 @@ export async function importContentHandler(req: NextApiRequest, res: NextApiResp
         };
         res.send(person);
         return person;
-      } else if(entity.type === "PERSON") {
+      } else if (entity.type === "PERSON") {
         // fetched a profile, but it wasn't verified, so use a generic URL
         const person: ImportCompletePersonResponse = {
           ...baseReply,
@@ -109,7 +120,7 @@ export async function importContentHandler(req: NextApiRequest, res: NextApiResp
         return person;
       }
 
-      if(entity.type === "NOTE" && entity.note) {
+      if (entity.type === "NOTE" && entity.note) {
         // fetched a verified note
         const note: ImportCompleteNoteResponse = {
           ...baseReply,
@@ -119,7 +130,7 @@ export async function importContentHandler(req: NextApiRequest, res: NextApiResp
         };
         res.send(note);
         return note;
-      } else if(entity.type === "NOTE") {
+      } else if (entity.type === "NOTE") {
         // fetched a non-verified note, so use a generic URL
         const note: ImportCompleteNoteResponse = {
           ...baseReply,

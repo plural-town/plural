@@ -1,5 +1,4 @@
 describe("importing a URL via searchbar", () => {
-
   before(() => {
     cy.viewport("macbook-15");
     cy.exec("yarn nx run models:reset");
@@ -12,5 +11,4 @@ describe("importing a URL via searchbar", () => {
     cy.contains("@test@transforthe.win");
     cy.url().should("include", "/@test@transforthe.win");
   });
-
 });

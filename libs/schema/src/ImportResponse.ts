@@ -57,15 +57,15 @@ export interface ImportCompletePersonResponse extends ImportCompleteResponse {
   entityType: "PERSON";
 }
 
-export type ImportResponse
-  = ImportInvalidLoginResponse
+export type ImportResponse =
+  | ImportInvalidLoginResponse
   | ImportQueuedResponse
   | ImportInvalidResponse
   | ImportCompleteNoteResponse
   | ImportCompletePersonResponse;
 
-export type ImportStatusResponse
-  = ImportInvalidLoginResponse
+export type ImportStatusResponse =
+  | ImportInvalidLoginResponse
   | ImportInvalidParameterResponse
   | ImportQueuedResponse
   | ImportCompleteNoteResponse
@@ -73,24 +73,26 @@ export type ImportStatusResponse
 
 export const ImportResponseSchema = Yup.object().shape({
   status: Yup.mixed<"ok" | "failure">().oneOf(["ok", "failure"]).required(),
-  error: Yup.mixed<"NO_LOGIN">().oneOf(["NO_LOGIN"]).when("status", {
-    is: "failure",
-    then: s => s.required(),
-  }),
+  error: Yup.mixed<"NO_LOGIN">()
+    .oneOf(["NO_LOGIN"])
+    .when("status", {
+      is: "failure",
+      then: (s) => s.required(),
+    }),
   queued: Yup.boolean().when("status", {
     is: "ok",
-    then: s => s.required(),
+    then: (s) => s.required(),
   }),
   query: Yup.string().when("status", {
     is: "ok",
-    then: s => s.required(),
+    then: (s) => s.required(),
   }),
   job: Yup.string().when("queued", {
     is: true,
-    then: s => s.required(),
+    then: (s) => s.required(),
   }),
   entityFound: Yup.boolean().when("queued", {
     is: false,
-    then: s => s.required(),
+    then: (s) => s.required(),
   }),
 });

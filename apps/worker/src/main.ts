@@ -159,5 +159,9 @@ const queryURL = new TaskQueueWorker("queryURL", QueryURL, {
   ],
 });
 
-const server = new TaskServer([sendEmailConfirmationCode, sendDuplicateRegistrationEmail, queryURL]);
+const server = new TaskServer([
+  sendEmailConfirmationCode,
+  sendDuplicateRegistrationEmail,
+  queryURL,
+]);
 server.printWorkers();

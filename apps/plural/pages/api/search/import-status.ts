@@ -1,13 +1,23 @@
-import { ImportCompleteNoteResponse, ImportCompletePersonResponse, ImportInvalidLoginResponse, ImportInvalidParameterResponse, ImportQueuedResponse, ImportStatusResponse } from "@plural/schema";
+import {
+  ImportCompleteNoteResponse,
+  ImportCompletePersonResponse,
+  ImportInvalidLoginResponse,
+  ImportInvalidParameterResponse,
+  ImportQueuedResponse,
+  ImportStatusResponse,
+} from "@plural/schema";
 import { PrismaClient } from "@prisma/client";
 import { SESSION_OPTIONS } from "../../../lib/session";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export async function importContentStatusHandler(req: NextApiRequest, res: NextApiResponse): Promise<ImportStatusResponse> {
+export async function importContentStatusHandler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+): Promise<ImportStatusResponse> {
   const users = req.session.users;
 
-  if(!users) {
+  if (!users) {
     const err: ImportInvalidLoginResponse = {
       status: "failure",
       error: "NO_LOGIN",
@@ -20,7 +30,7 @@ export async function importContentStatusHandler(req: NextApiRequest, res: NextA
 
   const { search } = req.query;
 
-  if(typeof search !== "string") {
+  if (typeof search !== "string") {
     const err: ImportInvalidParameterResponse = {
       status: "failure",
       error: "MISSING_PARAMETER",
@@ -47,7 +57,7 @@ export async function importContentStatusHandler(req: NextApiRequest, res: NextA
 
   // START COPY
   // the following is shared with 'import.ts' - move to a common location
-  if(complete && complete.entity) {
+  if (complete && complete.entity) {
     const { entity } = complete;
     const baseReply = {
       status: "ok",
@@ -57,7 +67,7 @@ export async function importContentStatusHandler(req: NextApiRequest, res: NextA
       entityId: entity.id,
     } as const;
 
-    if(entity.type === "PERSON" && entity.profile) {
+    if (entity.type === "PERSON" && entity.profile) {
       // fetched a genuine profile
       const person: ImportCompletePersonResponse = {
         ...baseReply,
@@ -66,7 +76,7 @@ export async function importContentStatusHandler(req: NextApiRequest, res: NextA
       };
       res.send(person);
       return person;
-    } else if(entity.type === "PERSON") {
+    } else if (entity.type === "PERSON") {
       // fetched a profile, but it wasn't verified, so use a generic URL
       const person: ImportCompletePersonResponse = {
         ...baseReply,
@@ -77,7 +87,7 @@ export async function importContentStatusHandler(req: NextApiRequest, res: NextA
       return person;
     }
 
-    if(entity.type === "NOTE" && entity.note) {
+    if (entity.type === "NOTE" && entity.note) {
       // fetched a verified note
       const note: ImportCompleteNoteResponse = {
         ...baseReply,
@@ -87,7 +97,7 @@ export async function importContentStatusHandler(req: NextApiRequest, res: NextA
       };
       res.send(note);
       return note;
-    } else if(entity.type === "NOTE") {
+    } else if (entity.type === "NOTE") {
       // fetched a non-verified note, so use a generic URL
       const note: ImportCompleteNoteResponse = {
         ...baseReply,
