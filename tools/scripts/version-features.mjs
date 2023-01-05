@@ -12,8 +12,6 @@ const y = date.getFullYear().toString().slice(2);
 const m = date.getMonth() + 1;
 const d = date.getDate();
 
-const updated = existing
-  .replace(/<VERSION>/g, `${version}`)
-  .replace(/<BRANCH>/g, `${y}-${m}-${d}`);
+const updated = existing.replace(/<VERSION>/g, `${version}`).replace(/<BRANCH>/g, `${y}-${m}-${d}`);
 
 writeFileSync(file, updated);
