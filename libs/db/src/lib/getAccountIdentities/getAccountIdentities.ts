@@ -13,6 +13,7 @@ export function summarizeIdentity(
 
   return {
     id: identity.id,
+    role: identity.role,
     displayId: identity.displayId,
 
     display: {

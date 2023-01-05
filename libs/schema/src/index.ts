@@ -8,6 +8,7 @@ export * from "./IdentitySummary";
 export * from "./ImageSummary";
 export * from "./ImportRequest";
 export * from "./ImportResponse";
+export * from "./InitialPromotionRequest";
 export * from "./NewEmailRequest";
 export * from "./ProfilePage";
 export * from "./ProfileSummary";
