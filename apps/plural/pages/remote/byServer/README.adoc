@@ -1,0 +1,6 @@
+= byServer Rewrite
+
+This route is to only be used by rewrites, and not directly.
+
+For example,
+`/@username@server.com/` will be rewritten to `/remote/byServer/server.com/byUser/username/`

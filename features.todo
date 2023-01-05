@@ -11,10 +11,71 @@ Each completed item is tagged with the repository that added the feature
 Registration:
 
   Authentication Methods:
-    ☐ Email
+    Email:
+      ✔ Sends email via SMTP @PluralTown <VERSION> @done(<BRANCH>)
+      ☐ Provide status/progress bar for outgoing messages
 
-  ✔ Disableable registration @PluralTown @done(22-12-30 01:27)
+  ✔ Disableable registration @PluralTown v0.0.0 @done(22-12-30)
   ☐ Registration request form
 
+Accounts:
+  Authentication:
+    ☐ Users can add additional emails to their account @est(1d)
+
+  Identities:
+    ✔ Each account (authentication method) may have multiple identities @PluralTown v0.0.0 @done(23-01-01 13:14)
+    ☐ Users can grant other accounts access to an identity @est(1d)
+    ☐ Identities can set which profiles they post to by default when they are active @est(2d)
+
+  Profiles:
+    Following:
+      ☐ Profiles can follow other profiles @est(1d)
+      ☐ Profiles may (publicly or privately) share followers with each other @est(2d)
+        A system with a system profile + sub-profiles for each member can list all followers under the system profile,
+        and each member can "inherit" specific followers to populate their own feed without sending out follow notifications.
+
+Browsing:
+  Session:
+    ✔ Users may be authenticated in multiple accounts at once @PluralTown v0.0.0 @done(22-12-30)
+    ☐ Users can set which identities are active (/fronting) @est(2d)
+    ☐ Users can see which identities are active in a user switcher @est(2d)
+
+  Profile Displays:
+    ✔ Displays an "about" card for the profile @PluralTown v0.0.0 @done(22-12-30)
+    ✔ Displays notes posted to the profile @PluralTown v0.0.0 @done(22-12-30)
+    ☐ Displays a list of featured profiles @est(2d)
+    ☐ Can display a "parent" account @est(1d)
+
+  Home Feed:
+    ☐ Displays content from any profile followed by an active identity @est(3d)
+
+  Local Feed:
+    ☐ Displays content from any profile on the server @est(3d)
+
+  Search:
+    ✔ Searching for a URL fetches ActivityPub from a remote server @PluralTown <VERSION> @done(<BRANCH>)
+      https://github.com/plural-town/plural/issues/5
+
 Administration:
+
+  Moderation:
+    ☐ Registration approval interface
+
+Background Task System:
+
+  ✔ Tasks may be run in the foreground, if background workers not configured @PluralTown <VERSION> @done(<BRANCH>)
+  ✔ Dashboard configured to view queue status @PluralTown <VERSION> @done(<BRANCH>)
+  ✔ Tasks have access to formatted logging @PluralTown <VERSION> @done(<BRANCH>)
+
+  Worker Server:
+    ✔ Runs tasks @PluralTown <VERSION> @done(<BRANCH>)
+    ✔ Separate retry queues @PluralTown <VERSION> @done(<BRANCH>)
+    ☐ Queues/priorities can be easily configured @est(1d)
+    ☐ Workers can be remotely paused @est(2d)
   ☐ Registration approval interface
+
+Development:
+  Workflow/CI:
+    ✔ Lint/test in CI @PluralTown <VERSION> @done(<BRANCH>)
+    ✔ Automated releases @PluralTown <VERSION> @done(<BRANCH>)
+    ☐ Cypress E2E tests in CI

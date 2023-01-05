@@ -1,0 +1,3 @@
+= PluralTown Dashboard
+
+A simple dashboard to inspect background processing and the task queues.

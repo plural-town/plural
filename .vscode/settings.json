@@ -1,11 +1,20 @@
 {
   "cSpell.words": [
+    "activitypub",
+    "activitystreams",
+    "backoff",
+    "blocklisting",
+    "bullmq",
     "chakra",
     "Formik",
+    "fromMillis",
+    "luxon",
     "macbook",
     "nolookalikesSafe",
     "nrwl",
     "SUBACCOUNT",
+    "toMillis",
+    "Upstash",
     "webfinger"
   ]
 }

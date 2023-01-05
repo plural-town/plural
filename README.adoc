@@ -46,3 +46,10 @@ docker run -d \
 . Migrate database
   . `cd libs/models/`
   . Execute `npx prisma migrate dev --schema src/schema.prisma --name <name>`
+
+=== Running E2E Tests (interactively)
+
+[source,sh]
+----
+NODE_ENV="test" yarn nx e2e plural-e2e --watch
+----
