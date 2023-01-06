@@ -1,11 +1,27 @@
-import { Collapse, Flex, FlexProps, Icon, useDisclosure } from "@chakra-ui/react";
+import {
+  Collapse,
+  Flex,
+  FlexProps,
+  Icon,
+  LinkBox,
+  LinkOverlay,
+  Text,
+  Tooltip,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { ReactNode } from "react";
+import NextLink from "next/link";
 import { useSidebarStyles } from "../SidebarLayout";
+import { FaShieldAlt } from "react-icons/fa";
 
 export interface SidebarItemProps {
   text: string;
 
+  href?: string;
+
   disabled?: boolean;
+
+  readonly?: boolean;
 
   pl?: FlexProps["pl"];
 
@@ -20,7 +36,15 @@ export interface SidebarItemProps {
   children?: ReactNode;
 }
 
-export function SidebarItem({ text, icon, disabled, children, ...props }: SidebarItemProps) {
+export function SidebarItem({
+  text,
+  href,
+  icon,
+  disabled,
+  readonly,
+  children,
+  ...props
+}: SidebarItemProps) {
   const { isOpen, onToggle } = useDisclosure();
   const styles = useSidebarStyles();
 
@@ -32,15 +56,33 @@ export function SidebarItem({ text, icon, disabled, children, ...props }: Sideba
 
   return (
     <>
-      <Flex
-        onClick={handleClick}
-        role="group"
-        __css={disabled ? styles.itemDisabled : styles.item}
-        {...props}
-      >
-        {icon && <Icon __css={styles.itemIcon} as={icon} />}
-        {text}
-      </Flex>
+      <LinkBox as="nav">
+        <Flex
+          onClick={handleClick}
+          role="group"
+          __css={disabled ? styles.itemDisabled : styles.item}
+          {...props}
+        >
+          {icon && <Icon __css={styles.itemIcon} as={icon} />}
+          {href && !disabled ? (
+            <NextLink href={href} passHref legacyBehavior>
+              <LinkOverlay flex="1">{text}</LinkOverlay>
+            </NextLink>
+          ) : (
+            <Text display="inline" flex="1">
+              {text}
+            </Text>
+          )}
+          {!disabled && readonly && (
+            <Tooltip label="You can view this page, but lack permission to make changes.">
+              <span>
+                <Icon as={FaShieldAlt} __css={styles.itemReadOnlyIcon} />
+              </span>
+            </Tooltip>
+          )}
+          {/* TODO: Add a "read-only" icon indication */}
+        </Flex>
+      </LinkBox>
       {children && <Collapse in={isOpen}>{children}</Collapse>}
     </>
   );

@@ -1,8 +1,8 @@
-import { PluralTownRule, rulesFor } from "@plural-town/ability";
+import { abilityFor, PluralTownRule, rulesFor } from "@plural-town/ability";
 import { ReactNode } from "react";
 import { AiFillDashboard, AiFillFileText, AiFillSetting } from "react-icons/ai";
 import { FaArrowLeft, FaUsers } from "react-icons/fa";
-import { AdminProvider, useAdminAbility } from "../admin-can/AdminCan";
+import { AdminProvider } from "../admin-can/AdminCan";
 import SidebarHeader from "../sidebar-layout/sidebar-header/SidebarHeader";
 import SidebarItem from "../sidebar-layout/sidebar-item/SidebarItem";
 import SidebarLayoutMain from "../sidebar-layout/sidebar-layout-main/SidebarLayoutMain";
@@ -18,23 +18,38 @@ export interface AdminLayoutProps {
 }
 
 export function AdminLayout({ brand, rules, children }: AdminLayoutProps) {
-  const ability = useAdminAbility();
+  const ability = abilityFor(rules ?? rulesFor([]));
 
   return (
     <AdminProvider rules={rules ?? rulesFor([])}>
       <SidebarLayout>
         <Sidebar brand={brand}>
-          <SidebarItem text="Back to Site" icon={FaArrowLeft} />
-          <SidebarItem text="Dashboard" icon={AiFillDashboard} />
+          <SidebarItem href="/" text="Back to Site" icon={FaArrowLeft} />
+          <SidebarItem href="/admin/" text="Dashboard" icon={AiFillDashboard} />
           <SidebarItem
+            href="/admin/site/"
             text="Server Settings"
             icon={AiFillSetting}
-            disabled={ability.cannot("browse", "AdminSiteSettings")}
+            disabled={ability.cannot("browse", "AdminDashboard", "siteSettings")}
+            readonly={ability.cannot("update", "AdminDashboard", "siteSettings")}
           />
           <SidebarItem text="Accounts" icon={FaUsers}>
-            <SidebarSubItem text="All Accounts" />
-            <SidebarSubItem text="Registration" />
-            <SidebarSubItem text="Invites" />
+            <SidebarSubItem
+              href="/admin/accounts/"
+              text="All Accounts"
+              disabled={ability.cannot("browse", "AdminDashboard", "accounts")}
+              readonly={ability.cannot("browse", "AdminDashboard", "accounts")}
+            />
+            <SidebarSubItem
+              text="Registration"
+              disabled={ability.cannot("browse", "AdminDashboard", "regSettings")}
+              readonly={ability.cannot("update", "AdminDashboard", "regSettings")}
+            />
+            <SidebarSubItem
+              text="Invites"
+              disabled={ability.cannot("browse", "AdminDashboard", "invitations")}
+              readonly={ability.cannot("update", "AdminDashboard", "invitations")}
+            />
           </SidebarItem>
           <SidebarItem text="Profiles" icon={AiFillFileText}>
             <SidebarSubItem text="All Profiles" />

@@ -9,6 +9,7 @@ const helpers = createMultiStyleConfigHelpers([
   "item",
   "itemDisabled",
   "itemIcon",
+  "itemReadOnlyIcon",
   "main",
   "header",
   "page",
@@ -52,8 +53,10 @@ export const SidebarLayout = helpers.defineMultiStyleConfig({
       fontSize: "sm",
     },
     item: {
+      display: "flex",
       alignItems: "center",
-      px: 4,
+      justifyContent: "space-between",
+      px: 6,
       pl: 4,
       py: 3,
       cursor: "pointer",
@@ -62,7 +65,9 @@ export const SidebarLayout = helpers.defineMultiStyleConfig({
       transition: ".15s ease",
     },
     itemDisabled: {
+      display: "flex",
       alignItem: "center",
+      justifyContent: "space-between",
       px: 4,
       pl: 4,
       py: 3,
@@ -83,7 +88,7 @@ export const SidebarLayout = helpers.defineMultiStyleConfig({
     },
     header: {
       alignItems: "center",
-      justify: "space-between",
+      justifyContent: "space-between",
       w: "full",
       px: 4,
       borderBottomWidth: "1px",
@@ -143,6 +148,9 @@ export const SidebarLayout = helpers.defineMultiStyleConfig({
             color: "gray.300",
           },
         },
+      },
+      itemReadOnlyIcon: {
+        color: "gray.400",
       },
     },
   },
