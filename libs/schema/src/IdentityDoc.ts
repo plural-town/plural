@@ -1,4 +1,4 @@
-import type { Role, Visibility } from "@prisma/client";
+import type { DisplayName, Identity, Role, Visibility } from "@prisma/client";
 import * as Yup from "yup";
 import { RoleSchema } from "./enum/Role";
 import { VisibilitySchema } from "./enum/Visibility";
@@ -37,6 +37,18 @@ export const IdentityDocSchema = Yup.object().shape({
   name: Yup.string().optional(),
   nameVisibility: VisibilitySchema.optional(),
 });
+
+export function createIdentityDoc(i: Identity & { display?: DisplayName }): IdentityDoc {
+  return {
+    kind: "Identity",
+    id: i.id,
+    role: i.role,
+    // TODO: Add visibility field to identities
+    visibility: "PUBLIC",
+    name: i.display?.name,
+    nameVisibility: i.display?.nameVisibility,
+  };
+}
 
 const IDENTITY_PROFILE_FIELDS = ["id", "name"] as const;
 
