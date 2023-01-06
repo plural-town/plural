@@ -5,6 +5,7 @@ declare module '*.svg' {
   export default content;
 }
 
+import { FrontSession, UserSession } from "@plural-town/next-ability";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as IronSession from "iron-session";
 
@@ -18,9 +19,7 @@ declare module "iron-session" {
       id: string;
     };
 
-    users?: {
-      id: string;
-    }[];
-
+    users?: UserSession[];
+    front?: FrontSession[];
   }
 }
