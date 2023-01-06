@@ -6,9 +6,10 @@ import {
   SubjectRawRule,
 } from "@casl/ability";
 import { Action } from "@plural-town/acl-models";
-import { AdminDashboard } from "./subjects/AdminDashboard";
+import type { IdentityDoc } from "@plural/schema";
+import type { AdminDashboard } from "./subjects/AdminDashboard";
 
-export type PluralTownSubject = InferSubjects<AdminDashboard>;
+export type PluralTownSubject = InferSubjects<AdminDashboard | IdentityDoc>;
 
 export type PluralTownRule = SubjectRawRule<
   Action,

@@ -74,6 +74,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
         cachedAgo < maxSessionCache
       ) {
         identities.push({
+          id,
           role: session.role,
           profiles: session.profiles,
         });
@@ -104,6 +105,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
       }));
 
       identities.push({
+        id: identity.id,
         role: identity.role,
         profiles,
       });
@@ -149,6 +151,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
 
     const identities = uniqBy(grants, (i) => i.identityId).map<ActiveIdentity>((grant) => {
       return {
+        id: grant.identityId,
         profiles: grant.identity.profiles.map((profile) => ({
           permission: profile.permission,
           profileId: profile.profileId,

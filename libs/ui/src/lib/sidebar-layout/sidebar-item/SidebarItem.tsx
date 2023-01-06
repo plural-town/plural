@@ -19,6 +19,8 @@ export interface SidebarItemProps {
 
   href?: string;
 
+  open?: boolean;
+
   disabled?: boolean;
 
   readonly?: boolean;
@@ -40,12 +42,15 @@ export function SidebarItem({
   text,
   href,
   icon,
+  open,
   disabled,
   readonly,
   children,
   ...props
 }: SidebarItemProps) {
-  const { isOpen, onToggle } = useDisclosure();
+  const { isOpen, onToggle } = useDisclosure({
+    defaultIsOpen: open,
+  });
   const styles = useSidebarStyles();
 
   const noop = () => {

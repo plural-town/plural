@@ -14,10 +14,11 @@ import SidebarLayout from "../sidebar-layout/SidebarLayout";
 export interface AdminLayoutProps {
   brand: string;
   rules?: PluralTownRule[];
+  section?: "accounts" | "identities";
   children?: ReactNode;
 }
 
-export function AdminLayout({ brand, rules, children }: AdminLayoutProps) {
+export function AdminLayout({ brand, rules, section, children }: AdminLayoutProps) {
   const ability = abilityFor(rules ?? rulesFor([]));
 
   return (
@@ -33,12 +34,12 @@ export function AdminLayout({ brand, rules, children }: AdminLayoutProps) {
             disabled={ability.cannot("browse", "AdminDashboard", "siteSettings")}
             readonly={ability.cannot("update", "AdminDashboard", "siteSettings")}
           />
-          <SidebarItem text="Accounts" icon={FaUsers}>
+          <SidebarItem text="Accounts" icon={FaUsers} open={section === "accounts"}>
             <SidebarSubItem
               href="/admin/accounts/"
               text="All Accounts"
               disabled={ability.cannot("browse", "AdminDashboard", "accounts")}
-              readonly={ability.cannot("browse", "AdminDashboard", "accounts")}
+              readonly={ability.cannot("update", "AdminDashboard", "accounts")}
             />
             <SidebarSubItem
               text="Registration"
@@ -49,6 +50,14 @@ export function AdminLayout({ brand, rules, children }: AdminLayoutProps) {
               text="Invites"
               disabled={ability.cannot("browse", "AdminDashboard", "invitations")}
               readonly={ability.cannot("update", "AdminDashboard", "invitations")}
+            />
+          </SidebarItem>
+          <SidebarItem text="Identities" icon={FaUsers} open={section === "identities"}>
+            <SidebarSubItem
+              href="/admin/identities/"
+              text="All Identities"
+              disabled={ability.cannot("browse", "AdminDashboard", "identities")}
+              readonly={ability.cannot("update", "AdminDashboard", "identities")}
             />
           </SidebarItem>
           <SidebarItem text="Profiles" icon={AiFillFileText}>

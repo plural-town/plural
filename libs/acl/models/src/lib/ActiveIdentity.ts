@@ -6,6 +6,7 @@ export interface ActiveProfileGrant {
 }
 
 export interface ActiveIdentity {
+  id: string;
   role: Role;
   profiles: ActiveProfileGrant[];
 }

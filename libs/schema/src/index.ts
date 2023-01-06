@@ -4,6 +4,7 @@ export * from "./CreateNoteRequest";
 export * from "./CreateNSRequest";
 export * from "./CreateRootProfileRequest";
 export * from "./DisplaySummary";
+export * from "./IdentityDoc";
 export * from "./IdentitySummary";
 export * from "./ImageSummary";
 export * from "./ImportRequest";

@@ -28,6 +28,7 @@
       "@plural/form": ["libs/form/src/index.ts"],
       "@plural/log": ["libs/log/src/index.ts"],
       "@plural/models": ["libs/models/src/index.ts"],
+      "@plural/next-utils": ["libs/next-utils/src/index.ts"],
       "@plural/schema": ["libs/schema/src/index.ts"],
       "@plural/tasks/fetch": ["libs/tasks/fetch/src/index.ts"],
       "@plural/ui": ["libs/ui/src/index.ts"]
