@@ -1084,6 +1084,11 @@
     "@ucast/core" "^1.10.0"
     "@ucast/js" "^3.0.1"
 
+"@casl/react@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@casl/react/-/react-3.1.0.tgz#1bd6cf511686d232158752da9e4ec0e9cc76f234"
+  integrity sha512-p4Xmex1Slxz/G0cBtZik+xyOkeOynBUe0UrMFTai6aYkYOb4NyUy3w+9rtnedjcuKijiow2HKJQjnSurLxdc/g==
+
 "@chakra-ui/accordion@2.1.4":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@chakra-ui/accordion/-/accordion-2.1.4.tgz#a3eca38f8e52d5a5f4b9528fb9d269dcdcb035ac"

@@ -1,5 +1,1 @@
-export type Action
-  = "create"
-  | "browse"
-  | "update"
-  | "delete";
+export type Action = "create" | "browse" | "update" | "delete";

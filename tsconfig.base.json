@@ -22,6 +22,7 @@
       "@plural-town/next-ability": ["libs/acl/next/src/index.ts"],
       "@plural-town/queue-core": ["libs/queue/core/src/index.ts"],
       "@plural-town/queue-worker": ["libs/queue/worker/src/index.ts"],
+      "@plural-town/theme": ["libs/theme/src/index.ts"],
       "@plural/db": ["libs/db/src/index.ts"],
       "@plural/email-tasks": ["libs/tasks/email/src/index.ts"],
       "@plural/form": ["libs/form/src/index.ts"],

@@ -114,6 +114,12 @@ async function main() {
   });
   const [adminIdentity] = await createIdentity("admin", adminDisplay, admin, Role.OWNER);
 
+  const [mod] = await createAccount("mod", "mod@example.com", "testing");
+  const modDisplay = await createDisplayName("Moderator", {
+    id: "mod-display",
+  });
+  const [modIdentity] = await createIdentity("mod", modDisplay, mod, Role.MOD);
+
   const [account] = await createAccount("test", "test@example.com", "testing");
 
   const systemDisplay = await createDisplayName("Test", {
@@ -198,7 +204,15 @@ async function main() {
     },
   });
 
-  console.log(adminIdentity, alter1Profile, alter2Profile, draft, systemItem, otherProfile);
+  console.log(
+    adminIdentity,
+    modIdentity,
+    alter1Profile,
+    alter2Profile,
+    draft,
+    systemItem,
+    otherProfile,
+  );
 }
 
 main()

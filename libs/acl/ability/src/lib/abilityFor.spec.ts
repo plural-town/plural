@@ -1,6 +1,7 @@
 import { ActiveIdentity } from "@plural-town/acl-models";
 import { Role } from "@prisma/client";
 import { abilityFor } from "./abilityFor";
+import { rulesFor } from "./rulesFor";
 
 const ADMIN = {
   role: Role.ADMIN,
@@ -8,19 +9,15 @@ const ADMIN = {
 } satisfies ActiveIdentity;
 
 describe("abilityFor", () => {
-
   describe("browse AdminDashboard", () => {
-
     it("does not allow non-logged in users", () => {
-      const ability = abilityFor([]);
+      const ability = abilityFor(rulesFor([]));
       expect(ability.can("browse", "AdminDashboard")).toBe(false);
     });
 
     it("allows admins", () => {
-      const ability = abilityFor([ ADMIN ]);
+      const ability = abilityFor(rulesFor([ADMIN]));
       expect(ability.can("browse", "AdminDashboard")).toBe(true);
     });
-
   });
-
 });

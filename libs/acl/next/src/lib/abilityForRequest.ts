@@ -1,5 +1,5 @@
 import { Permission, PrismaClient } from "@prisma/client";
-import { abilityFor, PluralTownAbility } from "@plural-town/ability";
+import { abilityFor, PluralTownAbility, PluralTownRule, rulesFor } from "@plural-town/ability";
 import uniqBy from "lodash.uniqby";
 import { FrontSession } from "./FrontSession";
 import { UserSession } from "./UserSession";
@@ -35,30 +35,30 @@ export interface AbilityForRequestOptions {
   ensurePrisma?: boolean;
 }
 
-type ReturnedPrismaClient<O extends AbilityForRequestOptions>
-  = O extends { prisma: PrismaClient }
-    ? PrismaClient
-    : O extends { ensurePrisma: true }
-      ? PrismaClient
-      : PrismaClient | undefined;
+type ReturnedPrismaClient<O extends AbilityForRequestOptions> = O extends { prisma: PrismaClient }
+  ? PrismaClient
+  : O extends { ensurePrisma: true }
+  ? PrismaClient
+  : PrismaClient | undefined;
 
-export async function abilityForRequest<
-  Options extends AbilityForRequestOptions
->(
+export async function abilityForRequest<Options extends AbilityForRequestOptions>(
   req: RequestWithSession,
   options?: Options,
-): Promise<Readonly<[false, false]> | Readonly<[PluralTownAbility, ReturnedPrismaClient<Options>]>> {
+): Promise<
+  | Readonly<[false, false, false]>
+  | Readonly<[PluralTownAbility, ReturnedPrismaClient<Options>, PluralTownRule[]]>
+> {
   const { users, front } = req.session;
   const maxSessionCache = options?.maxSessionCache ?? Duration.fromObject({ minutes: 1 });
 
-  if(!users && !front) {
-    const base = abilityFor([]);
-    if(options?.baseRequirement && !options?.baseRequirement(base)) {
-      return [false, false] as const;
+  if (!users && !front) {
+    const base = abilityFor(rulesFor([]));
+    if (options?.baseRequirement && !options?.baseRequirement(base)) {
+      return [false, false, false] as const;
     }
   }
 
-  if(front && Array.isArray(front) && front.length > 0 && options?.allIdentities !== true) {
+  if (front && Array.isArray(front) && front.length > 0 && options?.allIdentities !== true) {
     const identities: ActiveIdentity[] = [];
     let prisma: PrismaClient | undefined = options?.prisma;
     let sessionUpdated = false;
@@ -67,7 +67,12 @@ export async function abilityForRequest<
       const { id } = session;
       const at = DateTime.fromMillis(session.at);
       const cachedAgo = DateTime.now().diff(at);
-      if(session.role && session.profiles && options?.latest !== true && cachedAgo < maxSessionCache) {
+      if (
+        session.role &&
+        session.profiles &&
+        options?.latest !== true &&
+        cachedAgo < maxSessionCache
+      ) {
         identities.push({
           role: session.role,
           profiles: session.profiles,
@@ -75,7 +80,7 @@ export async function abilityForRequest<
         continue;
       }
 
-      if(!prisma) {
+      if (!prisma) {
         prisma = new PrismaClient();
       }
 
@@ -88,12 +93,15 @@ export async function abilityForRequest<
         },
       });
 
-      if(!identity) {
+      if (!identity) {
         // TODO: Log/return a discriminative value
-        return [false, false] as const;
+        return [false, false, false] as const;
       }
 
-      const profiles = identity.profiles.map(p => ({ profileId: p.profileId, permission: p.permission }));
+      const profiles = identity.profiles.map((p) => ({
+        profileId: p.profileId,
+        permission: p.permission,
+      }));
 
       identities.push({
         role: identity.role,
@@ -110,24 +118,25 @@ export async function abilityForRequest<
       sessionUpdated = true;
     }
 
-    if(sessionUpdated) {
+    if (sessionUpdated) {
       await req.session.save();
     }
 
-    const ability = abilityFor(identities);
-    if(options?.baseRequirement && !options.baseRequirement(ability)) {
-      return [false, false] as const;
+    const rules = rulesFor(identities);
+    const ability = abilityFor(rules);
+    if (options?.baseRequirement && !options.baseRequirement(ability)) {
+      return [false, false, false] as const;
     }
-    return [ability, prisma as ReturnedPrismaClient<Options>] as const;
+    return [ability, prisma as ReturnedPrismaClient<Options>, rules] as const;
   }
 
-  if(users) {
+  if (users) {
     const prisma = options?.prisma ?? new PrismaClient();
 
     const grants = await prisma.identityGrant.findMany({
       where: {
-        accountId: { in: users.map(u => u.id) },
-        permission: { in: [ Permission.OWNER, Permission.ADMIN ]},
+        accountId: { in: users.map((u) => u.id) },
+        permission: { in: [Permission.OWNER, Permission.ADMIN] },
       },
       include: {
         identity: {
@@ -138,9 +147,9 @@ export async function abilityForRequest<
       },
     });
 
-    const identities = uniqBy(grants, i => i.identityId).map<ActiveIdentity>(grant => {
+    const identities = uniqBy(grants, (i) => i.identityId).map<ActiveIdentity>((grant) => {
       return {
-        profiles: grant.identity.profiles.map(profile => ({
+        profiles: grant.identity.profiles.map((profile) => ({
           permission: profile.permission,
           profileId: profile.profileId,
         })),
@@ -148,17 +157,23 @@ export async function abilityForRequest<
       };
     });
 
-    const ability = abilityFor(identities);
-    if(options?.baseRequirement && !options.baseRequirement(ability)) {
-      return [false, false] as const;
+    const rules = rulesFor(identities);
+    const ability = abilityFor(rules);
+    if (options?.baseRequirement && !options.baseRequirement(ability)) {
+      return [false, false, false] as const;
     }
 
-    return [ability, prisma as ReturnedPrismaClient<Options>] as const;
+    return [ability, prisma as ReturnedPrismaClient<Options>, rules] as const;
   }
 
-  const ability = abilityFor([]);
-  if(options?.baseRequirement && !options.baseRequirement(ability)) {
-    return [false, false] as const;
+  const rules = rulesFor([]);
+  const ability = abilityFor(rules);
+  if (options?.baseRequirement && !options.baseRequirement(ability)) {
+    return [false, false, false] as const;
   }
-  return [ability, (options?.prisma ?? new PrismaClient()) as ReturnedPrismaClient<Options>] as const;
+  return [
+    ability,
+    (options?.prisma ?? new PrismaClient()) as ReturnedPrismaClient<Options>,
+    rules,
+  ] as const;
 }

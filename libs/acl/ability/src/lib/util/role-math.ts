@@ -11,14 +11,11 @@ const ROLE_PRIORITY: Record<RoleParameter, number> = {
 };
 
 export function highestRole(roles: RoleParameter[]) {
-  return roles.reduce((a, b) => (ROLE_PRIORITY[a] >= ROLE_PRIORITY[b]) ? a : b, "PUBLIC");
+  return roles.reduce((a, b) => (ROLE_PRIORITY[a] >= ROLE_PRIORITY[b] ? a : b), "PUBLIC");
 }
 
-export function requireRole(
-  heldRole: RoleParameter,
-  threshold: Role,
-): boolean {
-  if(heldRole === "PUBLIC") {
+export function requireRole(heldRole: RoleParameter, threshold: Role): boolean {
+  if (heldRole === "PUBLIC") {
     return false;
   }
   return ROLE_PRIORITY[heldRole] >= ROLE_PRIORITY[threshold];
