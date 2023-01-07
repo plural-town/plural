@@ -8,7 +8,9 @@ describe("importing a URL via searchbar", () => {
     cy.login("import-url", "test@example.com", "testing");
     cy.visit("/@test/");
     cy.get("input[name='q']").type("https://transforthe.win/@test{enter}");
-    cy.contains("@test@transforthe.win");
+    cy.contains("@test@transforthe.win", {
+      timeout: 45 * 1000,
+    });
     cy.url().should("include", "/@test@transforthe.win");
   });
 });

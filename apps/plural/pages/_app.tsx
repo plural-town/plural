@@ -1,5 +1,6 @@
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { mode } from "@chakra-ui/theme-tools";
+import { theme } from "@plural-town/theme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppProps } from "next/app";
 import Head from "next/head";
@@ -45,20 +46,23 @@ const accent = {
   "900": "#2D1C06",
 };
 
-const theme = extendTheme({
-  colors: {
-    brand,
-    secondary,
-    accent,
+const customTheme = extendTheme(
+  {
+    colors: {
+      brand,
+      secondary,
+      accent,
+    },
+    styles: {
+      global: (props) => ({
+        body: {
+          bg: mode("gray.100", "gray.800")(props),
+        },
+      }),
+    },
   },
-  styles: {
-    global: (props) => ({
-      body: {
-        bg: mode("gray.100", "gray.800")(props),
-      },
-    }),
-  },
-});
+  theme,
+);
 
 const queryClient = new QueryClient();
 
@@ -74,7 +78,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
       </Head>
       <main>
         <QueryClientProvider client={queryClient}>
-          <ChakraProvider theme={theme}>
+          <ChakraProvider theme={customTheme}>
             <Component {...pageProps} />
           </ChakraProvider>
         </QueryClientProvider>

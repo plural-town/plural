@@ -4,6 +4,16 @@
   "sourceRoot": "libs/schema/src",
   "projectType": "library",
   "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/schema",
+        "main": "libs/schema/src/index.ts",
+        "tsConfig": "libs/schema/tsconfig.lib.json",
+        "assets": ["libs/schema/*.md"]
+      }
+    },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],

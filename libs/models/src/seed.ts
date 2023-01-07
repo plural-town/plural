@@ -1,13 +1,17 @@
-import { Account, DisplayName, Identity, IdentityGrant, PrismaClient, Profile } from "@prisma/client";
+import {
+  Account,
+  DisplayName,
+  Identity,
+  IdentityGrant,
+  PrismaClient,
+  Profile,
+  Role,
+} from "@prisma/client";
 import { hash } from "bcrypt";
 
 const prisma = new PrismaClient();
 
-async function createAccount(
-  accountId: string,
-  emailAddress: string,
-  password: string,
-) {
+async function createAccount(accountId: string, emailAddress: string, password: string) {
   const email = await prisma.email.create({
     data: {
       email: emailAddress,
@@ -53,11 +57,13 @@ async function createIdentity(
   id: string,
   displayName: DisplayName,
   owner: Account,
+  role: Role = Role.USER,
 ): Promise<[Identity, IdentityGrant]> {
   const identity = await prisma.identity.create({
     data: {
       id,
       displayId: displayName.id,
+      role,
     },
   });
 
@@ -102,6 +108,18 @@ async function createProfile(
 }
 
 async function main() {
+  const [admin] = await createAccount("admin", "admin@example.com", "testing");
+  const adminDisplay = await createDisplayName("Admin", {
+    id: "admin-display",
+  });
+  const [adminIdentity] = await createIdentity("admin", adminDisplay, admin, Role.OWNER);
+
+  const [mod] = await createAccount("mod", "mod@example.com", "testing");
+  const modDisplay = await createDisplayName("Moderator", {
+    id: "mod-display",
+  });
+  const [modIdentity] = await createIdentity("mod", modDisplay, mod, Role.MOD);
+
   const [account] = await createAccount("test", "test@example.com", "testing");
 
   const systemDisplay = await createDisplayName("Test", {
@@ -186,7 +204,15 @@ async function main() {
     },
   });
 
-  console.log(alter1Profile, alter2Profile, draft, systemItem, otherProfile);
+  console.log(
+    adminIdentity,
+    modIdentity,
+    alter1Profile,
+    alter2Profile,
+    draft,
+    systemItem,
+    otherProfile,
+  );
 }
 
 main()

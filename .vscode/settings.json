@@ -5,7 +5,9 @@
     "backoff",
     "blocklisting",
     "bullmq",
+    "casl",
     "chakra",
+    "commitlint",
     "Formik",
     "fromMillis",
     "luxon",
@@ -13,8 +15,12 @@
     "nolookalikesSafe",
     "nrwl",
     "SUBACCOUNT",
+    "tanstack",
+    "theunderscorer",
     "toMillis",
+    "uniqby",
     "Upstash",
+    "usehooks",
     "webfinger"
   ]
 }

@@ -2,7 +2,6 @@ import { customAlphabet } from "nanoid";
 import { nolookalikesSafe } from "nanoid-dictionary";
 
 describe("E2E Application Tests", () => {
-
   it("can register, create profiles, post", () => {
     const id = customAlphabet(nolookalikesSafe, 6)();
     const systemHandle = id;
@@ -88,7 +87,9 @@ describe("E2E Application Tests", () => {
     cy.get(`[data-profile-slug='${jayHandle}']`);
 
     // Step: view profiles
-    cy.visit(`http://plural.local:4200/@${systemHandle}/`);
+    cy.visit(`http://plural.local:4200/@${systemHandle}/`, {
+      retryOnStatusCodeFailure: true,
+    });
 
     cy.contains(`@${systemHandle}@plural.local:4200`);
     cy.contains("Test System");
@@ -99,6 +100,10 @@ describe("E2E Application Tests", () => {
 
     cy.get("[data-test-id='profile-dropdown']").click().focus().type("{enter}");
     cy.contains("Edit Profile").click();
+
+    cy.contains("Display ID", {
+      timeout: 20 * 1000,
+    });
 
     cy.url().should("contain", "/account/profile/");
 
@@ -113,5 +118,4 @@ describe("E2E Application Tests", () => {
     cy.visit(`http://plural.local:4200/@${systemHandle}/`);
     cy.contains("The Test System");
   });
-
 });
