@@ -22,12 +22,12 @@ const nextConfig = {
         destination: "/api/.well-known/webfinger",
       },
       {
-        source: "/:tag(\\@[a-zA-Z-_]+)",
+        source: "/:tag(\\@[a-zA-Z0-9-_]+)",
         destination: "/profile/:tag",
       },
       {
-        source: "/:username(\\@[a-zA-Z-_]+):server(\\@[a-zA-Z-_.0-9]+)",
-        destination: "/remote/byServer/:server/byUser/:username",
+        source: "/:username(\\@[a-zA-Z0-9-_]+)\\@:server([a-zA-Z-_.0-9]+)",
+        destination: "/remote/byServer/@:server/byUser/:username",
       },
     ];
   },

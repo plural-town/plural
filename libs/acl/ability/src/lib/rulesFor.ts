@@ -16,7 +16,7 @@ export function rulesFor(identities: ActiveIdentity[]): PluralTownRule[] {
     id: { $in: identities.map((i) => i.id) },
   });
 
-  can("browse", "Identity", ["id"], {
+  can("browse", "Identity", ["kind", "id"], {
     visibility: { $in: PUBLIC },
   });
 

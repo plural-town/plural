@@ -1,4 +1,5 @@
 import { Container } from "@chakra-ui/react";
+import { getLogger } from "@plural/log";
 import { ProfilePage } from "@plural/schema";
 import { ProfileCard, SiteHeader } from "@plural/ui";
 import { PrismaClient } from "@prisma/client";
@@ -6,6 +7,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 
 export const getServerSideProps: GetServerSideProps = async ({ query, req, res }) => {
+  const log = getLogger("RemoteUserPage.getServerSideProps");
   const { server, username } = query;
 
   if (typeof server !== "string" || typeof username !== "string") {
@@ -30,6 +32,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, req, res }
   });
 
   if (!profile) {
+    log.warn({ req, res, server, username }, "Profile not found");
     return {
       notFound: true,
     };

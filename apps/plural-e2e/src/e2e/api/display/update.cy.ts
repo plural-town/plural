@@ -5,6 +5,8 @@ const DISPLAY_UPDATE: UpdateDisplay = {
   nameVisibility: "PUBLIC",
   displayName: "test",
   displayNameVisibility: "PUBLIC",
+  bio: "",
+  bioVisibility: "PRIVATE",
 };
 
 describe("/api/display/:displayId/update/", () => {

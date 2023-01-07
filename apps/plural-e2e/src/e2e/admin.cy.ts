@@ -15,6 +15,26 @@ describe("Initial Admin Promotion", () => {
   });
 });
 
+describe("Promotion via UI", () => {
+  before(() => {
+    cy.viewport("macbook-16");
+    cy.exec("yarn nx run models:reset");
+  });
+
+  it("can promote moderators via UI", () => {
+    cy.login("admin-landing", "admin@example.com", "testing");
+    cy.visit("/admin/identities/");
+    cy.contains("Sam").click();
+    cy.contains("User");
+    cy.get("select[name='role']").select("Moderator");
+    cy.contains("Save").click();
+    cy.contains("Successfully updated identity");
+    cy.visit("/admin/identities/");
+    cy.contains("Sam").click();
+    cy.contains("Moderator");
+  });
+});
+
 describe("Administration", () => {
   before(() => {
     cy.viewport("macbook-16");

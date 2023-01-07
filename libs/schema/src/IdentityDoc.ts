@@ -60,3 +60,7 @@ export interface IdentityProfile
   extends Pick<IdentityDoc, typeof IDENTITY_PROFILE_FIELDS[number]> {}
 
 export const IdentityProfileSchema = IdentityDocSchema.pick(IDENTITY_PROFILE_FIELDS.map((i) => i));
+
+export const UpdateIdentityDocSchema = Yup.object().shape({
+  role: RoleSchema.optional(),
+});

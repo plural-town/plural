@@ -4,6 +4,12 @@ import { Role } from "@prisma/client";
 import { abilityFor } from "./abilityFor";
 import { rulesFor } from "./rulesFor";
 
+const USER = {
+  id: "user",
+  role: Role.USER,
+  profiles: [],
+} satisfies ActiveIdentity;
+
 const ADMIN = {
   id: "admin",
   role: Role.ADMIN,
@@ -30,6 +36,11 @@ describe("abilityFor", () => {
   describe("browse AdminDashboard", () => {
     it("does not allow non-logged in users", () => {
       const ability = abilityFor(rulesFor([]));
+      expect(ability.can("browse", "AdminDashboard")).toBe(false);
+    });
+
+    it("does not allow average users", () => {
+      const ability = abilityFor(rulesFor([USER]));
       expect(ability.can("browse", "AdminDashboard")).toBe(false);
     });
 
