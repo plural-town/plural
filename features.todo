@@ -58,6 +58,10 @@ Browsing:
 
 Administration:
 
+  Identity Administration:
+    ✔ Administrators can assign roles to identities @PluralTown <VERSION> @done(<BRANCH>)
+      https://github.com/plural-town/plural/issues/8
+
   Moderation:
     ☐ Registration approval interface
 
