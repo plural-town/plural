@@ -43,13 +43,13 @@ export function rulesFor(identities: ActiveIdentity[]): PluralTownRule[] {
     can("update", "Identity", ["visibility", "name", "nameVisibility"]);
   }
 
-  if(role === Role.ADMIN) {
+  if (role === Role.ADMIN) {
     can("update", "Identity", ["role"], {
-      role: { $nin: [ "ADMIN", "OWNER" ] },
+      role: { $nin: ["ADMIN", "OWNER"] },
     });
   }
 
-  if(role === Role.OWNER) {
+  if (role === Role.OWNER) {
     can("update", "Identity", "role");
   }
 

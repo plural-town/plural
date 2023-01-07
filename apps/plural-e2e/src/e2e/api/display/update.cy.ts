@@ -10,7 +10,6 @@ const DISPLAY_UPDATE: UpdateDisplay = {
 };
 
 describe("/api/display/:displayId/update/", () => {
-
   before(() => {
     cy.clean();
   });
@@ -21,7 +20,7 @@ describe("/api/display/:displayId/update/", () => {
       url: "/api/display/system-display/update/",
       body: DISPLAY_UPDATE,
       failOnStatusCode: false,
-    }).then(res => {
+    }).then((res) => {
       expect(res.status).to.eq(500);
     });
   });
@@ -33,7 +32,7 @@ describe("/api/display/:displayId/update/", () => {
       url: "/api/display/system-display/update/",
       body: DISPLAY_UPDATE,
       failOnStatusCode: false,
-    }).then(res => {
+    }).then((res) => {
       expect(res.status).to.eq(404);
     });
   });
@@ -45,9 +44,8 @@ describe("/api/display/:displayId/update/", () => {
       url: "/api/display/unknown/update/",
       body: DISPLAY_UPDATE,
       failOnStatusCode: false,
-    }).then(res => {
+    }).then((res) => {
       expect(res.status).to.eq(404);
     });
   });
-
 });

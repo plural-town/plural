@@ -11,15 +11,16 @@ export async function updateIdentityHandler(req: NextApiRequest, res: NextApiRes
   const update = UpdateIdentityDocSchema.validateSync(req.body);
 
   const [ability, prisma] = await abilityForRequest(req, {
-    baseRequirement: (a) => a.can("update", {
-      kind: "Identity",
-      id,
-    }),
+    baseRequirement: (a) =>
+      a.can("update", {
+        kind: "Identity",
+        id,
+      }),
     latest: true,
     ensurePrisma: true,
   });
 
-  if(!ability || !prisma) {
+  if (!ability || !prisma) {
     res.status(404).send({
       status: "failure",
     });
@@ -37,7 +38,7 @@ export async function updateIdentityHandler(req: NextApiRequest, res: NextApiRes
 
   const doc = existing ? createIdentityDoc(existing) : undefined;
 
-  if(!existing || !doc || ability.cannot("update", doc)) {
+  if (!existing || !doc || ability.cannot("update", doc)) {
     res.status(404).send({
       status: "failure",
     });
@@ -48,8 +49,8 @@ export async function updateIdentityHandler(req: NextApiRequest, res: NextApiRes
     fieldsFrom: (rule) => rule.fields || Object.keys(update),
   });
 
-  const forbidden = Object.keys(update).filter(k => !allowedFields.includes(k));
-  if(forbidden.length > 0) {
+  const forbidden = Object.keys(update).filter((k) => !allowedFields.includes(k));
+  if (forbidden.length > 0) {
     res.status(401).send({
       status: "failure",
       error: "MISSING_PERMISSION_FOR_FIELDS",

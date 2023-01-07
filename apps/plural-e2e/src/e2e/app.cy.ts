@@ -2,7 +2,6 @@ import { customAlphabet } from "nanoid";
 import { nolookalikesSafe } from "nanoid-dictionary";
 
 describe("E2E Application Tests", () => {
-
   it("can register, create profiles, post", () => {
     const id = customAlphabet(nolookalikesSafe, 6)();
     const systemHandle = id;
@@ -119,5 +118,4 @@ describe("E2E Application Tests", () => {
     cy.visit(`http://plural.local:4200/@${systemHandle}/`);
     cy.contains("The Test System");
   });
-
 });

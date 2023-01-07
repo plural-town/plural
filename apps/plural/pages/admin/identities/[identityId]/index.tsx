@@ -40,15 +40,18 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req }) => {
 
   const doc = found ? createIdentityDoc(found) : undefined;
 
-  if(!found || !doc || ability.cannot("browse", doc)) {
+  if (!found || !doc || ability.cannot("browse", doc)) {
     return {
       notFound: true,
     };
   }
 
-  const identity = pick(doc, permittedFieldsOf(ability, "browse", doc, {
-    fieldsFrom: () => ["kind", "id", "role", "visibility", "name", "nameVisibility"],
-  }));
+  const identity = pick(
+    doc,
+    permittedFieldsOf(ability, "browse", doc, {
+      fieldsFrom: () => ["kind", "id", "role", "visibility", "name", "nameVisibility"],
+    }),
+  );
 
   return {
     props: {
@@ -80,9 +83,12 @@ export function AdminIdentityPage({
             initialValues={identity}
             onSubmit={async (values) => {
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const submit = pick(values, permittedFieldsOf(ability, "update", values as any as IdentityDoc, {
-                fieldsFrom: () => ["role"],
-              }));
+              const submit = pick(
+                values,
+                permittedFieldsOf(ability, "update", values as any as IdentityDoc, {
+                  fieldsFrom: () => ["role"],
+                }),
+              );
               await axios.post(`/api/identity/${identity.id}/update/`, submit);
               toast({
                 title: "Updated",
@@ -101,9 +107,7 @@ export function AdminIdentityPage({
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 disabled={ability.cannot("update", identity as any as IdentityDoc, "role")}
               />
-              <SubmitButton colorScheme="brand">
-                Save
-              </SubmitButton>
+              <SubmitButton colorScheme="brand">Save</SubmitButton>
             </Form>
           </Formik>
         </Container>

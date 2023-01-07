@@ -51,7 +51,6 @@ describe("abilityFor", () => {
   });
 
   describe("Identity", () => {
-
     it("knows that anyone may be able to read one or more identities", () => {
       const ability = abilityFor(rulesFor([]));
       expect(ability.can("browse", "Identity")).toBe(true);
@@ -71,6 +70,5 @@ describe("abilityFor", () => {
       const ability = abilityFor(rulesFor([]));
       expect(ability.can("browse", PUBLIC_IDENTITY, "id")).toBe(true);
     });
-
   });
 });

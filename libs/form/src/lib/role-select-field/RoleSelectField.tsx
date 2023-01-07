@@ -12,7 +12,7 @@ export function RoleSelectField({
   helpText,
   ...props
 }: CommonFieldProps) {
-  const [ field, meta ] = useField(name);
+  const [field, meta] = useField(name);
 
   return (
     <FormControl
@@ -22,23 +22,14 @@ export function RoleSelectField({
       my={my ?? 4}
     >
       <FormLabel>{label}</FormLabel>
-      <Select
-        {...field}
-        placeholder={placeholder}
-      >
+      <Select {...field} placeholder={placeholder}>
         <option value="USER">User</option>
         <option value="MOD">Moderator</option>
         <option value="ADMIN">Administrator</option>
         <option value="OWNER">Server Owner</option>
       </Select>
-      { helpText && (
-        <FormHelperText>
-          { helpText }
-        </FormHelperText>
-      )}
-      <FormErrorMessage>
-        {meta.error}
-      </FormErrorMessage>
+      {helpText && <FormHelperText>{helpText}</FormHelperText>}
+      <FormErrorMessage>{meta.error}</FormErrorMessage>
     </FormControl>
-  )
+  );
 }

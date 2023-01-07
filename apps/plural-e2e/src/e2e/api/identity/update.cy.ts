@@ -1,5 +1,4 @@
 describe("/api/identity/[identityId]/update/", () => {
-
   before(() => {
     cy.clean();
   });
@@ -12,7 +11,7 @@ describe("/api/identity/[identityId]/update/", () => {
       body: {
         role: "MOD",
       },
-    }).then(res => {
+    }).then((res) => {
       expect(res.status).to.eq(200);
     });
   });
@@ -26,12 +25,11 @@ describe("/api/identity/[identityId]/update/", () => {
         role: "MOD",
       },
       failOnStatusCode: false,
-    }).then(res => {
+    }).then((res) => {
       expect(res.status).to.eq(401);
       expect(res.body).to.haveOwnProperty("error", "MISSING_PERMISSION_FOR_FIELDS");
       expect(res.body).to.haveOwnProperty("fields");
-      expect(res.body.fields).to.deep.eq([ "role" ]);
+      expect(res.body.fields).to.deep.eq(["role"]);
     });
   });
-
 });
