@@ -59,7 +59,7 @@ Browsing:
 Administration:
 
   Identity Administration:
-    ✔ Administrators can assign roles to identities @PluralTown <VERSION> @done(<BRANCH>)
+    ✔ Administrators can assign roles to identities @PluralTown v1.1.0 @done(23-1-7)
       https://github.com/plural-town/plural/issues/8
 
   Moderation:
