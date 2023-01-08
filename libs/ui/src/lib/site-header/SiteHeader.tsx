@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   chakra,
   Flex,
   HStack,
@@ -14,6 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import { FaSearchPlus } from "react-icons/fa";
 import NextLink from "next/link";
 import SiteHeaderSearchBar from "./search-bar/SiteHeaderSearchBar";
+import SiteHeaderUserMenu from "./site-header-user-menu/SiteHeaderUserMenu";
 
 export interface SiteHeaderProps {
   siteName: string;
@@ -103,16 +103,7 @@ export function SiteHeader({ siteName, ...props }: SiteHeaderProps) {
                 spacing="5"
                 display={{ base: "none", sm: search.isOpen ? "none" : "flex", md: "flex" }}
               >
-                <NextLink href="/login/" passHref legacyBehavior>
-                  <Button as="a" colorScheme="secondary" variant="ghost" size="sm">
-                    Sign In
-                  </Button>
-                </NextLink>
-                <NextLink href="/register/email/" passHref legacyBehavior>
-                  <Button as="a" colorScheme="secondary" variant="ghost" size="sm">
-                    Register
-                  </Button>
-                </NextLink>
+                <SiteHeaderUserMenu />
               </HStack>
             </Flex>
           </Flex>

@@ -7,7 +7,7 @@ import { ActiveIdentity } from "@plural-town/acl-models";
 import { DateTime, Duration } from "luxon";
 import { IncomingMessage } from "http";
 
-type RequestWithSession = IncomingMessage & {
+export type RequestWithSession = IncomingMessage & {
   session: {
     save: () => Promise<void>;
     users?: UserSession[];
@@ -90,6 +90,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
           id,
         },
         include: {
+          grants: true,
           profiles: true,
         },
       });
@@ -110,8 +111,11 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
         profiles,
       });
 
+      const owner = identity.grants.find((g) => g.permission === "OWNER");
+
       req.session.front?.push({
         id,
+        account: owner?.accountId,
         role: identity.role,
         profiles,
         at: Date.now(),

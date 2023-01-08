@@ -7,6 +7,11 @@ export interface FrontSession {
    */
   id: string;
 
+  /**
+   * {@link IdentityGrant.accountId}
+   */
+  account?: string;
+
   role?: Role;
 
   profiles?: ActiveProfileGrant[];

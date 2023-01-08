@@ -1,6 +1,7 @@
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { mode } from "@chakra-ui/theme-tools";
 import { theme } from "@plural-town/theme";
+import { AuthStoreProvider } from "@plural/use-auth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppProps } from "next/app";
 import Head from "next/head";
@@ -91,9 +92,11 @@ function CustomApp({ Component, pageProps }: AppProps) {
       </Head>
       <main>
         <QueryClientProvider client={queryClient}>
-          <ChakraProvider theme={customTheme}>
-            <Component {...pageProps} />
-          </ChakraProvider>
+          <AuthStoreProvider>
+            <ChakraProvider theme={customTheme}>
+              <Component {...pageProps} />
+            </ChakraProvider>
+          </AuthStoreProvider>
         </QueryClientProvider>
       </main>
     </>
