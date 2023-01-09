@@ -14,9 +14,17 @@ import Sidebar from "../sidebar-layout/sidebar/Sidebar";
 import SidebarLayout from "../sidebar-layout/SidebarLayout";
 import { UserProvider } from "../user-can/UserCan";
 
+type DashboardSection =
+  | "account-identities"
+  | "identity-grants"
+  | "identity-profiles"
+  | "profile-grants";
+
 export interface DashboardLayoutProps {
   brand: string;
   rules?: PluralTownRule[];
+
+  section?: DashboardSection;
 
   accountId?: string;
 
@@ -24,7 +32,6 @@ export interface DashboardLayoutProps {
 
   profileId?: string;
 
-  section?: "accounts" | "identities";
   children?: ReactNode;
 }
 
@@ -33,12 +40,13 @@ export function DashboardLayout({
   rules,
   accountId,
   identityId,
+  section,
   children,
 }: DashboardLayoutProps) {
-  const ability = abilityFor(rules ?? rulesFor([]));
+  const ability = abilityFor(rules ?? rulesFor([], []));
 
   return (
-    <UserProvider rules={rules ?? rulesFor([])}>
+    <UserProvider rules={rules ?? rulesFor([], [])}>
       <SidebarLayout>
         <Sidebar brand={brand}>
           <SidebarItem href="/" text="Back to Site" icon={FaArrowLeft} />
@@ -58,7 +66,7 @@ export function DashboardLayout({
                 text="Authentication"
                 icon={MdPassword}
               />
-              <SidebarItem text="Identities" icon={FaUsers}>
+              <SidebarItem text="Identities" icon={FaUsers} open={section === "account-identities"}>
                 <SidebarSubItem
                   href={`/account/accounts/${accountId}/identities/`}
                   text="Active Identities"

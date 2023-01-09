@@ -19,10 +19,10 @@ export interface AdminLayoutProps {
 }
 
 export function AdminLayout({ brand, rules, section, children }: AdminLayoutProps) {
-  const ability = abilityFor(rules ?? rulesFor([]));
+  const ability = abilityFor(rules ?? rulesFor([], []));
 
   return (
-    <AdminProvider rules={rules ?? rulesFor([])}>
+    <AdminProvider rules={rules ?? rulesFor([], [])}>
       <SidebarLayout>
         <Sidebar brand={brand}>
           <SidebarItem href="/" text="Back to Site" icon={FaArrowLeft} />

@@ -1,3 +1,4 @@
+import isEqual from "lodash.isequal";
 import { ReactNode, useEffect, useMemo } from "react";
 import { authContext, AuthContext } from "../AuthContext";
 import { ServerAuthHydration } from "../ServerAuthHydration";
@@ -27,7 +28,7 @@ export function AuthHydrationProvider({ auth, children }: AuthHydrationProviderP
   }, [auth.users, existing.users]);
 
   useEffect(() => {
-    if (auth.front) {
+    if (auth.front && !isEqual(auth.front, existing.front)) {
       existing.setFront(auth.front);
     }
   }, [auth.front, existing]);

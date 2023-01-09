@@ -1,4 +1,4 @@
-import { ActiveProfileGrant } from "@plural-town/acl-models";
+import { ActiveAccountGrant, ActiveProfileGrant } from "@plural-town/acl-models";
 import type { Role } from "@prisma/client";
 
 export interface FrontSession {
@@ -13,6 +13,8 @@ export interface FrontSession {
   account?: string;
 
   role?: Role;
+
+  accounts?: ActiveAccountGrant[];
 
   profiles?: ActiveProfileGrant[];
 

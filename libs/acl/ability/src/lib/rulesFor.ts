@@ -1,16 +1,23 @@
 import { AbilityBuilder, createMongoAbility } from "@casl/ability";
-import { ActiveIdentity } from "@plural-town/acl-models";
+import { ActiveAccount, ActiveIdentity } from "@plural-town/acl-models";
 import { Role, Visibility } from "@prisma/client";
 import { PluralTownAbility, PluralTownRule } from "./PluralTownAbility";
 import { highestRole, requireRole } from "./util/role-math";
 
 const PUBLIC: Visibility[] = [Visibility.PUBLIC, Visibility.UNLISTED];
 
-export function rulesFor(identities: ActiveIdentity[]): PluralTownRule[] {
+export function rulesFor(
+  accounts: ActiveAccount[],
+  identities: ActiveIdentity[],
+): PluralTownRule[] {
   const { can, cannot, rules } = new AbilityBuilder<PluralTownAbility>(createMongoAbility);
 
   const roles = identities.map((i) => i.role);
   const role = highestRole(roles);
+
+  can("browse", "Account", {
+    id: { $in: accounts.map(i => i.id) },
+  });
 
   can("update", "Identity", ["visibility", "name", "nameVisibility"], {
     id: { $in: identities.map((i) => i.id) },
@@ -34,6 +41,7 @@ export function rulesFor(identities: ActiveIdentity[]): PluralTownRule[] {
   });
 
   if (requireRole(role, Role.MOD)) {
+    can("browse", "Account");
     can("browse", "AdminDashboard");
     cannot("browse", "AdminDashboard", ["*"]);
     can("browse", "AdminDashboard", ["regSettings", "invitations", "accounts", "identities"]);

@@ -4,7 +4,7 @@ import uniqBy from "lodash.uniqby";
 import isEqual from "lodash.isequal";
 import { FrontSession } from "./FrontSession";
 import { UserSession } from "./UserSession";
-import { ActiveIdentity } from "@plural-town/acl-models";
+import { ActiveAccountGrant, ActiveIdentity } from "@plural-town/acl-models";
 import { DateTime, Duration } from "luxon";
 import { IncomingMessage } from "http";
 
@@ -54,7 +54,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
   const maxSessionCache = options?.maxSessionCache ?? Duration.fromObject({ minutes: 1 });
 
   if (!users && !front) {
-    const base = abilityFor(rulesFor([]));
+    const base = abilityFor(rulesFor([], []));
     if (options?.ensureUser) {
       return [false, false, false] as const;
     }
@@ -75,6 +75,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
       if (
         session.role &&
         session.profiles &&
+        session.accounts &&
         options?.latest !== true &&
         cachedAgo < maxSessionCache
       ) {
@@ -82,6 +83,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
           id,
           role: session.role,
           profiles: session.profiles,
+          accounts: session.accounts,
         });
         continue;
       }
@@ -105,6 +107,11 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
         return [false, false, false] as const;
       }
 
+      const accounts = identity.grants.map<ActiveAccountGrant>((g) => ({
+        accountId: g.accountId,
+        permission: g.permission,
+      }));
+
       const profiles = identity.profiles.map((p) => ({
         profileId: p.profileId,
         permission: p.permission,
@@ -113,6 +120,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
       identities.push({
         id: identity.id,
         role: identity.role,
+        accounts,
         profiles,
       });
 
@@ -153,7 +161,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
       await req.session.save();
     }
 
-    const rules = rulesFor(identities);
+    const rules = rulesFor(users ?? [], identities);
     const ability = abilityFor(rules);
     if (options?.baseRequirement && !options.baseRequirement(ability)) {
       return [false, false, false] as const;
@@ -181,6 +189,12 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
     const identities = uniqBy(grants, (i) => i.identityId).map<ActiveIdentity>((grant) => {
       return {
         id: grant.identityId,
+        accounts: [
+          {
+            accountId: grant.accountId,
+            permission: grant.permission,
+          },
+        ],
         profiles: grant.identity.profiles.map((profile) => ({
           permission: profile.permission,
           profileId: profile.profileId,
@@ -189,7 +203,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
       };
     });
 
-    const rules = rulesFor(identities);
+    const rules = rulesFor(users, identities);
     const ability = abilityFor(rules);
     if (options?.baseRequirement && !options.baseRequirement(ability)) {
       return [false, false, false] as const;
@@ -202,7 +216,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
     return [false, false, false] as const;
   }
 
-  const rules = rulesFor([]);
+  const rules = rulesFor([], []);
   const ability = abilityFor(rules);
   if (options?.baseRequirement && !options.baseRequirement(ability)) {
     return [false, false, false] as const;

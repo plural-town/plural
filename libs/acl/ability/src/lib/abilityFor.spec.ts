@@ -35,39 +35,39 @@ const PRIVATE_IDENTITY = {
 describe("abilityFor", () => {
   describe("browse AdminDashboard", () => {
     it("does not allow non-logged in users", () => {
-      const ability = abilityFor(rulesFor([]));
+      const ability = abilityFor(rulesFor([], []));
       expect(ability.can("browse", "AdminDashboard")).toBe(false);
     });
 
     it("does not allow average users", () => {
-      const ability = abilityFor(rulesFor([USER]));
+      const ability = abilityFor(rulesFor([], [USER]));
       expect(ability.can("browse", "AdminDashboard")).toBe(false);
     });
 
     it("allows admins", () => {
-      const ability = abilityFor(rulesFor([ADMIN]));
+      const ability = abilityFor(rulesFor([], [ADMIN]));
       expect(ability.can("browse", "AdminDashboard")).toBe(true);
     });
   });
 
   describe("Identity", () => {
     it("knows that anyone may be able to read one or more identities", () => {
-      const ability = abilityFor(rulesFor([]));
+      const ability = abilityFor(rulesFor([], []));
       expect(ability.can("browse", "Identity")).toBe(true);
     });
 
     it("allows anyone to browse public identities", () => {
-      const ability = abilityFor(rulesFor([]));
+      const ability = abilityFor(rulesFor([], []));
       expect(ability.can("browse", PUBLIC_IDENTITY)).toBe(true);
     });
 
     it("does not allow the public to browse private identities", () => {
-      const ability = abilityFor(rulesFor([]));
+      const ability = abilityFor(rulesFor([], []));
       expect(ability.can("browse", PRIVATE_IDENTITY)).toBe(false);
     });
 
     it("allows anyone to read the 'id' field for a public identity", () => {
-      const ability = abilityFor(rulesFor([]));
+      const ability = abilityFor(rulesFor([], []));
       expect(ability.can("browse", PUBLIC_IDENTITY, "id")).toBe(true);
     });
   });
