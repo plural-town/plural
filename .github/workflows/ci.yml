@@ -54,3 +54,46 @@ jobs:
           REDIS_PORT: 6379
 
       - run: yarn nx affected --target=build --parallel=3
+
+  e2e:
+    runs-on: ubuntu-latest
+    container: cypress/browsers:node16.18.0-chrome107-ff106-edge
+
+    services:
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup artifact folder
+        uses: actions/upload-artifact@v3
+        with:
+          name: e2e-artifacts
+          if-no-files-found: error
+          path: dist/cypress/apps/plural-e2e
+
+      - name: Set Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: "yarn"
+
+      - uses: nrwl/nx-set-shas@v3
+
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile --immutable
+
+      - name: Run Cypress tests
+        uses: BerniWittmann/background-server-action@v1.0.4
+        with:
+          command: yarn nx e2e plural-e2e
+          start: yarn nx serve worker
