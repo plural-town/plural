@@ -98,6 +98,12 @@ jobs:
       - name: Generate Database Schema
         run: yarn nx run models:generate
 
+      - name: Setup /etc/hosts for domain tests
+        run: |
+          sudo echo "127.0.0.1 plural.local" | sudo tee -a /etc/hosts
+          sudo echo "127.0.0.1 test.plural.local" | sudo tee -a /etc/hosts
+          sudo echo "127.0.0.1 code.plural.local" | sudo tee -a /etc/hosts
+
       - name: Run Cypress tests
         uses: cypress-io/github-action@v4
         with:
