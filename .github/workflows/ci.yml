@@ -61,7 +61,7 @@ jobs:
 
     strategy:
       matrix:
-        browser: [electron,firefox]
+        browser: [electron, firefox]
 
     services:
       postgres:
