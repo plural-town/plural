@@ -88,10 +88,14 @@ jobs:
         run: yarn install --frozen-lockfile --immutable
 
       - name: Run Cypress tests
-        uses: BerniWittmann/background-server-action@v1.0.4
+        uses: cypress-io/github-action@v4
         with:
+          install: false
           command: yarn nx e2e plural-e2e
           start: yarn nx serve worker
+        env:
+          REDIS_HOST: redis
+          REDIS_PORT: 6379
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
