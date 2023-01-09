@@ -1,0 +1,71 @@
+Email registration:
+  ✔ Send emails @done(22-12-31 15:10)
+  ✔ Send emails via queue @done(23-01-01 10:24)
+  ✔ Prevent registering duplicate emails @done(23-01-01 12:26)
+
+Task Queues:
+  ✔ Define tasks @done(22-12-31 15:13)
+  ✔ Build functionality for seperate retry queues @done(22-12-31 15:14)
+  ✔ Use same configuration library as Next, that includes variable interpolation @done(23-01-01 12:50)
+  ✔ Create worker server @done(23-01-01 10:24)
+  ☐ Document deploying worker server
+
+✔ Trim whitespace in confirmation codes @done(22-12-31 15:10)
+☐ DCO?
+☐ Reduce Prisma connections
+  https://www.prisma.io/docs/guides/performance-and-optimization/connection-management#prevent-hot-reloading-from-creating-new-instances-of-prismaclient
+☐ Create documentation for software
+☐ Create documentation for plural.town instance
+☐ i18n
+☐ Reorganize React libraries
+  ☐ Remove non-core-ui-library components from `ui`
+☐ Allow CI jobs (lint) to run in parallel/not stop other tests
+☐ Generate install scripts to move files, etc.
+✔ Setup versioning/publishing @done(23-01-01 18:55)
+✔ Add logging library to task queue system @done(23-01-04 20:46)
+☐ Make queue worker settings configurable
+☐ Have the queue dashboard load settings from the worker config (so you don't need to redefine all retry queue names, etc.)
+☐ Report email sending status to users ("Sent email" for instant, "Sending email..." for task queue, "We are experiencing load.  The confirmation email has been queued, and will be sent as soon as it can." if timeout while queing)
+☐ Implement "Follow"
+☐ Implement "Block"
+☐ Moderation tools
+✔ Admin panel @started(23-01-05 10:01) @done(23-01-07 00:19) @lasted(1d14h18m20s)
+☐ Show post count on profile
+☐ Hide profile fields if no permission
+✔ Fetch remote content if URL searched @started(23-01-01) @done(23-01-04 23:03) @lasted(3d23h4m)
+☐ Implement hashtags
+☐ Implement tagging usernames
+☐ Accept remote follows
+☐ Send content to remote followers
+☐ Upload avatars
+☐ Fix rendering tags (overflows)
+☐ Trending
+☐ Signup approvals
+☐ Invites (that can bypass closed registration)
+☐ Emoji
+☐ DMs
+☐ Generate federation keys
+☐ Markdown bios
+✔ Fix CI @done(23-01-05 09:38)
+☐ Test Cypress in CI
+☐ Advanced search UI (e.g. "tagged <tag>" AND "tagged <tag>" AND "by <user>")
+☐ Implement root profile limit per account
+☐ Have compose screen update on changes, vs. needing to be refreshed
+☐ Publish buttons on "Compose" are incorrectly styled
+☐ Ensure registration works with noscript
+☐ Improve background worker configuration loading
+☐ Better federation with another PluralTown server
+☐ Publish activitystreams-validator+queue libraries to GitHub and/or NPM
+☐ Track coverage in CI
+☐ Track test results in CI(?) (aka GitLab's integration with junit reports)
+☐ Refactor `.env` file to organize settings
+
+Big features:
+  ☐ Groups
+    ☐ Boost toots that tag the group
+    ☐ Group moderation
+      ☐ Closed groups/join approval
+      ☐ Allow Google-Groups style approval (e.g. "boost anyone", "moderate once", "moderate always")
+  ☐ Longform/blog
+  ☐ Image feed (e.g. Pixelfed)
+  ☐ Matrix-compatible DMs?
