@@ -59,6 +59,10 @@ jobs:
     runs-on: ubuntu-latest
     container: cypress/browsers:node16.18.0-chrome107-ff106-edge
 
+    strategy:
+      matrix:
+        browser: [electron,firefox]
+
     services:
       postgres:
         image: postgres
@@ -107,6 +111,7 @@ jobs:
       - name: Run Cypress tests
         uses: cypress-io/github-action@v4
         with:
+          browser: ${{ matrix.browser }}
           install: false
           command: yarn nx e2e plural-e2e
           start: yarn nx serve worker
@@ -120,6 +125,6 @@ jobs:
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: e2e-artifacts
+          name: e2e-artifacts-${{ matrix.browser }}
           if-no-files-found: error
           path: dist/cypress/apps/plural-e2e
