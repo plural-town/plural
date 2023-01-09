@@ -1,6 +1,7 @@
 import { Permission, PrismaClient } from "@prisma/client";
 import { abilityFor, PluralTownAbility, PluralTownRule, rulesFor } from "@plural-town/ability";
 import uniqBy from "lodash.uniqby";
+import isEqual from "lodash.isequal";
 import { FrontSession } from "./FrontSession";
 import { UserSession } from "./UserSession";
 import { ActiveIdentity } from "@plural-town/acl-models";
@@ -33,6 +34,7 @@ export interface AbilityForRequestOptions {
   baseRequirement?: (ability: PluralTownAbility) => boolean;
   prisma?: PrismaClient;
   ensurePrisma?: boolean;
+  ensureUser?: boolean;
 }
 
 type ReturnedPrismaClient<O extends AbilityForRequestOptions> = O extends { prisma: PrismaClient }
@@ -53,6 +55,9 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
 
   if (!users && !front) {
     const base = abilityFor(rulesFor([]));
+    if(options?.ensureUser) {
+      return [false, false, false] as const;
+    }
     if (options?.baseRequirement && !options?.baseRequirement(base)) {
       return [false, false, false] as const;
     }
@@ -113,15 +118,35 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
 
       const owner = identity.grants.find((g) => g.permission === "OWNER");
 
-      req.session.front?.push({
+      const newSession: FrontSession = {
         id,
         account: owner?.accountId,
         role: identity.role,
         profiles,
         at: Date.now(),
-      });
+      };
 
-      sessionUpdated = true;
+      if(req.session.front) {
+        const existingFront = req.session.front.find(f => f.id === id);
+        if(existingFront) {
+          if(existingFront.role !== identity.role) {
+            existingFront.role = identity.role;
+            existingFront.at = Date.now();
+            sessionUpdated = true;
+          }
+          if(!isEqual(existingFront.profiles, profiles)) {
+            existingFront.profiles = profiles;
+            existingFront.at = Date.now();
+            sessionUpdated = true;
+          }
+        } else {
+          req.session.front.push(newSession);
+          sessionUpdated = true;
+        }
+      } else {
+        req.session.front = [newSession];
+        sessionUpdated = true;
+      }
     }
 
     if (sessionUpdated) {
@@ -171,6 +196,10 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
     }
 
     return [ability, prisma as ReturnedPrismaClient<Options>, rules] as const;
+  }
+
+  if(options?.ensureUser) {
+    return [false, false, false] as const;
   }
 
   const rules = rulesFor([]);
