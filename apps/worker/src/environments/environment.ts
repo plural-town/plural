@@ -3,6 +3,6 @@ export const environment = {
 };
 
 export const connection = {
-  host: "localhost",
+  host: process.env.REDIS_HOST ?? "localhost",
   port: 6379,
 };
