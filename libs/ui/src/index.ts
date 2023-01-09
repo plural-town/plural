@@ -1,3 +1,6 @@
+export * from "./lib/switching-modal-provider/useSwitchingModal";
+export * from "./lib/switching-modal-provider/SwitchingModalProvider";
+export * from "./lib/identity-switcher/IdentitySwitcher";
 export * from "./lib/admin-can/AdminCan";
 export * from "./lib/admin-layout/AdminLayout";
 export * from "./lib/sidebar-layout/sidebar-layout-main/SidebarLayoutMain";

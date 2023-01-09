@@ -45,6 +45,8 @@ export interface AuthContext {
   front?: IdentitySessionContext[];
 
   addUser(user: UserSessionContext): void;
+  setUsers(users: UserSessionContext[]): void;
+  setFront(front: IdentitySessionContext[]): void;
 }
 
 export const authContext = createContext<AuthContext>({
@@ -52,6 +54,12 @@ export const authContext = createContext<AuthContext>({
   loggedIn: false,
   clientOn: false,
   addUser: () => {
+    return;
+  },
+  setUsers: () => {
+    return;
+  },
+  setFront: () => {
     return;
   },
 });

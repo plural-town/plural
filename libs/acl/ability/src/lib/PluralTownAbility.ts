@@ -1,20 +1,13 @@
-import {
-  ExtractSubjectType,
-  InferSubjects,
-  MongoAbility,
-  MongoQuery,
-  SubjectRawRule,
-} from "@casl/ability";
-import { Action } from "@plural-town/acl-models";
+import { InferSubjects, MongoAbility, RawRuleOf } from "@casl/ability";
+import { Action, IdentityAction } from "@plural-town/acl-models";
 import type { IdentityDoc } from "@plural/schema";
 import type { AdminDashboard } from "./subjects/AdminDashboard";
 
-export type PluralTownSubject = InferSubjects<AdminDashboard | IdentityDoc>;
+type IdentityAbility = [IdentityAction, InferSubjects<IdentityDoc>];
+type AdminDashboardAbility = [Action, InferSubjects<AdminDashboard>];
 
-export type PluralTownRule = SubjectRawRule<
-  Action,
-  ExtractSubjectType<PluralTownSubject>,
-  MongoQuery<Record<PropertyKey, unknown>>
->;
+type PluralTownRawAbility = IdentityAbility | AdminDashboardAbility;
 
-export type PluralTownAbility = MongoAbility<[Action, PluralTownSubject]>;
+export type PluralTownAbility = MongoAbility<PluralTownRawAbility>;
+
+export type PluralTownRule = RawRuleOf<PluralTownAbility>;

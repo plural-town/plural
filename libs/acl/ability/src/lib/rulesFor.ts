@@ -29,6 +29,10 @@ export function rulesFor(identities: ActiveIdentity[]): PluralTownRule[] {
     id: { $in: identities.map((i) => i.id) },
   });
 
+  can("activate", "Identity", {
+    id: { $in: identities.map((i) => i.id) },
+  });
+
   if (requireRole(role, Role.MOD)) {
     can("browse", "AdminDashboard");
     cannot("browse", "AdminDashboard", ["*"]);

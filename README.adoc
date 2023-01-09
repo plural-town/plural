@@ -53,3 +53,9 @@ docker run -d \
 ----
 NODE_ENV="test" yarn nx e2e plural-e2e --watch
 ----
+
+.With better logging
+[source,sh]
+----
+NODE_ENV="test" yarn nx e2e plural-e2e --watch | yarn bunyan
+----

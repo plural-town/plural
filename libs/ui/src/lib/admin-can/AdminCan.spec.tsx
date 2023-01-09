@@ -17,7 +17,7 @@ describe("AdminCan", () => {
 
   it("shows the dashboard to administrators", () => {
     const dashboard = render(
-      <AdminProvider rules={rulesFor([{ profiles: [], role: "ADMIN" }])}>
+      <AdminProvider rules={rulesFor([{ id: "123", profiles: [], role: "ADMIN" }])}>
         <AdminCan I="browse" a="AdminDashboard">
           Hello World
         </AdminCan>

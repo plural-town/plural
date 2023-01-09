@@ -1,3 +1,4 @@
+export * from "./ActivateIdentityRequest";
 export * from "./AddNoteDestination";
 export * from "./CreateIdentityRequest";
 export * from "./CreateNoteRequest";

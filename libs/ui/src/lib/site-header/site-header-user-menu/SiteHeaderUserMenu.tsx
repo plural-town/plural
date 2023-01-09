@@ -11,8 +11,10 @@ import {
 } from "@chakra-ui/react";
 import { useAuth } from "@plural/use-auth";
 import NextLink from "next/link";
+import { useMemo } from "react";
 import { AiFillControl } from "react-icons/ai";
 import { FaChevronDown } from "react-icons/fa";
+import useSwitchingModal from "../../switching-modal-provider/useSwitchingModal";
 
 /* eslint-disable-next-line */
 export interface SiteHeaderUserMenuProps {}
@@ -22,9 +24,21 @@ export interface SiteHeaderUserMenuProps {}
  * depending on the current authentication (and hydration) status.
  */
 export function SiteHeaderUserMenu(props: SiteHeaderUserMenuProps) {
+  const switchingModal = useSwitchingModal();
   const { clientOn, hydrated, loggedIn, front } = useAuth();
 
   const hasIdentities = front && Array.isArray(front) && front.length > 0;
+
+  const switchMenuItem = useMemo(() => {
+    if (switchingModal.available) {
+      return <MenuItem onClick={() => switchingModal.open()}>Update Active Identities</MenuItem>;
+    }
+    return (
+      <NextLink href="/session/" passHref legacyBehavior>
+        <MenuItem as="a">Update Active Identities</MenuItem>
+      </NextLink>
+    );
+  }, [switchingModal]);
 
   if (!hydrated) {
     // Authentication data is not available.  Provide a universal value that will work for any authentication state.
@@ -82,7 +96,7 @@ export function SiteHeaderUserMenu(props: SiteHeaderUserMenuProps) {
           <MenuItem disabled color="gray.400">
             No active identities
           </MenuItem>
-          <MenuItem>Update Active Identities</MenuItem>
+          {switchMenuItem}
           <MenuDivider />
           <NextLink href="/account/" passHref legacyBehavior>
             <MenuItem as="a">Account Settings</MenuItem>
@@ -111,7 +125,14 @@ export function SiteHeaderUserMenu(props: SiteHeaderUserMenuProps) {
           ))}
         </AvatarGroup>
         <NextLink href="/session/" passHref legacyBehavior>
-          <IconButton as="a" icon={<AiFillControl />} aria-label="Control Session" />
+          <IconButton
+            as="a"
+            size="sm"
+            variant="ghost"
+            color="black"
+            icon={<AiFillControl />}
+            aria-label="Control Session"
+          />
         </NextLink>
       </>
     );
@@ -130,12 +151,12 @@ export function SiteHeaderUserMenu(props: SiteHeaderUserMenuProps) {
           <MenuButton
             as={IconButton}
             size="sm"
+            variant="ghost"
+            color="black"
             icon={<FaChevronDown />}
             aria-label="Session Options"
           />
-          <MenuList>
-            <MenuItem>Update Active Identities</MenuItem>
-          </MenuList>
+          <MenuList color="black">{switchMenuItem}</MenuList>
         </Menu>
       </>
     );

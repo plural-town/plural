@@ -1,6 +1,11 @@
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
-import { authContext, AuthContext, UserSessionContext } from "../AuthContext";
+import {
+  authContext,
+  AuthContext,
+  IdentitySessionContext,
+  UserSessionContext,
+} from "../AuthContext";
 
 type StoredData = Pick<AuthContext, "users" | "front">;
 
@@ -46,6 +51,26 @@ export function AuthStoreProvider({ store, children }: AuthStoreProviderProps) {
     [setStored, stored],
   );
 
+  const setUsers = useCallback(
+    (users: UserSessionContext[]) => {
+      setStored({
+        users,
+        front: stored.front,
+      });
+    },
+    [setStored, stored.front],
+  );
+
+  const setFront = useCallback(
+    (front: IdentitySessionContext[]) => {
+      setStored({
+        users: stored.users,
+        front,
+      });
+    },
+    [setStored, stored.users],
+  );
+
   useEffect(() => {
     setClientOn(true);
   }, []);
@@ -57,6 +82,8 @@ export function AuthStoreProvider({ store, children }: AuthStoreProviderProps) {
     users: clientOn ? stored.users : [],
     front: clientOn ? stored.front : [],
     addUser,
+    setFront,
+    setUsers,
   };
 
   return <authContext.Provider value={ctx}>{children}</authContext.Provider>;

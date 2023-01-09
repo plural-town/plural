@@ -1,4 +1,4 @@
-import { ReactNode, useMemo } from "react";
+import { ReactNode, useEffect, useMemo } from "react";
 import { authContext, AuthContext } from "../AuthContext";
 import { ServerAuthHydration } from "../ServerAuthHydration";
 import useAuth from "../use-auth/useAuth";
@@ -19,25 +19,22 @@ export function AuthHydrationProvider({ auth, children }: AuthHydrationProviderP
   const existing = useAuth();
 
   const front = useMemo(() => {
-    if (existing.clientOn) {
-      return existing.front;
-    }
-    return auth.front ?? undefined;
-  }, [auth.front, existing.clientOn, existing.front]);
+    return auth.front ?? existing.front;
+  }, [auth.front, existing.front]);
 
   const users = useMemo(() => {
-    if (existing.clientOn) {
-      return existing.users;
+    return auth.users ?? existing.users;
+  }, [auth.users, existing.users]);
+
+  useEffect(() => {
+    if (auth.front) {
+      existing.setFront(auth.front);
     }
-    return auth.users ?? undefined;
-  }, [auth.users, existing.clientOn, existing.users]);
+  }, [auth.front, existing]);
 
   const loggedIn = useMemo(() => {
-    if (existing.clientOn) {
-      return existing.loggedIn;
-    }
     return !!users && Array.isArray(users) && users.length > 0;
-  }, [existing.clientOn, existing.loggedIn, users]);
+  }, [users]);
 
   const ctx: AuthContext = {
     hydrated: true,
@@ -46,6 +43,8 @@ export function AuthHydrationProvider({ auth, children }: AuthHydrationProviderP
     front,
     users,
     addUser: existing.addUser,
+    setFront: existing.setFront,
+    setUsers: existing.setUsers,
   };
 
   return <authContext.Provider value={ctx}>{children}</authContext.Provider>;
