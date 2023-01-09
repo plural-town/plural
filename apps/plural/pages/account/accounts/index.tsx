@@ -5,7 +5,19 @@ import Head from "next/head";
 import NextLink from "next/link";
 import { DashboardLayout, GlossaryLink } from "@plural/ui";
 import { InferGetServerSidePropsType } from "next";
-import { Box, Heading, Link, Table, TableContainer, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  Link,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+} from "@chakra-ui/react";
 import { AuthHydrationProvider } from "@plural/use-auth";
 
 export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
@@ -48,10 +60,15 @@ export function AccountDashboardAccountsPage({
             {SITE_NAME} Accounts
           </Heading>
           <Box fontSize="lg">
-            You are currently logged in to the <GlossaryLink term="account">accounts</GlossaryLink> listed below.
+            You are currently logged in to the <GlossaryLink term="account">accounts</GlossaryLink>{" "}
+            listed below.
           </Box>
           <Box fontSize="lg">
-            You may <NextLink href="/login/" passHref legacyBehavior><Link as="a">login</Link></NextLink> to additional accounts if you wish.
+            You may{" "}
+            <NextLink href="/login/" passHref legacyBehavior>
+              <Link as="a">login</Link>
+            </NextLink>{" "}
+            to additional accounts if you wish.
           </Box>
 
           <TableContainer>
@@ -63,15 +80,13 @@ export function AccountDashboardAccountsPage({
                 </Tr>
               </Thead>
               <Tbody>
-                { auth.users.map(u => (
+                {auth.users.map((u) => (
                   <Tr key={u.id}>
                     <Td>
-                      <NextLink href={`/account/accounts/${u.id}/`}>
-                        {u.id}
-                      </NextLink>
+                      <NextLink href={`/account/accounts/${u.id}/`}>{u.id}</NextLink>
                     </Td>
                   </Tr>
-                )) }
+                ))}
               </Tbody>
             </Table>
           </TableContainer>

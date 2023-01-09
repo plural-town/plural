@@ -19,13 +19,11 @@ export interface InternalGlossaryLinkProps extends BaseGlossaryLinkProps {
   term: string;
 }
 
-export type GlossaryLinkProps
-  = ExternalGlossaryLinkProps
-  | InternalGlossaryLinkProps;
+export type GlossaryLinkProps = ExternalGlossaryLinkProps | InternalGlossaryLinkProps;
 
 export function GlossaryLink({ icon, children, ...props }: GlossaryLinkProps) {
   const href = useMemo(() => {
-    if("href" in props) {
+    if ("href" in props) {
       return props.href;
     }
     // TODO: set a base URL for documentation/glossary in global context
@@ -33,7 +31,7 @@ export function GlossaryLink({ icon, children, ...props }: GlossaryLinkProps) {
   }, [props]);
 
   const TheIcon = useMemo(() => {
-    if(icon === "external") {
+    if (icon === "external") {
       return RiExternalLinkLine;
     }
     return FaQuestionCircle;
@@ -45,12 +43,7 @@ export function GlossaryLink({ icon, children, ...props }: GlossaryLinkProps) {
   return (
     <NextLink href={href} passHref legacyBehavior>
       <Link as="a" isExternal={!props["same-tab"]}>
-        { children } { !props["no-icon"] && (
-          <Icon
-            fontSize="sm"
-            as={TheIcon}
-          />
-        )}
+        {children} {!props["no-icon"] && <Icon fontSize="sm" as={TheIcon} />}
       </Link>
     </NextLink>
   );
