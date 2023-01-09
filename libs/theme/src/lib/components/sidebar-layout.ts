@@ -6,6 +6,7 @@ const helpers = createMultiStyleConfigHelpers([
   "sidebarBrandFlex",
   "brandText",
   "sidebarItemContainer",
+  "sidebarHeading",
   "item",
   "itemDisabled",
   "itemIcon",
@@ -51,6 +52,18 @@ export const SidebarLayout = helpers.defineMultiStyleConfig({
     sidebarItemContainer: {
       direction: "column",
       fontSize: "sm",
+    },
+    sidebarHeading: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      px: 6,
+      pl: 2,
+      py: 2,
+      mt: 6,
+      color: "inherit",
+      fontWeight: "bold",
+      transition: ".15s ease",
     },
     item: {
       display: "flex",

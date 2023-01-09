@@ -55,7 +55,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
 
   if (!users && !front) {
     const base = abilityFor(rulesFor([]));
-    if(options?.ensureUser) {
+    if (options?.ensureUser) {
       return [false, false, false] as const;
     }
     if (options?.baseRequirement && !options?.baseRequirement(base)) {
@@ -126,15 +126,15 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
         at: Date.now(),
       };
 
-      if(req.session.front) {
-        const existingFront = req.session.front.find(f => f.id === id);
-        if(existingFront) {
-          if(existingFront.role !== identity.role) {
+      if (req.session.front) {
+        const existingFront = req.session.front.find((f) => f.id === id);
+        if (existingFront) {
+          if (existingFront.role !== identity.role) {
             existingFront.role = identity.role;
             existingFront.at = Date.now();
             sessionUpdated = true;
           }
-          if(!isEqual(existingFront.profiles, profiles)) {
+          if (!isEqual(existingFront.profiles, profiles)) {
             existingFront.profiles = profiles;
             existingFront.at = Date.now();
             sessionUpdated = true;
@@ -198,7 +198,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
     return [ability, prisma as ReturnedPrismaClient<Options>, rules] as const;
   }
 
-  if(options?.ensureUser) {
+  if (options?.ensureUser) {
     return [false, false, false] as const;
   }
 
