@@ -60,6 +60,16 @@ jobs:
     container: cypress/browsers:node16.18.0-chrome107-ff106-edge
 
     services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: socialdev
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
       redis:
         image: redis
         options: >-
@@ -67,8 +77,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        ports:
-          - 6379:6379
 
     steps:
       - name: Checkout
@@ -87,6 +95,9 @@ jobs:
       - name: Install Dependencies
         run: yarn install --frozen-lockfile --immutable
 
+      - name: Generate Database Schema
+        run: yarn nx run models:generate
+
       - name: Run Cypress tests
         uses: cypress-io/github-action@v4
         with:
@@ -96,6 +107,7 @@ jobs:
         env:
           REDIS_HOST: redis
           REDIS_PORT: 6379
+          DATABASE_URL: postgres://postgres:socialdev@postgres:5432/postgres
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
