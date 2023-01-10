@@ -60,8 +60,9 @@ jobs:
     container: cypress/browsers:node16.18.0-chrome107-ff106-edge
 
     strategy:
+      fail-fast: false
       matrix:
-        browser: [electron, firefox]
+        browser: [chrome, electron, firefox]
 
     services:
       postgres:
