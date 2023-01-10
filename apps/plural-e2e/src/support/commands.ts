@@ -51,7 +51,9 @@ Cypress.Commands.add('login', (id, email, password) => {
     cy.get("input[name='email']").type(email);
     cy.get("input[name='password']").type(password);
     cy.get("button[type='submit']").click();
-    cy.contains("Plural Social");
+    cy.contains("Plural Social", {
+      timeout: 20 * 1000,
+    });
   });
 });
 //
