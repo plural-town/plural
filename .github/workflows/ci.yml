@@ -117,7 +117,6 @@ jobs:
           command: yarn nx e2e plural-e2e
           start: yarn nx serve worker
         env:
-          DEBUG: "cypress:*"
           NODE_ENV: test
           REDIS_HOST: redis
           REDIS_PORT: 6379
