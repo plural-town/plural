@@ -122,6 +122,7 @@ jobs:
           REDIS_PORT: 6379
           DATABASE_URL: postgres://postgres:socialdev@postgres:5432/postgres
           CYPRESS_VIDEO: false
+          CYPRESS_DEFAULT_COMMAND_TIMEOUT: 15000
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
