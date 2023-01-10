@@ -121,6 +121,7 @@ jobs:
           REDIS_HOST: redis
           REDIS_PORT: 6379
           DATABASE_URL: postgres://postgres:socialdev@postgres:5432/postgres
+          CYPRESS_VIDEO: false
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
