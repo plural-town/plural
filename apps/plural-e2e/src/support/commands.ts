@@ -22,7 +22,7 @@ declare namespace Cypress {
       name: string,
       testThreshold?: number,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      retryOptions?: Partial<any>
+      retryOptions?: Partial<any>,
     ): Chainable<Element>;
 
     /**
