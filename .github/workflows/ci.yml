@@ -124,9 +124,19 @@ jobs:
           CYPRESS_VIDEO: false
           CYPRESS_DEFAULT_COMMAND_TIMEOUT: 15000
 
-      - name: Upload artifacts
+      - name: Upload visual diffs
         uses: actions/upload-artifact@v3
         if: always()
+        with:
+          name: e2e-visual-diff-${{ matrix.browser }}
+          if-no-files-found: error
+          path: |
+            apps/plural-e2e/cypress-visual-report
+            apps/plural-e2e/cypress-visual-screenshots
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        if: failure()
         with:
           name: e2e-artifacts-${{ matrix.browser }}
           if-no-files-found: error

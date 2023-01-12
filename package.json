@@ -89,6 +89,7 @@
     "axios-mock-adapter": "^1.21.2",
     "babel-jest": "28.1.1",
     "cypress": "^11.0.0",
+    "cypress-image-diff-js": "^1.23.0",
     "eslint": "~8.15.0",
     "eslint-config-next": "13.0.0",
     "eslint-config-prettier": "8.1.0",
