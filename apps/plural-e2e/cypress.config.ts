@@ -11,5 +11,7 @@ export default defineConfig({
       getCompareScreenshotsPlugin(on, config);
     },
     experimentalSessionAndOrigin: true,
+    viewportWidth: 1536,
+    viewportHeight: 960,
   },
 });
