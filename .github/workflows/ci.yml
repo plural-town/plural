@@ -115,7 +115,7 @@ jobs:
           browser: ${{ matrix.browser }}
           install: false
           record: true
-          command: yarn nx e2e plural-e2e
+          command: yarn nx e2e plural-e2e --record --tag ${{ matrix.browser }}
           start: yarn nx serve worker
         env:
           NODE_ENV: test
