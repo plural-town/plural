@@ -114,6 +114,7 @@ jobs:
         with:
           browser: ${{ matrix.browser }}
           install: false
+          record: true
           command: yarn nx e2e plural-e2e
           start: yarn nx serve worker
         env:
@@ -123,6 +124,9 @@ jobs:
           DATABASE_URL: postgres://postgres:socialdev@postgres:5432/postgres
           CYPRESS_VIDEO: false
           CYPRESS_DEFAULT_COMMAND_TIMEOUT: 15000
+          CYPRESS_PROJECT_ID: kuvuog
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload visual diffs
         uses: actions/upload-artifact@v3
