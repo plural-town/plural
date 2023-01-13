@@ -13,5 +13,10 @@ export default defineConfig({
     experimentalSessionAndOrigin: true,
     viewportWidth: 1536,
     viewportHeight: 960,
+    env: {
+      // cypress-image-diff-js moves screenshots by default, and then Cypress Cloud can't upload the screenshot files.
+      // preserve originals to allow greater visibility.
+      preserveOriginalScreenshot: true,
+    },
   },
 });
