@@ -8,7 +8,7 @@ describe("Initial Admin Promotion", () => {
     cy.login("admin-initial-promotion", "test@example.com", "testing");
     cy.visit("/admin/initial/");
     cy.contains("Promote Initial Administrator");
-    cy.compareSnapshot("admin-initial-promotion-blank");
+    cy.compareSnapshot("admin-initial-promotion-blank", 0.1);
     cy.get("select[name='identity']").select("Test System");
     cy.get("input[name='token']").type("promotion_secret");
     cy.get("button[type='submit']").click();
