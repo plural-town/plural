@@ -63,7 +63,7 @@ jobs:
       fail-fast: false
       matrix:
         # 'containers' is a placeholder variable to create extra machines for parallel execution
-        containers: [1,2,3]
+        containers: [1, 2, 3]
         # 'browser' provides runners for each browser that will be tested
         browser:
           - chrome
