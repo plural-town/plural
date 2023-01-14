@@ -16,7 +16,7 @@ export function rulesFor(
   const role = highestRole(roles);
 
   can("browse", "Account", {
-    id: { $in: accounts.map(i => i.id) },
+    id: { $in: accounts.map((i) => i.id) },
   });
 
   can("update", "Identity", ["visibility", "name", "nameVisibility"], {

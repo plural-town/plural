@@ -7,17 +7,30 @@ import NextLink from "next/link";
 import { InferGetServerSidePropsType } from "next";
 import { DashboardLayout, GlossaryLink, UserCan } from "@plural/ui";
 import { param } from "@plural/next-utils";
-import { Box, Heading, Link, Table, TableContainer, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  Link,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+} from "@chakra-ui/react";
 import { getAccountIdentities } from "@plural/db";
 import { createIdentityDoc } from "@plural/schema";
 
 export const getServerSideProps = withIronSessionSsr(async ({ req, query }) => {
   const accountId = param(query, "accountId", "");
   const [ability, prisma, rules] = await abilityForRequest(req, {
-    baseRequirement: ability => ability.can("browse", {
-      kind: "Account",
-      id: accountId,
-    }),
+    baseRequirement: (ability) =>
+      ability.can("browse", {
+        kind: "Account",
+        id: accountId,
+      }),
     allIdentities: true,
     ensurePrisma: true,
   });
@@ -35,7 +48,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ req, query }) => {
   const found = await prisma.identity.findMany({
     where: {
       id: {
-        in: identitySummaries.map(i => i.id),
+        in: identitySummaries.map((i) => i.id),
       },
     },
     include: {
@@ -91,27 +104,26 @@ export function AccountDashboardAccountIdentitiesPage({
                 </Tr>
               </Thead>
               <Tbody>
-                { identities.map(identity => (
+                {identities.map((identity) => (
                   <Tr key={identity.id}>
                     <Td>
                       <UserCan I="update" this={identity}>
-                        <NextLink href={`/account/accounts/identities/${identity.id}/`} passHref legacyBehavior>
-                          <Link as="a">
-                            {identity.name}
-                          </Link>
+                        <NextLink
+                          href={`/account/accounts/identities/${identity.id}/`}
+                          passHref
+                          legacyBehavior
+                        >
+                          <Link as="a">{identity.name}</Link>
                         </NextLink>
                       </UserCan>
                       <UserCan not I="update" this={identity}>
-                        <Text decoration="line-through">
-                          {identity.name}
-                        </Text>
+                        <Text decoration="line-through">{identity.name}</Text>
                       </UserCan>
                     </Td>
                     <Td>
-                      {(auth.front ?? []).find(fronting => fronting.id === identity.id)
+                      {(auth.front ?? []).find((fronting) => fronting.id === identity.id)
                         ? "Yes"
-                        : "No"
-                      }
+                        : "No"}
                     </Td>
                   </Tr>
                 ))}

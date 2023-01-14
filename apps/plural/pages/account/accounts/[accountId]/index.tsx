@@ -12,10 +12,11 @@ import { Link } from "@chakra-ui/react";
 export const getServerSideProps = withIronSessionSsr(async ({ req, query }) => {
   const accountId = param(query, "accountId", "");
   const [ability, prisma, rules] = await abilityForRequest(req, {
-    baseRequirement: ability => ability.can("browse", {
-      kind: "Account",
-      id: accountId,
-    }),
+    baseRequirement: (ability) =>
+      ability.can("browse", {
+        kind: "Account",
+        id: accountId,
+      }),
     ensurePrisma: true,
   });
 

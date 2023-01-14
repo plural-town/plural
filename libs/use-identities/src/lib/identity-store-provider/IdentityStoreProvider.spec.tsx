@@ -4,12 +4,8 @@ import React, { ReactNode } from "react";
 
 import IdentityStoreProvider from "./IdentityStoreProvider";
 
-const wrapper: React.FC<{children: ReactNode}> = ({ children }) => {
-  return (
-    <QueryClientProvider client={new QueryClient()}>
-      { children }
-    </QueryClientProvider>
-  );
+const wrapper: React.FC<{ children: ReactNode }> = ({ children }) => {
+  return <QueryClientProvider client={new QueryClient()}>{children}</QueryClientProvider>;
 };
 
 describe("IdentityStoreProvider", () => {

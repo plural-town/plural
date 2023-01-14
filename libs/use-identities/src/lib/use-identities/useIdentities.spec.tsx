@@ -5,12 +5,10 @@ import IdentityStoreProvider from "../identity-store-provider/IdentityStoreProvi
 
 import useIdentities from "./useIdentities";
 
-const wrapper: React.FC<{children: ReactNode}> = ({ children }) => {
+const wrapper: React.FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <QueryClientProvider client={new QueryClient()}>
-      <IdentityStoreProvider>
-        { children }
-      </IdentityStoreProvider>
+      <IdentityStoreProvider>{children}</IdentityStoreProvider>
     </QueryClientProvider>
   );
 };

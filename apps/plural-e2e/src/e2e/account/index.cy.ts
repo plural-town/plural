@@ -1,5 +1,4 @@
 describe("Account Settings Landing", () => {
-
   before(() => {
     cy.viewport("macbook-16");
     cy.clean();
@@ -23,5 +22,4 @@ describe("Account Settings Landing", () => {
     cy.contains("Accounts").click();
     cy.contains("You are currently logged in");
   });
-
 });
