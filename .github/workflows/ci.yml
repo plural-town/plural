@@ -121,7 +121,9 @@ jobs:
           browser: ${{ matrix.browser }}
           install: false
           record: true
-          command: yarn nx e2e plural-e2e --record --group 3x-${{ matrix.browser }} --parallel
+          parallel: true
+          group: 3x-${{ matrix.browser }}
+          command: yarn nx e2e plural-e2e --record --parallel --group 3x-${{ matrix.browser }}
           start: yarn nx serve worker
         env:
           NODE_ENV: test
