@@ -1,4 +1,4 @@
-import { Card, CardBody, CardHeader, Heading, Text } from "@chakra-ui/react";
+import { Card, CardBody, CardHeader, Heading, Text, useToast } from "@chakra-ui/react";
 import { InputField, SubmitButton } from "@plural/form";
 import { SerializableDisplayName, UpdateDisplay, UpdateDisplaySchema } from "@plural/schema";
 import { Form, Formik } from "formik";
@@ -13,6 +13,7 @@ export function DisplayEditor({
   id,
   display,
 }: DisplayEditorProps) {
+  const toast = useToast();
   return (
     <Formik<UpdateDisplay>
       initialValues={{
@@ -31,7 +32,13 @@ export function DisplayEditor({
         });
         const res = await r.json();
         if(res.status === "ok") {
-          // TODO: successful, do something?
+          toast({
+            title: "Profile Updated",
+            description: "Successfully updated profile.",
+            status: "success",
+            position: "top-right",
+            isClosable: true,
+          });
         }
       }}
     >
