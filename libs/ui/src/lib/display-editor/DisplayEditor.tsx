@@ -9,10 +9,7 @@ export interface DisplayEditorProps {
   display: SerializableDisplayName;
 }
 
-export function DisplayEditor({
-  id,
-  display,
-}: DisplayEditorProps) {
+export function DisplayEditor({ id, display }: DisplayEditorProps) {
   const toast = useToast();
   return (
     <Formik<UpdateDisplay>
@@ -31,7 +28,7 @@ export function DisplayEditor({
           body: JSON.stringify(values),
         });
         const res = await r.json();
-        if(res.status === "ok") {
+        if (res.status === "ok") {
           toast({
             title: "Profile Updated",
             description: "Successfully updated profile.",
@@ -45,45 +42,20 @@ export function DisplayEditor({
       <Form>
         <Card variant="outline">
           <CardHeader>
-            <Heading size="sm">
-              Edit Display
-            </Heading>
-            <Text fontSize="xs">
-              Display ID {id}
-            </Text>
+            <Heading size="sm">Edit Display</Heading>
+            <Text fontSize="xs">Display ID {id}</Text>
           </CardHeader>
           <CardBody>
-            <VisibilityFieldWrapper
-              name="nameVisibility"
-            >
-              <InputField
-                name="name"
-                label="Name"
-                my={{ md: 0 }}
-              />
+            <VisibilityFieldWrapper name="nameVisibility">
+              <InputField name="name" label="Name" my={{ md: 0 }} />
             </VisibilityFieldWrapper>
-            <VisibilityFieldWrapper
-              name="displayNameVisibility"
-            >
-              <InputField
-                name="displayName"
-                label="Display Name"
-                my={{ md: 0 }}
-              />
+            <VisibilityFieldWrapper name="displayNameVisibility">
+              <InputField name="displayName" label="Display Name" my={{ md: 0 }} />
             </VisibilityFieldWrapper>
-            <VisibilityFieldWrapper
-              name="bioVisibility"
-            >
-              <InputField
-                name="bio"
-                label="Description/Bio"
-                my={{ md: 0 }}
-                textarea
-              />
+            <VisibilityFieldWrapper name="bioVisibility">
+              <InputField name="bio" label="Description/Bio" my={{ md: 0 }} textarea />
             </VisibilityFieldWrapper>
-            <SubmitButton colorScheme="blue">
-              Save Display
-            </SubmitButton>
+            <SubmitButton colorScheme="blue">Save Display</SubmitButton>
             {/* TODO: Also list other uses of the display */}
           </CardBody>
         </Card>
