@@ -116,7 +116,7 @@ describe("posting e2e", () => {
 
     cy.visit("/@test/");
 
-    cy.contains("Sign In");
+    cy.contains("New Toot");
     cy.get("@coFrontPostId").then(id => {
       cy.get(`[data-note][data-note-id='${id}']`).should("have.length", 1);
       cy.get(`[data-note-id='${id}'] [data-note-ft-author='alter1']`).should("have.length", 1);
