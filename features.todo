@@ -66,7 +66,7 @@ Administration:
     ☐ Registration approval interface
 
 Branding:
-  ✔ Consistent fonts from Google Fonts @PluralTown <VERSION> @done(<BRANCH>)
+  ✔ Consistent fonts from Google Fonts @PluralTown v1.2.0 @done(23-1-14)
     https://github.com/plural-town/plural/issues/11
 
 Background Task System:
@@ -86,4 +86,4 @@ Development:
   Workflow/CI:
     ✔ Lint/test in CI @PluralTown v1.0.0 @done(23-1-5)
     ✔ Automated releases @PluralTown v1.0.0 @done(23-1-5)
-    ✔ Cypress E2E tests in CI @PluralTown <VERSION> @done(<BRANCH>)
+    ✔ Cypress E2E tests in CI @PluralTown v1.2.0 @done(23-1-14)
