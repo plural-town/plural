@@ -112,8 +112,8 @@ describe("E2E Application Tests", () => {
     cy.contains("Visibility");
     cy.get("input[name='displayName']").clear().type("The Test System");
     cy.get("button[type='submit']").click();
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(100);
+
+    cy.contains("Successfully updated profile.");
 
     cy.visit(`http://plural.local:4200/@${systemHandle}/`);
     cy.contains("The Test System");

@@ -13,6 +13,19 @@ declare namespace Cypress {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
     /**
+     * @param name The name of the snapshots that will be generated
+     * @param testThreshold @default 0 A number between 0 and 1 that represents the allowed percentage of pixels that can be different between the two snapshots
+     * @param retryOptions @default { limit: 1 } @see {@link RecurseDefaults}
+     * @example cy.compareSnapshot('empty-canvas', 0.1)
+     */
+    compareSnapshot(
+      name: string,
+      testThreshold?: number,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      retryOptions?: Partial<any>,
+    ): Chainable<Element>;
+
+    /**
      * Reset the entire database, and seed testing data
      */
     clean(): void;
@@ -27,31 +40,37 @@ Cypress.Commands.add("clean", () => {
 });
 
 Cypress.Commands.add("apiSession", (id, email, password) => {
-  cy.session(id, () => {
-    cy.request({
-      method: "POST",
-      url: "/api/login/",
-      body: {
-        email,
-        password,
-      },
-    });
-  }, {
-    validate() {
-      cy.getCookie("plural_social").should("exist");
+  cy.session(
+    id,
+    () => {
+      cy.request({
+        method: "POST",
+        url: "/api/login/",
+        body: {
+          email,
+          password,
+        },
+      });
     },
-  });
+    {
+      validate() {
+        cy.getCookie("plural_social").should("exist");
+      },
+    },
+  );
 });
 
 //
 // -- This is a parent command --
-Cypress.Commands.add('login', (id, email, password) => {
+Cypress.Commands.add("login", (id, email, password) => {
   cy.session(id, () => {
     cy.visit("/login/");
     cy.get("input[name='email']").type(email);
     cy.get("input[name='password']").type(password);
     cy.get("button[type='submit']").click();
-    cy.contains("Plural Social");
+    cy.contains("Plural Social", {
+      timeout: 20 * 1000,
+    });
   });
 });
 //
@@ -69,11 +88,8 @@ Cypress.Commands.add('login', (id, email, password) => {
 Cypress.Commands.add("visitNoScript", (route: string) => {
   cy.request(route)
     .its("body")
-    .then(html => {
-      const noScript = html.replace(
-        /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
-        "",
-      );
+    .then((html) => {
+      const noScript = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
       cy.document().invoke({ log: false }, "write", noScript);
     });
-})
+});

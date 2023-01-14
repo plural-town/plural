@@ -4,6 +4,15 @@ import { theme } from "@plural-town/theme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppProps } from "next/app";
 import Head from "next/head";
+import { Heebo, Overpass } from "@next/font/google";
+
+const heebo = Heebo({
+  subsets: ["latin"],
+});
+
+const overpass = Overpass({
+  subsets: ["latin"],
+});
 
 // https://coolors.co/870058-f2d0a4-a4303f-ffeccc-c8d6af
 
@@ -48,6 +57,10 @@ const accent = {
 
 const customTheme = extendTheme(
   {
+    fonts: {
+      heading: heebo.style.fontFamily,
+      body: overpass.style.fontFamily,
+    },
     colors: {
       brand,
       secondary,
