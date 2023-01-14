@@ -62,6 +62,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # 'containers' is a placeholder variable to create extra machines for parallel execution
+        containers: [1,2,3]
+        # 'browser' provides runners for each browser that will be tested
         browser:
           - chrome
           # - electron
@@ -118,7 +121,7 @@ jobs:
           browser: ${{ matrix.browser }}
           install: false
           record: true
-          command: yarn nx e2e plural-e2e --record --tag ${{ matrix.browser }}
+          command: yarn nx e2e plural-e2e --record --group 3x-${{ matrix.browser }} --parallel
           start: yarn nx serve worker
         env:
           NODE_ENV: test
