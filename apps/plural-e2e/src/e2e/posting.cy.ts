@@ -1,8 +1,11 @@
-import { addDestinationToDraft, draftSetAsLatest, publishDraftToProfile } from "../support/compose.po";
+import {
+  addDestinationToDraft,
+  draftSetAsLatest,
+  publishDraftToProfile,
+} from "../support/compose.po";
 import { startDraftFromProfile, visitRootProfile } from "../support/profile.po";
 
 describe("posting e2e", () => {
-
   before(() => {
     cy.viewport("macbook-15");
     cy.exec("yarn nx run models:reset");
@@ -31,9 +34,12 @@ describe("posting e2e", () => {
 
     cy.visit("/@test/");
 
-    cy.get("@simplePostId").then(id => {
+    cy.get("@simplePostId").then((id) => {
       cy.get(`[data-note][data-note-id='${id}']`).should("have.length", 1);
-      cy.get(`[data-note-id='${id}'] [data-note-ft-author='systemProfile']`).should("have.length", 1);
+      cy.get(`[data-note-id='${id}'] [data-note-ft-author='systemProfile']`).should(
+        "have.length",
+        1,
+      );
       cy.contains("#introduction Hello World!");
     });
   });
@@ -49,9 +55,12 @@ describe("posting e2e", () => {
     publishDraftToProfile("systemProfile", "bylinePostId");
 
     visitRootProfile("@test", "Test System");
-    cy.get("@bylinePostId").then(id => {
+    cy.get("@bylinePostId").then((id) => {
       cy.get(`[data-note][data-note-id='${id}']`).should("have.length", 1);
-      cy.get(`[data-note-id='${id}'] [data-note-ft-author='systemProfile']`).should("have.length", 1);
+      cy.get(`[data-note-id='${id}'] [data-note-ft-author='systemProfile']`).should(
+        "have.length",
+        1,
+      );
       cy.get(`[data-note-id='${id}'] [data-note-by-author='alter1']`).should("have.length", 1);
       cy.contains("#introductions #SystemIntro I'm Jay!");
     });
@@ -103,8 +112,12 @@ describe("posting e2e", () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(50);
 
-    cy.get("[data-destination-form-for-profile='systemProfile'] select[name='noteAuthor']").select("Named");
-    cy.get("[data-destination-form-for-profile='systemProfile'] button[type='submit'][data-update-destination]").click();
+    cy.get("[data-destination-form-for-profile='systemProfile'] select[name='noteAuthor']").select(
+      "Named",
+    );
+    cy.get(
+      "[data-destination-form-for-profile='systemProfile'] button[type='submit'][data-update-destination]",
+    ).click();
     cy.contains("Updated destination.");
 
     cy.contains("Set as latest draft").click();
@@ -117,7 +130,7 @@ describe("posting e2e", () => {
     cy.visit("/@test/");
 
     cy.contains("New Toot");
-    cy.get("@coFrontPostId").then(id => {
+    cy.get("@coFrontPostId").then((id) => {
       cy.get(`[data-note][data-note-id='${id}']`).should("have.length", 1);
       cy.get(`[data-note-id='${id}'] [data-note-ft-author='alter1']`).should("have.length", 1);
       cy.get(`[data-note-id='${id}'] [data-note-ft-author='alter2']`).should("have.length", 1);
@@ -125,5 +138,4 @@ describe("posting e2e", () => {
       cy.get(`[data-note-id='${id}'] [data-note-ft-author]`).should("have.length", 2);
     });
   });
-
 });
