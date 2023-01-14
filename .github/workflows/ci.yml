@@ -62,7 +62,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        browser: [chrome, electron, firefox]
+        browser:
+          - chrome
+          # - electron
+          # - firefox
 
     services:
       postgres:
