@@ -141,7 +141,7 @@ jobs:
         if: always()
         with:
           name: e2e-visual-diff-${{ matrix.browser }}
-          if-no-files-found: error
+          if-no-files-found: ignore
           path: |
             apps/plural-e2e/cypress-visual-report
             apps/plural-e2e/cypress-visual-screenshots
@@ -151,5 +151,5 @@ jobs:
         if: failure()
         with:
           name: e2e-artifacts-${{ matrix.browser }}
-          if-no-files-found: error
+          if-no-files-found: ignore
           path: dist/cypress/apps/plural-e2e
