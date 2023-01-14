@@ -123,7 +123,7 @@ jobs:
           record: true
           parallel: true
           group: 3x-${{ matrix.browser }}
-          command: yarn nx e2e plural-e2e -- --record --group 3x-${{ matrix.browser }} -- --parallel
+          command: yarn nx e2e plural-e2e -- -- --record --group 3x-${{ matrix.browser }} --parallel
           start: yarn nx serve worker
         env:
           NODE_ENV: test
