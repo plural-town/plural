@@ -1,5 +1,6 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import { AuthStoreProvider } from "@plural/use-auth";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import MatchMediaMock from "jest-matchmedia-mock";
@@ -11,9 +12,11 @@ const AuthWrapper: React.FC<{
   children: ReactNode;
 }> = ({ children }) => {
   return (
-    <ChakraProvider>
-      <AuthStoreProvider>{children}</AuthStoreProvider>
-    </ChakraProvider>
+    <QueryClientProvider client={new QueryClient()}>
+      <ChakraProvider>
+        <AuthStoreProvider>{children}</AuthStoreProvider>
+      </ChakraProvider>
+    </QueryClientProvider>
   );
 };
 

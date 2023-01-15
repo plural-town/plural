@@ -1,7 +1,17 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook } from "@testing-library/react";
+import React, { ReactNode } from "react";
 import AuthStoreProvider from "../auth-store-provider/AuthStoreProvider";
 
 import useAuth from "./useAuth";
+
+const wrapper: React.FC<{ children: ReactNode }> = ({ children }) => {
+  return (
+    <QueryClientProvider client={new QueryClient()}>
+      <AuthStoreProvider>{children}</AuthStoreProvider>
+    </QueryClientProvider>
+  );
+};
 
 describe("useAuth", () => {
   it("should work without context", () => {
@@ -12,7 +22,7 @@ describe("useAuth", () => {
 
   it("should store authentication", () => {
     const { result } = renderHook(() => useAuth(), {
-      wrapper: AuthStoreProvider,
+      wrapper,
     });
     expect(result.current.users).toBeUndefined();
 
