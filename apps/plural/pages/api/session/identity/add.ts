@@ -43,7 +43,7 @@ export async function activateIdentity(req: NextApiRequest, res: NextApiResponse
     return;
   }
 
-  if (req.session.front && req.session.front.find((i) => i.id === identity)) {
+  if (req.session.front && req.session.front.find((i) => i.id === identity) && !replace) {
     res.status(409).send({
       status: "noop",
     });
