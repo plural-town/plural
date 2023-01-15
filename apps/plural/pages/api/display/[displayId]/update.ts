@@ -2,27 +2,26 @@ import { SESSION_OPTIONS } from "../../../../lib/session";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiRequest, NextApiResponse } from "next";
 import { UpdateDisplaySchema } from "@plural/schema";
-import { Permission, PrismaClient } from "@prisma/client";
+import { Permission } from "@prisma/client";
 import flatten from "lodash.flatten";
+import { prismaClient } from "@plural/prisma";
 
-export async function updateDisplayHandler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export async function updateDisplayHandler(req: NextApiRequest, res: NextApiResponse) {
   const { users } = req.session;
 
-  if(!users) {
+  if (!users) {
     throw new Error("Must be logged in.");
   }
-  const userIds = users.map(u => u.id);
+  const userIds = users.map((u) => u.id);
 
   const { displayId } = req.query;
 
-  if(typeof displayId !== "string") {
+  if (typeof displayId !== "string") {
     throw new Error("Malformed display ID.");
   }
 
-  const prisma = new PrismaClient();
+  const prisma = prismaClient();
+
   // TODO: Filter using who's fronting or a cached list of identities.
   const existing = await prisma.displayName.findUnique({
     where: {
@@ -34,7 +33,7 @@ export async function updateDisplayHandler(
           access: {
             where: {
               permission: {
-                in: [ Permission.OWNER, Permission.ADMIN, Permission.EDIT ],
+                in: [Permission.OWNER, Permission.ADMIN, Permission.EDIT],
               },
             },
             include: {
@@ -43,7 +42,7 @@ export async function updateDisplayHandler(
                   grants: {
                     where: {
                       permission: {
-                        in: [ Permission.OWNER, Permission.ADMIN ],
+                        in: [Permission.OWNER, Permission.ADMIN],
                       },
                       accountId: {
                         in: userIds,
@@ -59,26 +58,20 @@ export async function updateDisplayHandler(
     },
   });
 
-  const profiles = (existing?.profiles ?? []);
-  const profileGrants = flatten(profiles.map(p => p.access));
-  const identities = profileGrants.map(g => g.identity);
-  const identityGrants = flatten(identities.map(i => i.grants));
+  const profiles = existing?.profiles ?? [];
+  const profileGrants = flatten(profiles.map((p) => p.access));
+  const identities = profileGrants.map((g) => g.identity);
+  const identityGrants = flatten(identities.map((i) => i.grants));
 
-  if(!existing || identityGrants.length < 1) {
+  if (!existing || identityGrants.length < 1) {
     return res.status(404).send({
       status: "failure",
       error: "NOT_FOUND_NO_PERM",
     });
   }
 
-  const {
-    name,
-    nameVisibility,
-    displayName,
-    displayNameVisibility,
-    bio,
-    bioVisibility,
-  } = UpdateDisplaySchema.validateSync(req.body);
+  const { name, nameVisibility, displayName, displayNameVisibility, bio, bioVisibility } =
+    UpdateDisplaySchema.validateSync(req.body);
 
   await prisma.displayName.update({
     where: {

@@ -1,8 +1,8 @@
 import { Container } from "@chakra-ui/react";
 import { getLogger } from "@plural/log";
+import { prismaClient } from "@plural/prisma";
 import { ProfilePage } from "@plural/schema";
 import { ProfileCard, SiteHeader } from "@plural/ui";
-import { PrismaClient } from "@prisma/client";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 
@@ -16,7 +16,8 @@ export const getServerSideProps: GetServerSideProps = async ({ query, req, res }
     };
   }
 
-  const prisma = new PrismaClient();
+  const prisma = prismaClient();
+
   const profile = await prisma.remoteProfile.findFirst({
     where: {
       server: server.slice(1),

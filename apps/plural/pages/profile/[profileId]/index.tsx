@@ -3,12 +3,12 @@ import { SESSION_OPTIONS } from "../../../lib/session";
 import { withIronSessionSsr } from "iron-session/next";
 import { getProfilePage, requirePermission, summarizeIdentity } from "@plural/db";
 import { getLogger } from "@plural/log";
-import { PrismaClient } from "@prisma/client";
 import { InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import { NoteCard, ProfileCard, ProfileNoteComposer, SiteHeader, useDisplayName } from "@plural/ui";
 import { AuthHydrationProvider } from "@plural/use-auth";
 import { hydrateRequest } from "@plural-town/next-ability";
+import { prismaClient } from "@plural/prisma";
 
 export const getServerSideProps = withIronSessionSsr(async ({ query, req, res }) => {
   const log = getLogger("ProfilePage.getServerSideProps");
@@ -28,7 +28,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
   const host = req.headers.host;
   const subdomain = host.match(`^(.+).${BASE_DOMAIN}$`);
 
-  const prisma = new PrismaClient();
+  const prisma = prismaClient();
 
   const grants = await prisma.identityGrant.findMany({
     where: {

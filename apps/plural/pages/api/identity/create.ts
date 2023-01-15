@@ -2,19 +2,16 @@ import { CreateIdentityRequestSchema } from "@plural/schema";
 import { SESSION_OPTIONS } from "../../../lib/session";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
 import { customAlphabet } from "nanoid";
 import { nolookalikesSafe } from "nanoid-dictionary";
+import { prismaClient } from "@plural/prisma";
 
 const identityIdGenerator = customAlphabet(nolookalikesSafe, 8);
 
-export async function createIdentityHandler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export async function createIdentityHandler(req: NextApiRequest, res: NextApiResponse) {
   const { users } = req.session;
 
-  if(!users) {
+  if (!users) {
     return res.status(302).send({
       status: "failure",
       error: "NO_LOGIN",
@@ -22,15 +19,11 @@ export async function createIdentityHandler(
     });
   }
 
-  const userIds = users.map(u => u.id);
+  const userIds = users.map((u) => u.id);
 
-  const {
-    accountId,
-    name,
-    displayName,
-  } = CreateIdentityRequestSchema.validateSync(req.body);
+  const { accountId, name, displayName } = CreateIdentityRequestSchema.validateSync(req.body);
 
-  if(!userIds.includes(accountId)) {
+  if (!userIds.includes(accountId)) {
     return res.status(301).send({
       status: "failure",
       error: "NO_PERMS",
@@ -39,7 +32,7 @@ export async function createIdentityHandler(
     });
   }
 
-  const prisma = new PrismaClient();
+  const prisma = prismaClient();
 
   const display = await prisma.displayName.create({
     data: {

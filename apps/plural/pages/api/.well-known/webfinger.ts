@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client";
 import { getLogger } from "@plural/log";
+import { prismaClient } from "@plural/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -9,7 +9,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const SUBDOMAIN_ACCOUNTS = process.env.SUBDOMAIN_ACCOUNTS === "true";
   const BASE_DOMAIN = process.env.BASE_DOMAIN;
 
-  const host = req.headers.host;
   const { resource } = req.query;
 
   if (!resource || typeof resource !== "string") {
@@ -26,10 +25,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const subAccount = resource.match(SUB_ACCOUNT_RESOURCE);
   const subdomainAccount = resource.match(SUB_ACCOUNT_SUBDOMAIN);
 
-  const prisma = new PrismaClient();
-
   if (directAccount) {
     const subject = directAccount[1];
+
+    const prisma = prismaClient();
 
     const profile = await prisma.profile.findFirst({
       where: {

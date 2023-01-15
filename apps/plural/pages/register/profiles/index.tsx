@@ -3,16 +3,16 @@ import { IdentitySelectField, InputField, ProfileSelectField, SubmitButton } fro
 import { SESSION_OPTIONS } from "../../../lib/session";
 import { Form, Formik } from "formik";
 import { withIronSessionSsr } from "iron-session/next";
-import { PrismaClient } from "@prisma/client";
 import { getAccountIdentities, getAccountProfiles } from "@plural/db";
 import { InferGetServerSidePropsType } from "next";
 import { CreateRootProfileRequestSchema } from "@plural/schema";
 import { useState } from "react";
+import { prismaClient } from "@plural/prisma";
 
 export const getServerSideProps = withIronSessionSsr(async ({ req, res }) => {
   const { registration } = req.session;
 
-  if(!registration) {
+  if (!registration) {
     res.setHeader("location", "/register/email/login/");
     res.statusCode = 302;
     res.end();
@@ -24,7 +24,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ req, res }) => {
     };
   }
 
-  const prisma = new PrismaClient();
+  const prisma = prismaClient();
   const identities = await getAccountIdentities(registration.id, prisma);
   const profiles = await getAccountProfiles(registration.id, prisma);
 
@@ -44,32 +44,33 @@ export function RegisterProfilesPage({
 
   return (
     <Container>
-      <Heading as="h1">
-        Profiles
-      </Heading>
-      { profileList
-        .filter(p => p.isRoot)
-        .map(profile => (
+      <Heading as="h1">Profiles</Heading>
+      {profileList
+        .filter((p) => p.isRoot)
+        .map((profile) => (
           <Card key={profile.id} data-profile={profile.id} data-profile-slug={profile.slug}>
             <CardHeader>
-              <Heading size="sm">
-                @{ profile.slug }
-              </Heading>
+              <Heading size="sm">@{profile.slug}</Heading>
             </CardHeader>
             <CardBody>
-              {profileList.filter(p => p.parent === profile.id).map(nested => (
-                <Card key={nested.id} size="sm" variant="filled" data-profile={nested.id} data-profile-slug={nested.slug}>
-                  <CardHeader>
-                    <Heading size="xs">
-                      @{nested.slug}
-                    </Heading>
-                  </CardHeader>
-                </Card>
-              ))}
+              {profileList
+                .filter((p) => p.parent === profile.id)
+                .map((nested) => (
+                  <Card
+                    key={nested.id}
+                    size="sm"
+                    variant="filled"
+                    data-profile={nested.id}
+                    data-profile-slug={nested.slug}
+                  >
+                    <CardHeader>
+                      <Heading size="xs">@{nested.slug}</Heading>
+                    </CardHeader>
+                  </Card>
+                ))}
             </CardBody>
           </Card>
-        ))
-      }
+        ))}
       <Divider mt={6} mb={4} />
       <Heading as="h2" size="md">
         New Profile
@@ -93,7 +94,7 @@ export function RegisterProfilesPage({
             body: JSON.stringify(values),
           });
           const res = await r.json();
-          if(res.status === "ok") {
+          if (res.status === "ok") {
             setProfileList([...profileList, res.profile]);
           }
         }}
@@ -114,11 +115,7 @@ export function RegisterProfilesPage({
             field="id"
             helpText="Select the first identity that will be able to manage this profile.  You can add more identities after the identity has been created."
           />
-          <InputField
-            name="slug"
-            required
-            label="Username/Handle"
-          />
+          <InputField name="slug" required label="Username/Handle" />
           <IdentitySelectField
             name="displayId"
             identities={identities}
@@ -137,9 +134,7 @@ export function RegisterProfilesPage({
             label="Profile Display Name"
             helpText="If you are not linking an identity, a longer name for this profile."
           />
-          <SubmitButton colorScheme="blue">
-            Create Profile
-          </SubmitButton>
+          <SubmitButton colorScheme="blue">Create Profile</SubmitButton>
         </Form>
       </Formik>
     </Container>

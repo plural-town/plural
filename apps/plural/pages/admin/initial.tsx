@@ -7,10 +7,10 @@ import { InferGetServerSidePropsType } from "next";
 import { Form, Formik } from "formik";
 import { IdentitySelectField, InputField, SubmitButton } from "@plural/form";
 import { getAccountIdentities } from "@plural/db";
-import { PrismaClient } from "@prisma/client";
 import flatten from "lodash.flatten";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { prismaClient } from "@plural/prisma";
 
 export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
   const log = getLogger("AdminPage.getServerSideProps");
@@ -52,7 +52,8 @@ export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
     };
   }
 
-  const prisma = new PrismaClient();
+  const prisma = prismaClient();
+
   const identities = flatten(
     await Promise.all(users.map((u) => getAccountIdentities(u.id, prisma))),
   );

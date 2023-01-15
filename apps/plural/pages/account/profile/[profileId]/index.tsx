@@ -2,17 +2,23 @@ import { Container, Heading, Text } from "@chakra-ui/react";
 import { SESSION_OPTIONS } from "../../../../lib/session";
 import { withIronSessionSsr } from "iron-session/next";
 import Head from "next/head";
-import { Permission, PrismaClient } from "@prisma/client";
-import { getAccountIdentities, permissionAbove, requirePermission, summarizeProfile } from "@plural/db";
+import { Permission } from "@prisma/client";
+import {
+  getAccountIdentities,
+  permissionAbove,
+  requirePermission,
+  summarizeProfile,
+} from "@plural/db";
 import flatten from "lodash.flatten";
 import { InferGetServerSidePropsType } from "next";
 import { DisplayEditor } from "@plural/ui";
 import { SerializableDisplayName } from "@plural/schema";
+import { prismaClient } from "@plural/prisma";
 
 export const getServerSideProps = withIronSessionSsr(async ({ query, req, res }) => {
   const { users } = req.session;
 
-  if(!users) {
+  if (!users) {
     return {
       redirect: {
         destination: "/login/",
@@ -23,15 +29,17 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
 
   const { profileId } = query;
 
-  if(typeof profileId !== "string") {
+  if (typeof profileId !== "string") {
     throw new Error("Incorrect profileId format.");
   }
 
-  const prisma = new PrismaClient();
+  const prisma = prismaClient();
 
   // TODO: Use "fronting" to determine identities, vs. all identities of the accounts
-  const identities = flatten(await Promise.all(users.map(({ id }) => getAccountIdentities(id, prisma))));
-  const viewerIds = identities.map(i => i.id);
+  const identities = flatten(
+    await Promise.all(users.map(({ id }) => getAccountIdentities(id, prisma))),
+  );
+  const viewerIds = identities.map((i) => i.id);
 
   const profile = await prisma.profile.findUnique({
     where: {
@@ -50,18 +58,18 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
     },
   });
 
-  let permissionLevel: (Permission | "PUBLIC") = "PUBLIC";
-  for(const grant of (profile?.access ?? [])) {
+  let permissionLevel: Permission | "PUBLIC" = "PUBLIC";
+  for (const grant of profile?.access ?? []) {
     const { permission } = grant;
-    if(permissionAbove(permission, permissionLevel)) {
+    if (permissionAbove(permission, permissionLevel)) {
       permissionLevel = permission;
     }
-    if(permissionLevel === "OWNER") {
+    if (permissionLevel === "OWNER") {
       break;
     }
   }
 
-  if(!profile || !requirePermission(permissionLevel, "EDIT")) {
+  if (!profile || !requirePermission(permissionLevel, "EDIT")) {
     return {
       notFound: true,
     };
@@ -89,19 +97,14 @@ export function ProfileEditorPage({
   return (
     <>
       <Head>
-        <title>{ `Edit ${summary.fullUsername}` }</title>
+        <title>{`Edit ${summary.fullUsername}`}</title>
       </Head>
       <Container maxW="container.lg">
         <Heading as="h1" size="md">
           Edit Profile
         </Heading>
-        <Text my={2}>
-          {summary.fullUsername}
-        </Text>
-        <DisplayEditor
-          id={summary.displayId}
-          display={display}
-        />
+        <Text my={2}>{summary.fullUsername}</Text>
+        <DisplayEditor id={summary.displayId} display={display} />
       </Container>
     </>
   );

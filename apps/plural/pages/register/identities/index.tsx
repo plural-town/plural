@@ -1,13 +1,22 @@
-import { Button, Card, CardHeader, Container, Divider, Heading, Link, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Card,
+  CardHeader,
+  Container,
+  Divider,
+  Heading,
+  Link,
+  Text,
+} from "@chakra-ui/react";
 import { SESSION_OPTIONS } from "../../../lib/session";
 import { withIronSessionSsr } from "iron-session/next";
-import { PrismaClient } from "@prisma/client";
 import { InferGetServerSidePropsType } from "next";
 import NextLink from "next/link";
 import { Form, Formik } from "formik";
 import { InputField, SubmitButton } from "@plural/form";
 import { CreateIdentityRequest, CreateIdentityRequestSchema } from "@plural/schema";
 import { useState } from "react";
+import { prismaClient } from "@plural/prisma";
 
 export const getServerSideProps = withIronSessionSsr(async ({ req, res }) => {
   const name = process.env.SITE_NAME;
@@ -16,7 +25,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ req, res }) => {
   } as const;
   const { registration } = req.session;
 
-  if(!registration) {
+  if (!registration) {
     res.setHeader("location", "/register/email/login/");
     res.statusCode = 302;
     res.end();
@@ -30,7 +39,8 @@ export const getServerSideProps = withIronSessionSsr(async ({ req, res }) => {
     };
   }
 
-  const prisma = new PrismaClient();
+  const prisma = prismaClient();
+
   const grants = await prisma.identityGrant.findMany({
     where: {
       accountId: registration.id,
@@ -39,12 +49,12 @@ export const getServerSideProps = withIronSessionSsr(async ({ req, res }) => {
       identity: {
         include: {
           display: true,
-        }
+        },
       },
     },
   });
 
-  const identities = grants.map(grant => {
+  const identities = grants.map((grant) => {
     const { identity, permission } = grant;
     const { id, display } = identity;
     return {
@@ -80,38 +90,41 @@ export function RegistrationIdentitiesPage({
   const [identityList, setIdentityList] = useState(identities);
 
   const nonEmpty = (str: string) => {
-    if(typeof str === "string" && str.length > 0) {
+    if (typeof str === "string" && str.length > 0) {
       return str;
     }
     return undefined;
-  }
+  };
 
   return (
     <Container>
       <Heading as="h1">Identities</Heading>
       <Text my={2}>
-        Unlike many social network platforms, {name} allows you to have multiple identities
-        under a single account.
+        Unlike many social network platforms, {name} allows you to have multiple identities under a
+        single account.
       </Text>
       <Text my={2}>
         These identities will not be publicly visible - instead, they are like creating multiple
-        accounts in your web browser, for different browsing experiences.
-
-        The next step will create one or more public profiles.
+        accounts in your web browser, for different browsing experiences. The next step will create
+        one or more public profiles.
       </Text>
       <Text my={2}>
-        If you are setting up an account for an organization or company
-        you may wish to create one identity for yourself as a staff member,
-        and one identity for the company as a whole.
+        If you are setting up an account for an organization or company you may wish to create one
+        identity for yourself as a staff member, and one identity for the company as a whole.
       </Text>
       <Text my={2}>
         <Link href={links.system}>Systems</Link> may wish to create accounts for each alter.
       </Text>
-      { identityList.map(identity => (
-        <Card key={identity.id} my={2} data-identity={identity.id} data-identity-name={identity.display.name}>
+      {identityList.map((identity) => (
+        <Card
+          key={identity.id}
+          my={2}
+          data-identity={identity.id}
+          data-identity-name={identity.display.name}
+        >
           <CardHeader>
             <Heading size="sm">
-              { nonEmpty(identity.display.displayName) ?? identity.display.name }
+              {nonEmpty(identity.display.displayName) ?? identity.display.name}
             </Heading>
           </CardHeader>
         </Card>
@@ -138,28 +151,23 @@ export function RegistrationIdentitiesPage({
             body: JSON.stringify(values),
           });
           const res = await r.json();
-          if(res.status === "ok") {
+          if (res.status === "ok") {
             setIdentityList([...identityList, res.identity]);
           }
         }}
       >
         <Form>
-          <InputField
-            name="name"
-            label="Name"
-          />
+          <InputField name="name" label="Name" />
           <InputField
             name="displayName"
             label="Display Name"
             helpText="Typically used for longer names, or for a more descriptive name that is not visible to everyone."
           />
-          <SubmitButton colorScheme="blue">
-            Create Identity
-          </SubmitButton>
+          <SubmitButton colorScheme="blue">Create Identity</SubmitButton>
         </Form>
       </Formik>
     </Container>
-  )
+  );
 }
 
 export default RegistrationIdentitiesPage;

@@ -1,6 +1,6 @@
 import { createProfileURL } from "@plural/db";
 import { getLogger } from "@plural/log";
-import { PrismaClient } from "@prisma/client";
+import { prismaClient } from "@plural/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 
 function nonempty(val: string) {
@@ -22,7 +22,7 @@ export default async function actorHandler(req: NextApiRequest, res: NextApiResp
     return;
   }
 
-  const prisma = new PrismaClient();
+  const prisma = prismaClient();
 
   const profile = await prisma.profile.findUnique({
     where: {

@@ -6,10 +6,10 @@ import {
   ImportQueuedResponse,
   ImportStatusResponse,
 } from "@plural/schema";
-import { PrismaClient } from "@prisma/client";
 import { SESSION_OPTIONS } from "../../../lib/session";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiRequest, NextApiResponse } from "next";
+import { prismaClient } from "@plural/prisma";
 
 export async function importContentStatusHandler(
   req: NextApiRequest,
@@ -40,7 +40,8 @@ export async function importContentStatusHandler(
     return;
   }
 
-  const prisma = new PrismaClient();
+  const prisma = prismaClient();
+
   const complete = await prisma.remoteQuery.findUnique({
     where: {
       id: search,

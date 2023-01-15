@@ -1,15 +1,16 @@
 import { NewEmailRequestSchema } from "@plural/schema";
-import { PrismaClient } from "@prisma/client";
 import { SESSION_OPTIONS } from "../../lib/session";
 import { compare } from "bcrypt";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiRequest, NextApiResponse } from "next";
+import { prismaClient } from "@plural/prisma";
 
 export async function emailLoginHandler(req: NextApiRequest, res: NextApiResponse) {
   const { registration } = req.query;
   const { email, password } = NewEmailRequestSchema.validateSync(req.body);
 
-  const prisma = new PrismaClient();
+  const prisma = prismaClient();
+
   const address = await prisma.email.findFirst({
     where: {
       email,
