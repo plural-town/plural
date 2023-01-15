@@ -1,3 +1,5 @@
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import {
@@ -6,6 +8,7 @@ import {
   IdentitySessionContext,
   UserSessionContext,
 } from "../AuthContext";
+import { ServerAuthHydration } from "../ServerAuthHydration";
 
 type StoredData = Pick<AuthContext, "users" | "front">;
 
@@ -32,6 +35,26 @@ export function AuthStoreProvider({ store, children }: AuthStoreProviderProps) {
   const loggedIn = useMemo<boolean>(() => {
     return !!stored.users && Array.isArray(stored.users) && stored.users.length > 0;
   }, [stored.users]);
+
+  // TODO: add useQuery caching options so this doesn't always fetch
+
+  const fetch = useQuery({
+    queryKey: ["auth"],
+    queryFn: () => {
+      return axios.get("/api/session/auth/");
+    },
+    enabled: clientOn,
+  });
+
+  useEffect(() => {
+    if (fetch.data && fetch.data.data.status === "ok") {
+      const auth: ServerAuthHydration = fetch.data.data.auth;
+      setStored({
+        users: auth.users ?? undefined,
+        front: auth.front ?? undefined,
+      });
+    }
+  }, [fetch.data, setStored]);
 
   const addUser = useCallback(
     (user: UserSessionContext): void => {
@@ -84,6 +107,9 @@ export function AuthStoreProvider({ store, children }: AuthStoreProviderProps) {
     addUser,
     setFront,
     setUsers,
+    refresh: async () => {
+      await fetch.refetch();
+    },
   };
 
   return <authContext.Provider value={ctx}>{children}</authContext.Provider>;

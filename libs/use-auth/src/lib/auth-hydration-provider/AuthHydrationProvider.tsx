@@ -46,6 +46,7 @@ export function AuthHydrationProvider({ auth, children }: AuthHydrationProviderP
     addUser: existing.addUser,
     setFront: existing.setFront,
     setUsers: existing.setUsers,
+    refresh: existing.refresh,
   };
 
   return <authContext.Provider value={ctx}>{children}</authContext.Provider>;

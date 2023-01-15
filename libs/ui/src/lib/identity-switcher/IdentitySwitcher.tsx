@@ -78,7 +78,7 @@ export function IdentitySwitcher({ modal, ...props }: IdentitySwitcherProps) {
   const cols = useBreakpointValue(columns, { fallback: "sm" });
   const activeGrid = useDisclosure();
 
-  const { clientOn, loggedIn, front } = useAuth();
+  const { clientOn, loggedIn, front, refresh } = useAuth();
 
   if (!loggedIn) {
     return (
@@ -179,7 +179,9 @@ export function IdentitySwitcher({ modal, ...props }: IdentitySwitcherProps) {
         validationSchema={ActivateIdentityRequestSchema}
         onSubmit={async (values) => {
           const res = await axios.post("/api/session/identity/add/", values);
-          // TODO: handle response
+          if (res.data.status === "ok") {
+            refresh();
+          }
           return;
         }}
       >

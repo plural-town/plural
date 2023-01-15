@@ -167,6 +167,8 @@ export function SiteHeaderUserMenu(props: SiteHeaderUserMenuProps) {
     );
   }
 
+  console.error("Undetermined session status.");
+
   // TODO: Should never get here. Log warning.
 
   return (

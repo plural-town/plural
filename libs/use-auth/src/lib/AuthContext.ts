@@ -44,6 +44,7 @@ export interface AuthContext {
   users?: UserSessionContext[];
   front?: IdentitySessionContext[];
 
+  refresh(): Promise<void>;
   addUser(user: UserSessionContext): void;
   setUsers(users: UserSessionContext[]): void;
   setFront(front: IdentitySessionContext[]): void;
@@ -53,6 +54,9 @@ export const authContext = createContext<AuthContext>({
   hydrated: false,
   loggedIn: false,
   clientOn: false,
+  refresh: () => {
+    return Promise.resolve();
+  },
   addUser: () => {
     return;
   },
