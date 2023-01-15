@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { UpdateDisplaySchema } from "@plural/schema";
 import { Permission } from "@prisma/client";
 import flatten from "lodash.flatten";
-import { prisma } from "@plural/prisma";
+import { prismaClient } from "@plural/prisma";
 
 export async function updateDisplayHandler(req: NextApiRequest, res: NextApiResponse) {
   const { users } = req.session;
@@ -19,6 +19,8 @@ export async function updateDisplayHandler(req: NextApiRequest, res: NextApiResp
   if (typeof displayId !== "string") {
     throw new Error("Malformed display ID.");
   }
+
+  const prisma = prismaClient();
 
   // TODO: Filter using who's fronting or a cached list of identities.
   const existing = await prisma.displayName.findUnique({

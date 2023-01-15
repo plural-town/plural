@@ -1,6 +1,6 @@
 import { ASObject, Note, Person } from "@plural-town/activitystreams-validator";
 import { Task } from "@plural-town/queue-core";
-import { prisma } from "@plural/prisma";
+import { prismaClient } from "@plural/prisma";
 import { PrismaClient, RemoteEntity } from "@prisma/client";
 import axios, { AxiosResponse } from "axios";
 import {
@@ -50,7 +50,7 @@ export class QueryURL extends Task<QueryURL> {
   }
 
   public client() {
-    return prisma;
+    return prismaClient();
   }
 
   public storeRemotePerson(...args: Parameters<typeof storeRemotePerson>) {

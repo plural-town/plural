@@ -2,7 +2,7 @@ import { runTask } from "@plural-town/exec-queue";
 import { TaskQueue } from "@plural-town/queue-worker";
 import { SendDuplicateRegistrationEmail, SendEmailConfirmationCode } from "@plural/email-tasks";
 import { getLogger } from "@plural/log";
-import { prisma } from "@plural/prisma";
+import { prismaClient } from "@plural/prisma";
 import { NewEmailRequestSchema } from "@plural/schema";
 import { hash } from "bcrypt";
 import { customAlphabet } from "nanoid";
@@ -26,6 +26,8 @@ export async function createAccountHandler(req: NextApiRequest, res: NextApiResp
   }
 
   const hashed = await hash(password, 14);
+
+  const prisma = prismaClient();
 
   const existingVerified = await prisma.email.findFirst({
     where: {

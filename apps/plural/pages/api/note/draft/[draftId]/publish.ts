@@ -2,7 +2,7 @@ import { SESSION_OPTIONS } from "../../../../../lib/session";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiRequest, NextApiResponse } from "next";
 import { canAccountEditNote } from "@plural/db";
-import { prisma } from "@plural/prisma";
+import { prismaClient } from "@plural/prisma";
 
 export async function publishDraftHandler(req: NextApiRequest, res: NextApiResponse) {
   const { users } = req.session;
@@ -14,6 +14,8 @@ export async function publishDraftHandler(req: NextApiRequest, res: NextApiRespo
   if (typeof draftId !== "string") {
     throw new Error("Invalid draft ID parameter.");
   }
+
+  const prisma = prismaClient();
 
   const draft = await prisma.noteDraft.findUnique({
     where: {

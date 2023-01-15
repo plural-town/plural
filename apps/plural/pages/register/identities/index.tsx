@@ -16,7 +16,7 @@ import { Form, Formik } from "formik";
 import { InputField, SubmitButton } from "@plural/form";
 import { CreateIdentityRequest, CreateIdentityRequestSchema } from "@plural/schema";
 import { useState } from "react";
-import { prisma } from "@plural/prisma";
+import { prismaClient } from "@plural/prisma";
 
 export const getServerSideProps = withIronSessionSsr(async ({ req, res }) => {
   const name = process.env.SITE_NAME;
@@ -38,6 +38,8 @@ export const getServerSideProps = withIronSessionSsr(async ({ req, res }) => {
       },
     };
   }
+
+  const prisma = prismaClient();
 
   const grants = await prisma.identityGrant.findMany({
     where: {

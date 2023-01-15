@@ -4,7 +4,7 @@ import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiRequest, NextApiResponse } from "next";
 import { customAlphabet } from "nanoid";
 import { nolookalikesSafe } from "nanoid-dictionary";
-import { prisma } from "@plural/prisma";
+import { prismaClient } from "@plural/prisma";
 
 const identityIdGenerator = customAlphabet(nolookalikesSafe, 8);
 
@@ -31,6 +31,8 @@ export async function createIdentityHandler(req: NextApiRequest, res: NextApiRes
       message: "Cannot create identity for an account that is not logged in.",
     });
   }
+
+  const prisma = prismaClient();
 
   const display = await prisma.displayName.create({
     data: {

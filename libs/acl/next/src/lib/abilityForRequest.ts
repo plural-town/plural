@@ -5,7 +5,7 @@ import isEqual from "lodash.isequal";
 import { FrontSession } from "./FrontSession";
 import { UserSession } from "./UserSession";
 import { ActiveAccountGrant, ActiveIdentity } from "@plural-town/acl-models";
-import { prisma as existingPrisma } from "@plural/prisma";
+import { prismaClient } from "@plural/prisma";
 import { DateTime, Duration } from "luxon";
 import { IncomingMessage } from "http";
 
@@ -90,7 +90,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
       }
 
       if (!prisma) {
-        prisma = existingPrisma;
+        prisma = prismaClient();
       }
 
       const identity = await prisma.identity.findUnique({
@@ -176,7 +176,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
   }
 
   if (users) {
-    const prisma = options?.prisma ?? existingPrisma;
+    const prisma = options?.prisma ?? prismaClient();
 
     const grants = await prisma.identityGrant.findMany({
       where: {
@@ -229,7 +229,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
   }
   return [
     ability,
-    (options?.prisma ?? existingPrisma) as ReturnedPrismaClient<Options>,
+    (options?.prisma ?? prismaClient()) as ReturnedPrismaClient<Options>,
     rules,
   ] as const;
 }

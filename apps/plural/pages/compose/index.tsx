@@ -7,7 +7,7 @@ import { InferGetServerSidePropsType } from "next";
 import { Form, Formik } from "formik";
 import { CheckboxField, SubmitButton } from "@plural/form";
 import { useRouter } from "next/router";
-import { prisma } from "@plural/prisma";
+import { prismaClient } from "@plural/prisma";
 
 export const getServerSideProps = withIronSessionSsr(async ({ req, res }) => {
   const { users } = req.session;
@@ -22,6 +22,8 @@ export const getServerSideProps = withIronSessionSsr(async ({ req, res }) => {
       },
     };
   }
+
+  const prisma = prismaClient();
 
   const allIdentities = await Promise.all(
     users.map((user) => getAccountIdentities(user.id, prisma)),

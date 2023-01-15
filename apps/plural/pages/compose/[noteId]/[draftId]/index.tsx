@@ -17,7 +17,7 @@ import uniqBy from "lodash.uniqby";
 import React, { useMemo, useState } from "react";
 import { AddNoteDestination, AddNoteDestinationSchema, PublishedNoteProfile } from "@plural/schema";
 import { NoteCard, PostDestinationForm } from "@plural/ui";
-import { prisma } from "@plural/prisma";
+import { prismaClient } from "@plural/prisma";
 
 export const getServerSideProps = withIronSessionSsr(async ({ query, req, res }) => {
   const name = process.env.SITE_NAME;
@@ -34,6 +34,8 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
     };
   }
   const userIds = users.map((u) => u.id);
+
+  const prisma = prismaClient();
 
   // TODO: Only include profiles of current authors (aka filter by fronting)
   const profiles = uniqBy(

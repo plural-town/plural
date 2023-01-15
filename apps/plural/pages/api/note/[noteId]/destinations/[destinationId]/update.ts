@@ -1,10 +1,9 @@
 import { SESSION_OPTIONS } from "../../../../../../lib/session";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
 import { canAccountEditNote } from "@plural/db";
 import { UpdateNoteDestinationSchema } from "@plural/schema";
-import { prisma } from "@plural/prisma";
+import { prismaClient } from "@plural/prisma";
 
 export async function updateNoteDestinationHandler(req: NextApiRequest, res: NextApiResponse) {
   const { users } = req.session;
@@ -21,6 +20,8 @@ export async function updateNoteDestinationHandler(req: NextApiRequest, res: Nex
   if (typeof noteId !== "string" || typeof destinationId !== "string") {
     throw new Error("Invalid parameter.");
   }
+
+  const prisma = prismaClient();
 
   const note = await canAccountEditNote(
     users.map((u) => u.id),

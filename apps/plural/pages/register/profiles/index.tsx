@@ -7,7 +7,7 @@ import { getAccountIdentities, getAccountProfiles } from "@plural/db";
 import { InferGetServerSidePropsType } from "next";
 import { CreateRootProfileRequestSchema } from "@plural/schema";
 import { useState } from "react";
-import { prisma } from "@plural/prisma";
+import { prismaClient } from "@plural/prisma";
 
 export const getServerSideProps = withIronSessionSsr(async ({ req, res }) => {
   const { registration } = req.session;
@@ -24,6 +24,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ req, res }) => {
     };
   }
 
+  const prisma = prismaClient();
   const identities = await getAccountIdentities(registration.id, prisma);
   const profiles = await getAccountProfiles(registration.id, prisma);
 

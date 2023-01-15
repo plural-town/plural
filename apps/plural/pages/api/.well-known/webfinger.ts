@@ -1,5 +1,5 @@
 import { getLogger } from "@plural/log";
-import { prisma } from "@plural/prisma";
+import { prismaClient } from "@plural/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -27,6 +27,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (directAccount) {
     const subject = directAccount[1];
+
+    const prisma = prismaClient();
 
     const profile = await prisma.profile.findFirst({
       where: {

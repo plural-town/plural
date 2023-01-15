@@ -6,7 +6,7 @@ import { AddNoteDestinationSchema } from "@plural/schema";
 import flatten from "lodash.flatten";
 import { customAlphabet } from "nanoid";
 import { nolookalikesSafe } from "nanoid-dictionary";
-import { prisma } from "@plural/prisma";
+import { prismaClient } from "@plural/prisma";
 
 const itemIdGenerator = customAlphabet(nolookalikesSafe, 11);
 
@@ -27,6 +27,8 @@ export async function addNoteDestinationHandler(req: NextApiRequest, res: NextAp
   const { localOnly, noteAuthor, privacy, profileId } = AddNoteDestinationSchema.validateSync(
     req.body,
   );
+
+  const prisma = prismaClient();
 
   const profiles = flatten(await Promise.all(users.map((u) => getAccountProfiles(u.id, prisma))));
   const profile = profiles.find((p) => p.id === profileId);

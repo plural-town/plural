@@ -10,7 +10,7 @@ import { getAccountIdentities } from "@plural/db";
 import flatten from "lodash.flatten";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { prisma } from "@plural/prisma";
+import { prismaClient } from "@plural/prisma";
 
 export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
   const log = getLogger("AdminPage.getServerSideProps");
@@ -51,6 +51,8 @@ export const getServerSideProps = withIronSessionSsr(async ({ req }) => {
       },
     };
   }
+
+  const prisma = prismaClient();
 
   const identities = flatten(
     await Promise.all(users.map((u) => getAccountIdentities(u.id, prisma))),

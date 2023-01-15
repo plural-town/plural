@@ -2,7 +2,6 @@ import { Container, Heading, Text } from "@chakra-ui/react";
 import { SESSION_OPTIONS } from "../../../../lib/session";
 import { withIronSessionSsr } from "iron-session/next";
 import Head from "next/head";
-import { prisma } from "@plural/prisma";
 import { Permission } from "@prisma/client";
 import {
   getAccountIdentities,
@@ -14,6 +13,7 @@ import flatten from "lodash.flatten";
 import { InferGetServerSidePropsType } from "next";
 import { DisplayEditor } from "@plural/ui";
 import { SerializableDisplayName } from "@plural/schema";
+import { prismaClient } from "@plural/prisma";
 
 export const getServerSideProps = withIronSessionSsr(async ({ query, req, res }) => {
   const { users } = req.session;
@@ -32,6 +32,8 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
   if (typeof profileId !== "string") {
     throw new Error("Incorrect profileId format.");
   }
+
+  const prisma = prismaClient();
 
   // TODO: Use "fronting" to determine identities, vs. all identities of the accounts
   const identities = flatten(

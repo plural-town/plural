@@ -6,7 +6,7 @@ import { customAlphabet } from "nanoid";
 import { nolookalikesSafe } from "nanoid-dictionary";
 import { getAccountProfiles } from "@plural/db";
 import flatten from "lodash.flatten";
-import { prisma } from "@plural/prisma";
+import { prismaClient } from "@plural/prisma";
 
 const noteIdGenerator = customAlphabet(nolookalikesSafe, 12);
 
@@ -23,6 +23,8 @@ export async function startDraftHandler(req: NextApiRequest, res: NextApiRespons
   const userIds = users.map((u) => u.id);
 
   const { identities, content, profiles } = CreateNoteRequestSchema.validateSync(req.body);
+
+  const prisma = prismaClient();
 
   for (const identityId of Object.keys(identities)) {
     const identity = await prisma.identity.findUnique({

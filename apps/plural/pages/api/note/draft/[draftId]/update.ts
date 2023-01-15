@@ -3,7 +3,7 @@ import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiRequest, NextApiResponse } from "next";
 import { UpdateNoteContentSchema } from "@plural/schema";
 import { canAccountEditNote } from "@plural/db";
-import { prisma } from "@plural/prisma";
+import { prismaClient } from "@plural/prisma";
 
 export async function updateNoteDraftHandler(req: NextApiRequest, res: NextApiResponse) {
   const { users } = req.session;
@@ -17,6 +17,8 @@ export async function updateNoteDraftHandler(req: NextApiRequest, res: NextApiRe
   }
 
   const { content } = UpdateNoteContentSchema.validateSync(req.body);
+
+  const prisma = prismaClient();
 
   const draft = await prisma.noteDraft.findUnique({
     where: {

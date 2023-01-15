@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { InitialPromotionRequestSchema } from "@plural/schema";
 import { Role } from "@prisma/client";
 import { getLogger } from "@plural/log";
-import { prisma } from "@plural/prisma";
+import { prismaClient } from "@plural/prisma";
 
 export async function promoteInitialAdminHandler(req: NextApiRequest, res: NextApiResponse) {
   const log = getLogger("promoteInitialAdminHandler");
@@ -37,6 +37,8 @@ export async function promoteInitialAdminHandler(req: NextApiRequest, res: NextA
   const userIds = users.map((u) => u.id);
 
   const { identity, token } = InitialPromotionRequestSchema.validateSync(req.body);
+
+  const prisma = prismaClient();
 
   const i = await prisma.identity.findUnique({
     where: {

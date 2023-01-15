@@ -5,7 +5,7 @@ import { withIronSessionApiRoute } from "iron-session/next";
 import { customAlphabet } from "nanoid";
 import { nolookalikesSafe } from "nanoid-dictionary";
 import { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "@plural/prisma";
+import { prismaClient } from "@plural/prisma";
 
 const profileIdGenerator = customAlphabet(nolookalikesSafe, 8);
 
@@ -22,6 +22,8 @@ export async function createProfileHandler(req: NextApiRequest, res: NextApiResp
 
   const { parent, owner, slug, display, displayId, visibility } =
     CreateRootProfileRequestSchema.validateSync(req.body);
+
+  const prisma = prismaClient();
 
   const identity = await prisma.identity.findUnique({
     where: {
