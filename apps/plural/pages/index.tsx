@@ -189,7 +189,7 @@ export function Index({
       <Head>
         <title>{name}</title>
       </Head>
-      <SiteHeader siteName={name} />
+      <SiteHeader siteName={name} no-search />
 
       <Container maxW="container.sm" my={5}>
         <Alert status="info" variant="solid">

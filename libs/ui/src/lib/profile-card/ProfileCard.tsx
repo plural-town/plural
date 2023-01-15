@@ -1,4 +1,23 @@
-import { Avatar, Box, Button, Card, CardBody, CardFooter, CardHeader, Flex, Heading, HStack, IconButton, Image, Menu, MenuButton, MenuItem, MenuList, Stack, Text } from "@chakra-ui/react";
+import {
+  Avatar,
+  Box,
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Flex,
+  Heading,
+  HStack,
+  IconButton,
+  Image,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import { requirePermission } from "@plural/db";
 import { ProfilePage } from "@plural/schema";
 import NextLink from "next/link";
@@ -10,10 +29,7 @@ export interface ProfileCardProps {
   profile: ProfilePage;
 }
 
-export function ProfileCard({
-  BASE_URL,
-  profile,
-}: ProfileCardProps) {
+export function ProfileCard({ BASE_URL, profile }: ProfileCardProps) {
   const {
     display,
     highestRole,
@@ -28,29 +44,17 @@ export function ProfileCard({
 
   return (
     <Card variant="filled" my={4} bg="gray.200">
-      { banner && (
-        <Image
-          objectFit="cover"
-          w="full"
-          src={banner.src}
-          alt={banner.alt}
-        />
-      ) }
+      {banner && <Image objectFit="cover" w="full" src={banner.src} alt={banner.alt} />}
       <CardHeader>
         <Flex>
           <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">
-            { avatar && (
-              <Avatar
-                name={displayName ?? undefined}
-                src={avatar.src}
-              />
-            )}
+            {avatar && <Avatar name={displayName ?? undefined} src={avatar.src} />}
             <Box>
               <Heading size="sm">
-                { displayName }
+                {displayName}
                 {/* TODO: Render any custom badges */}
               </Heading>
-              <Text>{ fullUsername }</Text>
+              <Text>{fullUsername}</Text>
             </Box>
           </Flex>
           <HStack>
@@ -62,7 +66,7 @@ export function ProfileCard({
               </Button>
             </NextLink>
             {/* TODO: Use a Menu implementation that can work without JS */}
-            <Menu>
+            <Menu placement="bottom-end">
               <MenuButton
                 as={IconButton}
                 aria-label="Profile Options"
@@ -70,22 +74,20 @@ export function ProfileCard({
                 data-test-id="profile-dropdown"
               />
               <MenuList>
-                { requirePermission(highestRole, "ADMIN") && (
-                  <NextLink href={`${BASE_URL}/account/profile/${profile.id}/`} passHref legacyBehavior>
-                    <MenuItem as="a">
-                      Edit Profile
-                    </MenuItem>
+                {requirePermission(highestRole, "ADMIN") && (
+                  <NextLink
+                    href={`${BASE_URL}/account/profile/${profile.id}/`}
+                    passHref
+                    legacyBehavior
+                  >
+                    <MenuItem as="a">Edit Profile</MenuItem>
                   </NextLink>
-                ) }
+                )}
                 <NextLink href={`${profileURL}dm/`} passHref legacyBehavior>
-                  <MenuItem as="a">
-                    Send DM
-                  </MenuItem>
+                  <MenuItem as="a">Send DM</MenuItem>
                 </NextLink>
                 <NextLink href={`${profileURL}block/`} passHref legacyBehavior>
-                  <MenuItem as="a">
-                    Block Profile
-                  </MenuItem>
+                  <MenuItem as="a">Block Profile</MenuItem>
                 </NextLink>
               </MenuList>
             </Menu>
@@ -93,7 +95,7 @@ export function ProfileCard({
         </Flex>
       </CardHeader>
       <CardBody>
-        <Text fontSize="sm">{ display.bio }</Text>
+        <Text fontSize="sm">{display.bio}</Text>
       </CardBody>
       <CardFooter
         justify="space-between"
@@ -106,36 +108,24 @@ export function ProfileCard({
       >
         <Stack flex="1">
           <NextLink href={`${profileURL}`} passHref legacyBehavior>
-            <Button
-              as="a"
-              variant="ghost"
-              disabled={typeof postCount !== "number"}
-            >
-              { typeof postCount === "number" ? `${postCount} ` : "" }
+            <Button as="a" variant="ghost" disabled={typeof postCount !== "number"}>
+              {typeof postCount === "number" ? `${postCount} ` : ""}
               Posts
             </Button>
           </NextLink>
         </Stack>
         <Stack flex="1">
           <NextLink href={`${profileURL}following/`} passHref legacyBehavior>
-            <Button
-              as="a"
-              variant="ghost"
-              disabled={typeof followingCount !== "number"}
-            >
-              { typeof followingCount === "number" ? `${followingCount} ` : "" }
+            <Button as="a" variant="ghost" disabled={typeof followingCount !== "number"}>
+              {typeof followingCount === "number" ? `${followingCount} ` : ""}
               Following
             </Button>
           </NextLink>
         </Stack>
         <Stack flex="1">
           <NextLink href={`${profileURL}followers/`} passHref legacyBehavior>
-            <Button
-              as="a"
-              variant="ghost"
-              disabled={typeof followerCount !== "number"}
-            >
-              { typeof followerCount === "number" ? `${followerCount} ` : "" }
+            <Button as="a" variant="ghost" disabled={typeof followerCount !== "number"}>
+              {typeof followerCount === "number" ? `${followerCount} ` : ""}
               Followers
             </Button>
           </NextLink>

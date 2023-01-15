@@ -2,7 +2,7 @@ import { createContextualCan } from "@casl/react";
 import { abilityFor, PluralTownRule, rulesFor } from "@plural-town/ability";
 import { createContext, ReactNode, useContext, useMemo } from "react";
 
-const AbilityContext = createContext(abilityFor(rulesFor([])));
+const AbilityContext = createContext(abilityFor(rulesFor([], [])));
 export const AdminCan = createContextualCan(AbilityContext.Consumer);
 
 export function useAdminAbility() {

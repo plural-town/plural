@@ -31,6 +31,7 @@ export interface IdentityDoc {
 }
 
 export const IdentityDocSchema = Yup.object().shape({
+  kind: Yup.mixed<"Identity">().oneOf(["Identity"]).required(),
   id: Yup.string().required(),
   role: RoleSchema.optional(),
   visibility: VisibilitySchema.optional(),

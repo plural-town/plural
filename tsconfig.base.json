@@ -31,7 +31,9 @@
       "@plural/next-utils": ["libs/next-utils/src/index.ts"],
       "@plural/schema": ["libs/schema/src/index.ts"],
       "@plural/tasks/fetch": ["libs/tasks/fetch/src/index.ts"],
-      "@plural/ui": ["libs/ui/src/index.ts"]
+      "@plural/ui": ["libs/ui/src/index.ts"],
+      "@plural/use-auth": ["libs/use-auth/src/index.ts"],
+      "@plural/use-identities": ["libs/use-identities/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
