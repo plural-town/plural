@@ -1,0 +1,41 @@
+import { DocLayout, DocNavItem } from "@plural/ui";
+export const meta = { title: "Documentation" };
+
+# Documentation Introduction
+
+Welcome!
+This server is running [PluralTown](https://software.plural.town/),
+a social media platform designed with support for each user to have multiple identities.
+
+This server supports [ActivityPub](../docs/terms/ActivityPub/), allowing users on compatible servers
+to interact with users on this server even if they don't have a local account.
+
+## Quick Links
+
+Most users find one (or more) of the following links useful:
+
+<DocNavItem>
+
+### [About this server](../about/)
+
+Learn more about this specific server, including the server rules and privacy policy.
+
+</DocNavItem>
+<DocNavItem>
+
+### [Creating an Account](../docs/user-guide/create-account/)
+
+A step-by-step guide for creating an account on this server.
+
+</DocNavItem>
+
+<DocNavItem>
+
+### [Interacting with Content](../docs/user-guide/interact/)
+
+You can follow users on this server and like/react/reply to content on this server
+if you have an account on this server, or on a compatible server.
+
+</DocNavItem>
+
+export default ({ children }) => <DocLayout meta={meta}>{children}</DocLayout>;
