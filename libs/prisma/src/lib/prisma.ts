@@ -9,7 +9,7 @@ declare const global: CustomNodeJsGlobal;
 let cache: PrismaClient;
 
 export function prismaClient() {
-  if (process.env.NODE_ENV === "test") {
+  if (process.env["NODE_ENV"] === "test") {
     // Cypress E2E tests hit cache issues if the client is not re-created after the database is reset.
     return new PrismaClient();
   }
