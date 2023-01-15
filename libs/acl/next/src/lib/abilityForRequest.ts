@@ -97,6 +97,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
           id,
         },
         include: {
+          display: true,
           grants: true,
           profiles: true,
         },
@@ -128,6 +129,10 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
 
       const newSession: FrontSession = {
         id,
+        name:
+          identity.display && identity.display.displayName.length > 0
+            ? identity.display.displayName
+            : identity.display.name,
         account: owner?.accountId,
         role: identity.role,
         profiles,

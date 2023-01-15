@@ -28,6 +28,7 @@ export async function activateIdentity(req: NextApiRequest, res: NextApiResponse
         },
         include: {
           grants: true,
+          display: true,
           profiles: true,
         },
       });
@@ -61,6 +62,10 @@ export async function activateIdentity(req: NextApiRequest, res: NextApiResponse
     ...existing,
     {
       id: found.id,
+      name:
+        found.display && found.display.displayName.length > 0
+          ? found.display.displayName
+          : found.display.name,
       role: found.role,
       account: owner?.id,
       profiles: found.profiles.map((p) => ({

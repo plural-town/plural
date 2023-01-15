@@ -124,7 +124,7 @@ export function IdentitySwitcher({ modal, ...props }: IdentitySwitcherProps) {
               <Box key={f.id} role="group">
                 <Center>
                   {/* TODO: Render user avatar */}
-                  <Avatar />
+                  <Avatar name={f.name} />
                 </Center>
                 <Center>
                   <Heading size="sm">

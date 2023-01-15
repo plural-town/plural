@@ -6,6 +6,7 @@ export interface UserSessionContext {
 
 export interface IdentitySessionContext {
   id: string;
+  name: string;
   account: string | null;
 }
 

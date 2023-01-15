@@ -38,7 +38,7 @@ Browsing:
   Session:
     ✔ Users may be authenticated in multiple accounts at once @PluralTown v0.0.0 @done(22-12-30)
     ✔ Users can set which identities are active (/fronting) @PluralTown <VERSION> @done(<BRANCH>) @est(2d)
-    ☐ Users can see which identities are active in a user switcher @est(2d)
+    ✔ Users can see which identities are active in a user switcher @PluralTown <VERSION> @done(<BRANCH>) @est(2d)
 
   Profile Displays:
     ✔ Displays an "about" card for the profile @PluralTown v0.0.0 @done(22-12-30)

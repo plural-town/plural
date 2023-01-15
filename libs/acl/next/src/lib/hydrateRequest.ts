@@ -12,6 +12,7 @@ export function hydrateRequest(req: RequestWithSession): ServerAuthHydration {
     front:
       front?.map((f) => ({
         id: f.id,
+        name: f.name ?? f.id,
         account: f.account ?? null,
       })) ?? null,
   };

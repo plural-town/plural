@@ -7,6 +7,8 @@ export interface FrontSession {
    */
   id: string;
 
+  name?: string;
+
   /**
    * {@link IdentityGrant.accountId}
    */

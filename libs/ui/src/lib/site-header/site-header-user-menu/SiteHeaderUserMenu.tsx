@@ -121,7 +121,7 @@ export function SiteHeaderUserMenu(props: SiteHeaderUserMenuProps) {
       <>
         <AvatarGroup>
           {front.map((i) => (
-            <Avatar key={i.id} size="sm" data-front-avatar={i.id} />
+            <Avatar key={i.id} size="sm" data-front-avatar={i.id} name={i.name} />
           ))}
         </AvatarGroup>
         <NextLink href="/session/" passHref legacyBehavior>
@@ -144,7 +144,7 @@ export function SiteHeaderUserMenu(props: SiteHeaderUserMenuProps) {
       <>
         <AvatarGroup>
           {front.map((i) => (
-            <Avatar key={i.id} size="sm" data-front-avatar={i.id} />
+            <Avatar key={i.id} size="sm" data-front-avatar={i.id} name={i.name} />
           ))}
         </AvatarGroup>
         <Menu placement="bottom-end">
