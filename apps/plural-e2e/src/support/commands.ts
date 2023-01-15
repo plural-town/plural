@@ -37,6 +37,7 @@ declare namespace Cypress {
 
 Cypress.Commands.add("clean", () => {
   cy.exec("yarn nx run models:reset");
+  cy.then(Cypress.session.clearAllSavedSessions);
 });
 
 Cypress.Commands.add("apiSession", (id, email, password) => {

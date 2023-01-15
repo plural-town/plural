@@ -1,14 +1,15 @@
 import { Permission, PrismaClient } from "@prisma/client";
 import { abilityFor, PluralTownAbility, PluralTownRule, rulesFor } from "@plural-town/ability";
 import uniqBy from "lodash.uniqby";
+import isEqual from "lodash.isequal";
 import { FrontSession } from "./FrontSession";
 import { UserSession } from "./UserSession";
-import { ActiveIdentity } from "@plural-town/acl-models";
+import { ActiveAccountGrant, ActiveIdentity } from "@plural-town/acl-models";
 import { prisma as existingPrisma } from "@plural/prisma";
 import { DateTime, Duration } from "luxon";
 import { IncomingMessage } from "http";
 
-type RequestWithSession = IncomingMessage & {
+export type RequestWithSession = IncomingMessage & {
   session: {
     save: () => Promise<void>;
     users?: UserSession[];
@@ -34,6 +35,7 @@ export interface AbilityForRequestOptions {
   baseRequirement?: (ability: PluralTownAbility) => boolean;
   prisma?: PrismaClient;
   ensurePrisma?: boolean;
+  ensureUser?: boolean;
 }
 
 type ReturnedPrismaClient<O extends AbilityForRequestOptions> = O extends { prisma: PrismaClient }
@@ -53,7 +55,10 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
   const maxSessionCache = options?.maxSessionCache ?? Duration.fromObject({ minutes: 1 });
 
   if (!users && !front) {
-    const base = abilityFor(rulesFor([]));
+    const base = abilityFor(rulesFor([], []));
+    if (options?.ensureUser) {
+      return [false, false, false] as const;
+    }
     if (options?.baseRequirement && !options?.baseRequirement(base)) {
       return [false, false, false] as const;
     }
@@ -71,6 +76,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
       if (
         session.role &&
         session.profiles &&
+        session.accounts &&
         options?.latest !== true &&
         cachedAgo < maxSessionCache
       ) {
@@ -78,6 +84,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
           id,
           role: session.role,
           profiles: session.profiles,
+          accounts: session.accounts,
         });
         continue;
       }
@@ -91,6 +98,8 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
           id,
         },
         include: {
+          display: true,
+          grants: true,
           profiles: true,
         },
       });
@@ -100,6 +109,11 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
         return [false, false, false] as const;
       }
 
+      const accounts = identity.grants.map<ActiveAccountGrant>((g) => ({
+        accountId: g.accountId,
+        permission: g.permission,
+      }));
+
       const profiles = identity.profiles.map((p) => ({
         profileId: p.profileId,
         permission: p.permission,
@@ -108,24 +122,52 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
       identities.push({
         id: identity.id,
         role: identity.role,
+        accounts,
         profiles,
       });
 
-      req.session.front?.push({
+      const owner = identity.grants.find((g) => g.permission === "OWNER");
+
+      const newSession: FrontSession = {
         id,
+        name:
+          identity.display && identity.display.displayName.length > 0
+            ? identity.display.displayName
+            : identity.display.name,
+        account: owner?.accountId,
         role: identity.role,
         profiles,
         at: Date.now(),
-      });
+      };
 
-      sessionUpdated = true;
+      if (req.session.front) {
+        const existingFront = req.session.front.find((f) => f.id === id);
+        if (existingFront) {
+          if (existingFront.role !== identity.role) {
+            existingFront.role = identity.role;
+            existingFront.at = Date.now();
+            sessionUpdated = true;
+          }
+          if (!isEqual(existingFront.profiles, profiles)) {
+            existingFront.profiles = profiles;
+            existingFront.at = Date.now();
+            sessionUpdated = true;
+          }
+        } else {
+          req.session.front.push(newSession);
+          sessionUpdated = true;
+        }
+      } else {
+        req.session.front = [newSession];
+        sessionUpdated = true;
+      }
     }
 
     if (sessionUpdated) {
       await req.session.save();
     }
 
-    const rules = rulesFor(identities);
+    const rules = rulesFor(users ?? [], identities);
     const ability = abilityFor(rules);
     if (options?.baseRequirement && !options.baseRequirement(ability)) {
       return [false, false, false] as const;
@@ -153,6 +195,12 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
     const identities = uniqBy(grants, (i) => i.identityId).map<ActiveIdentity>((grant) => {
       return {
         id: grant.identityId,
+        accounts: [
+          {
+            accountId: grant.accountId,
+            permission: grant.permission,
+          },
+        ],
         profiles: grant.identity.profiles.map((profile) => ({
           permission: profile.permission,
           profileId: profile.profileId,
@@ -161,7 +209,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
       };
     });
 
-    const rules = rulesFor(identities);
+    const rules = rulesFor(users, identities);
     const ability = abilityFor(rules);
     if (options?.baseRequirement && !options.baseRequirement(ability)) {
       return [false, false, false] as const;
@@ -170,7 +218,11 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
     return [ability, prisma as ReturnedPrismaClient<Options>, rules] as const;
   }
 
-  const rules = rulesFor([]);
+  if (options?.ensureUser) {
+    return [false, false, false] as const;
+  }
+
+  const rules = rulesFor([], []);
   const ability = abilityFor(rules);
   if (options?.baseRequirement && !options.baseRequirement(ability)) {
     return [false, false, false] as const;

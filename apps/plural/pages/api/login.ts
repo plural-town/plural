@@ -50,6 +50,7 @@ export async function emailLoginHandler(req: NextApiRequest, res: NextApiRespons
     await req.session.save();
     return res.send({
       status: "ok",
+      id: address.account.id,
     });
   } catch (e) {
     res.status(404).send({

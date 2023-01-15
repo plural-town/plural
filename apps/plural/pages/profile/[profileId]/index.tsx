@@ -7,6 +7,8 @@ import { InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import { NoteCard, ProfileCard, ProfileNoteComposer, SiteHeader, useDisplayName } from "@plural/ui";
 import { prisma } from "@plural/prisma";
+import { AuthHydrationProvider } from "@plural/use-auth";
+import { hydrateRequest } from "@plural-town/next-ability";
 
 export const getServerSideProps = withIronSessionSsr(async ({ query, req, res }) => {
   const log = getLogger("ProfilePage.getServerSideProps");
@@ -53,6 +55,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
     props: {
       SITE_NAME,
       BASE_URL,
+      auth: hydrateRequest(req),
       identities: identitySummaries,
       profile,
     },
@@ -62,6 +65,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
 export function ProfilePage({
   SITE_NAME,
   BASE_URL,
+  auth,
   identities,
   profile,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
@@ -73,16 +77,18 @@ export function ProfilePage({
       <Head>
         <title>{`${displayName} - ${fullUsername}`}</title>
       </Head>
-      <SiteHeader siteName={SITE_NAME} />
-      <Container maxW="container.md">
-        <ProfileCard BASE_URL={BASE_URL} profile={profile} />
-        {requirePermission(highestRole, "POST") && (
-          <ProfileNoteComposer profileId={profile.id} identities={identities} />
-        )}
-        {profile.posts.map((post) => (
-          <NoteCard key={post.id} {...post} my={4} />
-        ))}
-      </Container>
+      <AuthHydrationProvider auth={auth}>
+        <SiteHeader siteName={SITE_NAME} />
+        <Container maxW="container.md">
+          <ProfileCard BASE_URL={BASE_URL} profile={profile} />
+          {requirePermission(highestRole, "POST") && (
+            <ProfileNoteComposer profileId={profile.id} identities={identities} />
+          )}
+          {profile.posts.map((post) => (
+            <NoteCard key={post.id} {...post} my={4} />
+          ))}
+        </Container>
+      </AuthHydrationProvider>
     </>
   );
 }
