@@ -91,7 +91,7 @@ export function SiteHeaderUserMenu(props: SiteHeaderUserMenuProps) {
     // Client has JS enabled, so use menus.
     return (
       <Menu placement="bottom-end">
-        <MenuButton as={Avatar} size="sm" />
+        <MenuButton as={Avatar} size="sm" aria-label="Account menu" />
         <MenuList color="black">
           <MenuItem disabled color="gray.400">
             No active identities
@@ -121,7 +121,7 @@ export function SiteHeaderUserMenu(props: SiteHeaderUserMenuProps) {
       <>
         <AvatarGroup>
           {front.map((i) => (
-            <Avatar key={i.id} size="sm" />
+            <Avatar key={i.id} size="sm" data-front-avatar={i.id} />
           ))}
         </AvatarGroup>
         <NextLink href="/session/" passHref legacyBehavior>
@@ -144,7 +144,7 @@ export function SiteHeaderUserMenu(props: SiteHeaderUserMenuProps) {
       <>
         <AvatarGroup>
           {front.map((i) => (
-            <Avatar key={i.id} size="sm" />
+            <Avatar key={i.id} size="sm" data-front-avatar={i.id} />
           ))}
         </AvatarGroup>
         <Menu placement="bottom-end">
@@ -156,7 +156,12 @@ export function SiteHeaderUserMenu(props: SiteHeaderUserMenuProps) {
             icon={<FaChevronDown />}
             aria-label="Session Options"
           />
-          <MenuList color="black">{switchMenuItem}</MenuList>
+          <MenuList color="black">
+            {switchMenuItem}
+            <NextLink href="/account/" passHref legacyBehavior>
+              <MenuItem as="a">Account Settings</MenuItem>
+            </NextLink>
+          </MenuList>
         </Menu>
       </>
     );
