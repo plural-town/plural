@@ -1,21 +1,14 @@
 import { NewEmailRequestSchema } from "@plural/schema";
-import { PrismaClient } from "@prisma/client";
 import { SESSION_OPTIONS } from "../../lib/session";
 import { compare } from "bcrypt";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiRequest, NextApiResponse } from "next";
+import { prisma } from "@plural/prisma";
 
-export async function emailLoginHandler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export async function emailLoginHandler(req: NextApiRequest, res: NextApiResponse) {
   const { registration } = req.query;
-  const {
-    email,
-    password,
-  } = NewEmailRequestSchema.validateSync(req.body);
+  const { email, password } = NewEmailRequestSchema.validateSync(req.body);
 
-  const prisma = new PrismaClient();
   const address = await prisma.email.findFirst({
     where: {
       email,
@@ -32,21 +25,23 @@ export async function emailLoginHandler(
 
   try {
     const verified = await compare(password, hashed);
-    if(!verified) {
+    if (!verified) {
       throw new Error();
     }
 
-    if(Array.isArray(req.session.users)) {
+    if (Array.isArray(req.session.users)) {
       req.session.users.push({
         id: address.account.id,
       });
     } else {
-      req.session.users = [{
-        id: address.account.id,
-      }];
+      req.session.users = [
+        {
+          id: address.account.id,
+        },
+      ];
     }
 
-    if(registration === "true") {
+    if (registration === "true") {
       req.session.registration = {
         id: address.account.id,
       };

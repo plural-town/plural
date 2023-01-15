@@ -1,6 +1,6 @@
 import { createProfileURL } from "@plural/db";
 import { getLogger } from "@plural/log";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@plural/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
 
 function nonempty(val: string) {
@@ -21,8 +21,6 @@ export default async function actorHandler(req: NextApiRequest, res: NextApiResp
     log.error({ req, res }, "User endpoint failed to parse 'profileId'");
     return;
   }
-
-  const prisma = new PrismaClient();
 
   const profile = await prisma.profile.findUnique({
     where: {

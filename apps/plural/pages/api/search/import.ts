@@ -11,10 +11,10 @@ import {
   ImportResponse,
 } from "@plural/schema";
 import { TaskQueue } from "@plural-town/queue-worker";
-import { PrismaClient } from "@prisma/client";
 import { runTask } from "@plural-town/exec-queue";
 import { getLogger } from "@plural/log";
 import { QueryURL } from "@plural/tasks/fetch";
+import { prisma } from "@plural/prisma";
 
 export async function importContentHandler(
   req: NextApiRequest,
@@ -39,8 +39,6 @@ export async function importContentHandler(
   // TODO: Rate-limit users (for extreme cases)
   // TODO: Have some way of blocklisting URLs
   // TODO: Check cache for recently imported content
-
-  const prisma = new PrismaClient();
 
   // TODO: Track/log who queued this query (for analytics, moderation, and so users can see complete/outstanding jobs)
 

@@ -2,8 +2,9 @@ import { SESSION_OPTIONS } from "../../../lib/session";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiRequest, NextApiResponse } from "next";
 import { InitialPromotionRequestSchema } from "@plural/schema";
-import { PrismaClient, Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 import { getLogger } from "@plural/log";
+import { prisma } from "@plural/prisma";
 
 export async function promoteInitialAdminHandler(req: NextApiRequest, res: NextApiResponse) {
   const log = getLogger("promoteInitialAdminHandler");
@@ -37,7 +38,6 @@ export async function promoteInitialAdminHandler(req: NextApiRequest, res: NextA
 
   const { identity, token } = InitialPromotionRequestSchema.validateSync(req.body);
 
-  const prisma = new PrismaClient();
   const i = await prisma.identity.findUnique({
     where: {
       id: identity,

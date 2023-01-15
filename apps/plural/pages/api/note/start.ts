@@ -2,36 +2,27 @@ import { SESSION_OPTIONS } from "../../../lib/session";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiRequest, NextApiResponse } from "next";
 import { CreateNoteRequestSchema } from "@plural/schema";
-import { PrismaClient } from "@prisma/client";
 import { customAlphabet } from "nanoid";
 import { nolookalikesSafe } from "nanoid-dictionary";
 import { getAccountProfiles } from "@plural/db";
 import flatten from "lodash.flatten";
+import { prisma } from "@plural/prisma";
 
 const noteIdGenerator = customAlphabet(nolookalikesSafe, 12);
 
-export async function startDraftHandler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export async function startDraftHandler(req: NextApiRequest, res: NextApiResponse) {
   const { users } = req.session;
 
-  if(!users) {
+  if (!users) {
     return res.status(302).send({
       status: "failure",
       error: "NO_LOGIN",
       nextStep: "LOGIN",
     });
   }
-  const userIds = users.map(u => u.id);
+  const userIds = users.map((u) => u.id);
 
-  const {
-    identities,
-    content,
-    profiles,
-  } = CreateNoteRequestSchema.validateSync(req.body);
-
-  const prisma = new PrismaClient();
+  const { identities, content, profiles } = CreateNoteRequestSchema.validateSync(req.body);
 
   for (const identityId of Object.keys(identities)) {
     const identity = await prisma.identity.findUnique({
@@ -43,8 +34,8 @@ export async function startDraftHandler(
       },
     });
 
-    const grant = identity.grants.find(grant => userIds.includes(grant.accountId));
-    if(!grant) {
+    const grant = identity.grants.find((grant) => userIds.includes(grant.accountId));
+    if (!grant) {
       return res.status(301).send({
         status: "failure",
         error: "NO_PERMS",
@@ -60,7 +51,7 @@ export async function startDraftHandler(
     },
   });
 
-  for(const identityId of Object.keys(identities)) {
+  for (const identityId of Object.keys(identities)) {
     await prisma.noteAuthor.create({
       data: {
         noteId: note.id,
@@ -76,18 +67,24 @@ export async function startDraftHandler(
     },
   });
 
-  const accountProfiles = flatten(await Promise.all(users.map(u => getAccountProfiles(u.id, prisma))));
+  const accountProfiles = flatten(
+    await Promise.all(users.map((u) => getAccountProfiles(u.id, prisma))),
+  );
 
   for (const profileId in profiles) {
     if (Object.prototype.hasOwnProperty.call(profiles, profileId)) {
       const profile = profiles[profileId];
-      if(!profile) {
+      if (!profile) {
         continue;
       }
-      const accountProfile = accountProfiles.find(p => p.id === profileId);
+      const accountProfile = accountProfiles.find((p) => p.id === profileId);
       // TODO: Test permission check
-      if(!accountProfile) {
-        throw new Error(`No permission to access profile: ${profileId} (${accountProfiles.map(p => p.id).join(", ")})`);
+      if (!accountProfile) {
+        throw new Error(
+          `No permission to access profile: ${profileId} (${accountProfiles
+            .map((p) => p.id)
+            .join(", ")})`,
+        );
       }
       await prisma.item.create({
         data: {

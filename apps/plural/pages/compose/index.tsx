@@ -1,18 +1,18 @@
 import { Card, CardBody, CardHeader, Container, Heading } from "@chakra-ui/react";
 import { SESSION_OPTIONS } from "../../lib/session";
 import { withIronSessionSsr } from "iron-session/next";
-import { PrismaClient } from "@prisma/client";
 import { getAccountIdentities } from "@plural/db";
 import flatten from "lodash.flatten";
 import { InferGetServerSidePropsType } from "next";
 import { Form, Formik } from "formik";
 import { CheckboxField, SubmitButton } from "@plural/form";
 import { useRouter } from "next/router";
+import { prisma } from "@plural/prisma";
 
 export const getServerSideProps = withIronSessionSsr(async ({ req, res }) => {
   const { users } = req.session;
 
-  if(!users) {
+  if (!users) {
     res.setHeader("location", "/login/");
     res.statusCode = 302;
     res.end();
@@ -23,9 +23,9 @@ export const getServerSideProps = withIronSessionSsr(async ({ req, res }) => {
     };
   }
 
-  const prisma = new PrismaClient();
-
-  const allIdentities = await Promise.all(users.map(user => getAccountIdentities(user.id, prisma)));
+  const allIdentities = await Promise.all(
+    users.map((user) => getAccountIdentities(user.id, prisma)),
+  );
   const identities = flatten(allIdentities);
 
   return {
@@ -42,12 +42,8 @@ export function ComposeHomePage({
 
   return (
     <Container>
-      <Heading as="h1">
-        Compose a note
-      </Heading>
-      <Heading size="md">
-        Authors
-      </Heading>
+      <Heading as="h1">Compose a note</Heading>
+      <Heading size="md">Authors</Heading>
       <Formik
         initialValues={{
           identities: {},
@@ -58,22 +54,20 @@ export function ComposeHomePage({
             body: JSON.stringify(values),
           });
           const res = await r.json();
-          if(res.status === "ok") {
+          if (res.status === "ok") {
             router.push(`/compose/${res.note}/${res.draft}`);
           }
         }}
       >
         <Form>
           {/* TODO: this should be profiles, not identities. */}
-          {identities.map(identity => (
+          {identities.map((identity) => (
             <Card key={identity.id}>
               <CardHeader>
                 <Heading size="md">
-                  {
-                    (identity.display.displayName && identity.display.displayName.length > 0)
-                      ? identity.display.displayName
-                      : identity.display.name
-                  }
+                  {identity.display.displayName && identity.display.displayName.length > 0
+                    ? identity.display.displayName
+                    : identity.display.name}
                 </Heading>
               </CardHeader>
               <CardBody>
@@ -85,9 +79,7 @@ export function ComposeHomePage({
               </CardBody>
             </Card>
           ))}
-          <SubmitButton colorScheme="blue">
-            Create Draft with Authors
-          </SubmitButton>
+          <SubmitButton colorScheme="blue">Create Draft with Authors</SubmitButton>
         </Form>
       </Formik>
     </Container>

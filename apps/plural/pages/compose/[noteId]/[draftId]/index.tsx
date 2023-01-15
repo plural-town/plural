@@ -1,16 +1,23 @@
 import { Box, Container, Divider, Heading } from "@chakra-ui/react";
 import { SESSION_OPTIONS } from "../../../../lib/session";
 import { withIronSessionSsr } from "iron-session/next";
-import { PrismaClient } from "@prisma/client";
 import { InferGetServerSidePropsType } from "next";
 import { Form, Formik } from "formik";
-import { AuthorTypeSelectField, CheckboxField, InputField, ProfileSelectField, SubmitButton, VisibilitySelectField } from "@plural/form";
+import {
+  AuthorTypeSelectField,
+  CheckboxField,
+  InputField,
+  ProfileSelectField,
+  SubmitButton,
+  VisibilitySelectField,
+} from "@plural/form";
 import { getAccountProfiles, summarizeProfile } from "@plural/db";
 import flatten from "lodash.flatten";
 import uniqBy from "lodash.uniqby";
 import React, { useMemo, useState } from "react";
 import { AddNoteDestination, AddNoteDestinationSchema, PublishedNoteProfile } from "@plural/schema";
 import { NoteCard, PostDestinationForm } from "@plural/ui";
+import { prisma } from "@plural/prisma";
 
 export const getServerSideProps = withIronSessionSsr(async ({ query, req, res }) => {
   const name = process.env.SITE_NAME;
@@ -18,7 +25,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
   const { noteId, draftId } = query;
   const id = typeof noteId === "string" ? noteId : "";
 
-  if(!users) {
+  if (!users) {
     return {
       redirect: {
         destination: "/login/",
@@ -26,14 +33,12 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
       },
     };
   }
-  const userIds = users.map(u => u.id);
-
-  const prisma = new PrismaClient();
+  const userIds = users.map((u) => u.id);
 
   // TODO: Only include profiles of current authors (aka filter by fronting)
   const profiles = uniqBy(
-    flatten(await Promise.all(userIds.map(id => getAccountProfiles(id, prisma)))),
-    i => i.id,
+    flatten(await Promise.all(userIds.map((id) => getAccountProfiles(id, prisma)))),
+    (i) => i.id,
   );
 
   // TODO: Permission check?
@@ -72,7 +77,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
   // TODO: Find highest permission author that is in scope
   // TODO: Summarize authors vs. returing entire
 
-  const destinations = publishes.map(publish => {
+  const destinations = publishes.map((publish) => {
     const { id, profile, localOnly, privacy, noteAuthor } = publish;
     return {
       id: id,
@@ -85,7 +90,7 @@ export const getServerSideProps = withIronSessionSsr(async ({ query, req, res })
 
   const draft = await prisma.noteDraft.findUniqueOrThrow({
     where: {
-      id: (typeof draftId === "string") ? draftId : "",
+      id: typeof draftId === "string" ? draftId : "",
     },
   });
 
@@ -115,7 +120,7 @@ export function ComposeNotePage({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [isStableDraft, setIsStableDraft] = useState(false);
   const previewProfile = useMemo<PublishedNoteProfile | null>(() => {
-    if(destinations.length < 1) {
+    if (destinations.length < 1) {
       return null;
     }
     const dest = destinations[0];
@@ -127,7 +132,7 @@ export function ComposeNotePage({
   }, [destinations]);
 
   const previewProfiles = useMemo<PublishedNoteProfile[]>(() => {
-    return destinations.map<PublishedNoteProfile>(dest => ({
+    return destinations.map<PublishedNoteProfile>((dest) => ({
       ...dest.profile,
       author: dest.noteAuthor,
     }));
@@ -135,9 +140,7 @@ export function ComposeNotePage({
 
   return (
     <Container maxW="container.lg">
-      <Heading as="h1">
-        Compose
-      </Heading>
+      <Heading as="h1">Compose</Heading>
       <Formik
         initialValues={{
           content,
@@ -148,20 +151,14 @@ export function ComposeNotePage({
             body: JSON.stringify(values),
           });
           const res = await r.json();
-          if(res.status === "ok") {
+          if (res.status === "ok") {
             // TODO: do something?
           }
         }}
       >
         <Form>
-          <InputField
-            name="content"
-            label="Message"
-            textarea
-          />
-          <SubmitButton colorScheme="purple">
-            Update Draft
-          </SubmitButton>
+          <InputField name="content" label="Message" textarea />
+          <SubmitButton colorScheme="purple">Update Draft</SubmitButton>
         </Form>
       </Formik>
       <Formik
@@ -169,32 +166,21 @@ export function ComposeNotePage({
         onSubmit={async (values) => {
           const r = await fetch(`/api/note/draft/${draftId}/publish/`);
           const res = await r.json();
-          if(res.status === "ok") {
+          if (res.status === "ok") {
             setIsStableDraft(true);
           }
         }}
       >
         <Form method="GET" action={`/api/note/draft/${draftId}/publish/`}>
-          <SubmitButton color="blue">
-            Set as latest draft
-          </SubmitButton>
+          <SubmitButton color="blue">Set as latest draft</SubmitButton>
         </Form>
       </Formik>
-      { isStableDraft && (
-        <Box>
-          This note has been published as the latest stable draft.
-        </Box>
-      )}
+      {isStableDraft && <Box>This note has been published as the latest stable draft.</Box>}
       <Heading as="h2" size="md" my={3}>
         Preview
       </Heading>
       <Container maxW="container.sm">
-        <NoteCard
-          id=""
-          content={content}
-          profile={previewProfile}
-          profiles={previewProfiles}
-        />
+        <NoteCard id="" content={content} profile={previewProfile} profiles={previewProfiles} />
       </Container>
       <Heading as="h2" size="md" my={3}>
         Authors
@@ -202,12 +188,8 @@ export function ComposeNotePage({
       <Heading as="h2" size="md" my={3}>
         Destinations
       </Heading>
-      {destinations.map(item => (
-        <PostDestinationForm
-          key={item.id}
-          noteId={noteId}
-          destination={item}
-        />
+      {destinations.map((item) => (
+        <PostDestinationForm key={item.id} noteId={noteId} destination={item} />
       ))}
       <Divider mt={4} mb={4} />
       <Heading as="h2" size="md">
@@ -228,7 +210,7 @@ export function ComposeNotePage({
               body: JSON.stringify(values),
             });
             const res = await r.json();
-            if(res.status === "ok") {
+            if (res.status === "ok") {
               // TODO: do something?
             }
             return;
@@ -247,17 +229,9 @@ export function ComposeNotePage({
               label="Local-Only Post"
               text={`Display only on ${name}`}
             />
-            <VisibilitySelectField
-              name="privacy"
-              label="Post Privacy"
-            />
-            <AuthorTypeSelectField
-              name="noteAuthor"
-              label="Author Display"
-            />
-            <SubmitButton colorScheme="purple">
-              Add Destination
-            </SubmitButton>
+            <VisibilitySelectField name="privacy" label="Post Privacy" />
+            <AuthorTypeSelectField name="noteAuthor" label="Author Display" />
+            <SubmitButton colorScheme="purple">Add Destination</SubmitButton>
           </Form>
         </Formik>
       </Box>

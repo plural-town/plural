@@ -1,21 +1,18 @@
 import { summarizeProfile } from "@plural/db";
 import { CreateRootProfileRequestSchema } from "@plural/schema";
-import { PrismaClient } from "@prisma/client";
 import { SESSION_OPTIONS } from "../../../lib/session";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { customAlphabet } from "nanoid";
 import { nolookalikesSafe } from "nanoid-dictionary";
 import { NextApiRequest, NextApiResponse } from "next";
+import { prisma } from "@plural/prisma";
 
 const profileIdGenerator = customAlphabet(nolookalikesSafe, 8);
 
-export async function createProfileHandler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export async function createProfileHandler(req: NextApiRequest, res: NextApiResponse) {
   const users = req.session.users;
 
-  if(!users) {
+  if (!users) {
     return res.status(302).send({
       status: "failure",
       error: "NO_LOGIN",
@@ -23,16 +20,9 @@ export async function createProfileHandler(
     });
   }
 
-  const {
-    parent,
-    owner,
-    slug,
-    display,
-    displayId,
-    visibility,
-  } = CreateRootProfileRequestSchema.validateSync(req.body);
+  const { parent, owner, slug, display, displayId, visibility } =
+    CreateRootProfileRequestSchema.validateSync(req.body);
 
-  const prisma = new PrismaClient();
   const identity = await prisma.identity.findUnique({
     where: {
       id: owner,
@@ -42,11 +32,11 @@ export async function createProfileHandler(
     },
   });
 
-  const ownership = identity.grants.find(grant => {
-    return !!(users.find(u => u.id === grant.accountId));
+  const ownership = identity.grants.find((grant) => {
+    return !!users.find((u) => u.id === grant.accountId);
   });
 
-  if(!ownership) {
+  if (!ownership) {
     return res.status(301).send({
       status: "failure",
       error: "NO_PERMS",
@@ -62,7 +52,7 @@ export async function createProfileHandler(
     },
   });
 
-  if(existing) {
+  if (existing) {
     return res.status(400).send({
       status: "failure",
       error: "COLLISION",
@@ -74,21 +64,22 @@ export async function createProfileHandler(
   const displayObj = displayId
     ? await prisma.displayName.findUniqueOrThrow({ where: { id: displayId } })
     : await prisma.displayName.create({
-      data: {
-        name: display.name,
-        nameVisibility: "PUBLIC",
-        displayName: display.displayName,
-        displayNameVisibility: "PUBLIC",
-      },
-    });
+        data: {
+          name: display.name,
+          nameVisibility: "PUBLIC",
+          displayName: display.displayName,
+          displayNameVisibility: "PUBLIC",
+        },
+      });
 
-  const parentProfile = (typeof parent === "string" && parent.length > 0)
-    ? await prisma.profile.findUnique({
-      where: {
-        id: parent,
-      },
-    })
-    : false;
+  const parentProfile =
+    typeof parent === "string" && parent.length > 0
+      ? await prisma.profile.findUnique({
+          where: {
+            id: parent,
+          },
+        })
+      : false;
 
   // TODO: Permission check that we can alter parent
 

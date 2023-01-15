@@ -4,6 +4,7 @@ import uniqBy from "lodash.uniqby";
 import { FrontSession } from "./FrontSession";
 import { UserSession } from "./UserSession";
 import { ActiveIdentity } from "@plural-town/acl-models";
+import { prisma as existingPrisma } from "@plural/prisma";
 import { DateTime, Duration } from "luxon";
 import { IncomingMessage } from "http";
 
@@ -82,7 +83,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
       }
 
       if (!prisma) {
-        prisma = new PrismaClient();
+        prisma = existingPrisma;
       }
 
       const identity = await prisma.identity.findUnique({
@@ -133,7 +134,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
   }
 
   if (users) {
-    const prisma = options?.prisma ?? new PrismaClient();
+    const prisma = options?.prisma ?? existingPrisma;
 
     const grants = await prisma.identityGrant.findMany({
       where: {
@@ -176,7 +177,7 @@ export async function abilityForRequest<Options extends AbilityForRequestOptions
   }
   return [
     ability,
-    (options?.prisma ?? new PrismaClient()) as ReturnedPrismaClient<Options>,
+    (options?.prisma ?? existingPrisma) as ReturnedPrismaClient<Options>,
     rules,
   ] as const;
 }

@@ -1,15 +1,12 @@
 import { SESSION_OPTIONS } from "../../../../../../lib/session";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
 import { canAccountEditNote } from "@plural/db";
+import { prisma } from "@plural/prisma";
 
-export async function publishNoteHandler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export async function publishNoteHandler(req: NextApiRequest, res: NextApiResponse) {
   const { users } = req.session;
-  if(!users) {
+  if (!users) {
     return res.status(401).send({
       status: "failed",
       error: "NO_LOGIN",
@@ -17,14 +14,16 @@ export async function publishNoteHandler(
   }
 
   const { noteId, destinationId } = req.query;
-  if(typeof noteId !== "string" || typeof destinationId !== "string") {
+  if (typeof noteId !== "string" || typeof destinationId !== "string") {
     throw new Error("Invalid parameter.");
   }
 
-  const prisma = new PrismaClient();
-
-  const note = await canAccountEditNote(users.map(u => u.id), noteId, prisma);
-  if(!note) {
+  const note = await canAccountEditNote(
+    users.map((u) => u.id),
+    noteId,
+    prisma,
+  );
+  if (!note) {
     return res.status(404).send({
       status: "failure",
       error: "NOT_FOUND_NO_PERM",
