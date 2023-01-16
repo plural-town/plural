@@ -3,14 +3,25 @@ import { MDXProvider } from "@mdx-js/react";
 import Head from "next/head";
 import NextLink from "next/link";
 import React, { ReactNode } from "react";
-import { FaArrowLeft } from "react-icons/fa";
+import { AiFillFileText, AiOutlineMessage } from "react-icons/ai";
+import { FaArrowLeft, FaLock, FaUser } from "react-icons/fa";
+import { GrLaunch } from "react-icons/gr";
 import SidebarHeader from "../sidebar-layout/sidebar-header/SidebarHeader";
 import SidebarItem from "../sidebar-layout/sidebar-item/SidebarItem";
 import SidebarLayoutMain from "../sidebar-layout/sidebar-layout-main/SidebarLayoutMain";
 import SidebarLayoutPage from "../sidebar-layout/sidebar-layout-page/SidebarLayoutPage";
+import SidebarSectionHeading from "../sidebar-layout/sidebar-section-heading/SidebarSectionHeading";
+import SidebarSubItem from "../sidebar-layout/sidebar-sub-item/SidebarSubItem";
 import Sidebar from "../sidebar-layout/sidebar/Sidebar";
 import SidebarLayout from "../sidebar-layout/SidebarLayout";
 import { useDocNavItem } from "./doc-nav-item/DocNavItem";
+
+export type DocLayoutSection =
+  | "start"
+  | "user-account"
+  | "user-identity"
+  | "user-profile"
+  | "user-notes";
 
 const MdLink: React.FC<{
   href?: string;
@@ -85,6 +96,7 @@ const P: React.FC<{ children?: ReactNode }> = ({ children }) => {
 
 export interface DocMeta {
   title?: string;
+  section?: DocLayoutSection;
 }
 
 export interface DocLayoutProps {
@@ -109,7 +121,33 @@ export function DocLayout({ meta, children }: DocLayoutProps) {
       <SidebarLayout>
         <Sidebar brand="Documentation">
           <SidebarItem href="/" text="Back to Site" icon={FaArrowLeft} />
-          <SidebarItem href="/docs/" text="Introduction" />
+          <SidebarItem href="/docs/" text="Introduction" icon={AiFillFileText} />
+          <SidebarItem text="Quickstart" icon={GrLaunch} open={meta?.section === "start"}>
+            <SidebarSubItem href="/docs/start/register/" text="Register" />
+            <SidebarSubItem href="/docs/start/interact/" text="Interact with Content" />
+          </SidebarItem>
+          <SidebarSectionHeading>For Users</SidebarSectionHeading>
+          <SidebarItem text="Your Account" icon={FaLock}>
+            {/* <SidebarSubItem href="/docs/users/account/register/" text="Registering" /> */}
+          </SidebarItem>
+          <SidebarItem text="Identities" icon={FaUser}>
+            {/* <SidebarSubItem href="/docs/users/identity/create/" text="Creating Identities" /> */}
+            {/* <SidebarSubItem href="/docs/users/identity/manage/" text="Managing Identities" /> */}
+          </SidebarItem>
+          <SidebarItem text="Profiles" icon={AiFillFileText}>
+            {/* <SidebarSubItem href="/docs/users/profile/create/" text="Creating a Profile" /> */}
+            {/* <SidebarSubItem href="/docs/users/profile/manage/" text="Managing your Profile" /> */}
+          </SidebarItem>
+          <SidebarItem text="Short Messages (Toots)" icon={AiOutlineMessage}>
+            {/* <SidebarSubItem href="/docs/users/notes/browse/" text="Browsing Toots" /> */}
+            {/* <SidebarSubItem href="/docs/users/notes/create/" text="Posting Toots" /> */}
+          </SidebarItem>
+          {/* <SidebarItem text="Long-Form/Blogs" icon={RiFileEditLine}>
+            <SidebarSubItem text="Read Blogs" />
+            <SidebarSubItem text="Create Blog" />
+            <SidebarSubItem text="Writing Posts" />
+          </SidebarItem> */}
+          {/* TODO: Include admin section?  only if admin? */}
         </Sidebar>
         <SidebarLayoutMain>
           <SidebarHeader />
