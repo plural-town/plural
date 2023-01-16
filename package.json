@@ -111,6 +111,7 @@
     "husky": "^8.0.0",
     "jest": "28.1.1",
     "jest-environment-jsdom": "28.1.1",
+    "jest-esm-transformer-2": "^1.0.0",
     "jest-matchmedia-mock": "^1.1.0",
     "jest-mock-extended": "^3.0.1",
     "nx": "15.4.4",
