@@ -2,10 +2,11 @@ import { Container, Heading, Link, Text } from "@chakra-ui/react";
 import { MDXProvider } from "@mdx-js/react";
 import Head from "next/head";
 import NextLink from "next/link";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useMemo } from "react";
 import { AiFillFileText, AiOutlineMessage } from "react-icons/ai";
 import { FaArrowLeft, FaLock, FaUser } from "react-icons/fa";
 import { GrLaunch } from "react-icons/gr";
+import { RiBookReadLine } from "react-icons/ri";
 import SidebarHeader from "../sidebar-layout/sidebar-header/SidebarHeader";
 import SidebarItem from "../sidebar-layout/sidebar-item/SidebarItem";
 import SidebarLayoutMain from "../sidebar-layout/sidebar-layout-main/SidebarLayoutMain";
@@ -15,6 +16,8 @@ import SidebarSubItem from "../sidebar-layout/sidebar-sub-item/SidebarSubItem";
 import Sidebar from "../sidebar-layout/sidebar/Sidebar";
 import SidebarLayout from "../sidebar-layout/SidebarLayout";
 import { useDocNavItem } from "./doc-nav-item/DocNavItem";
+import DocNavItemContent from "./doc-nav-item/DocNavItemContent";
+import DocNavItemTitle from "./doc-nav-item/DocNavItemTitle";
 
 export type DocLayoutSection =
   | "start"
@@ -71,9 +74,9 @@ const H3: React.FC<{ children?: ReactNode }> = ({ children }) => {
 
   if (navItem.nav) {
     return (
-      <Heading size="xs" textTransform="uppercase" pb={1}>
-        {children}
-      </Heading>
+      <DocNavItemTitle>
+        { children }
+      </DocNavItemTitle>
     );
   }
 
@@ -88,7 +91,7 @@ const P: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const navItem = useDocNavItem();
 
   if (navItem.nav) {
-    return <Text fontSize="sm">{children}</Text>;
+    return <DocNavItemContent>{ children }</DocNavItemContent>;
   }
 
   return <Text my={2}>{children}</Text>;
@@ -102,9 +105,10 @@ export interface DocMeta {
 export interface DocLayoutProps {
   children?: ReactNode;
   meta?: DocMeta;
+  term?: string;
 }
 
-export function DocLayout({ meta, children }: DocLayoutProps) {
+export function DocLayout({ meta, term, children }: DocLayoutProps) {
   const components = {
     h1: H1,
     h2: H2,
@@ -113,10 +117,17 @@ export function DocLayout({ meta, children }: DocLayoutProps) {
     a: MdLink,
   } as const;
 
+  const title = useMemo(() => {
+    if(term) {
+      return `Definition: ${term}`;
+    }
+    return meta?.title ?? "Documentation";
+  }, [meta, term]);
+
   return (
     <MDXProvider components={components}>
       <Head>
-        <title>{meta?.title ?? "Documentation"}</title>
+        <title>{title}</title>
       </Head>
       <SidebarLayout>
         <Sidebar brand="Documentation">
@@ -126,6 +137,7 @@ export function DocLayout({ meta, children }: DocLayoutProps) {
             <SidebarSubItem href="/docs/start/register/" text="Register" />
             <SidebarSubItem href="/docs/start/interact/" text="Interact with Content" />
           </SidebarItem>
+          <SidebarItem href="/docs/terms/" text="Glossary" icon={RiBookReadLine} />
           <SidebarSectionHeading>For Users</SidebarSectionHeading>
           <SidebarItem text="Your Account" icon={FaLock}>
             {/* <SidebarSubItem href="/docs/users/account/register/" text="Registering" /> */}

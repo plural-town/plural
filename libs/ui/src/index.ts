@@ -1,3 +1,5 @@
+export * from "./lib/doc-layout/doc-nav-item/DocNavItemContent";
+export * from "./lib/doc-layout/doc-nav-item/DocNavItemTitle";
 export * from "./lib/doc-layout/doc-nav-item/DocNavItem";
 export * from "./lib/doc-layout/DocLayout";
 export * from "./lib/glossary-link/GlossaryLink";
