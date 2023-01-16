@@ -34,14 +34,12 @@ export function GlossaryIndex({ terms }: InferGetStaticPropsType<typeof getStati
         <Heading as="h1" size="lg">
           Glossary
         </Heading>
-        { terms.map(term => (
+        {terms.map((term) => (
           <LinkBox key={term.id} as="article">
             <DocNavItem>
               <DocNavItemTitle>
                 <Link href={`/docs/terms/${term.id}/`} passHref legacyBehavior>
-                  <LinkOverlay>
-                    { term.name }
-                  </LinkOverlay>
+                  <LinkOverlay>{term.name}</LinkOverlay>
                 </Link>
               </DocNavItemTitle>
             </DocNavItem>

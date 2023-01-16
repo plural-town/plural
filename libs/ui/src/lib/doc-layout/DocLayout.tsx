@@ -73,11 +73,7 @@ const H3: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const navItem = useDocNavItem();
 
   if (navItem.nav) {
-    return (
-      <DocNavItemTitle>
-        { children }
-      </DocNavItemTitle>
-    );
+    return <DocNavItemTitle>{children}</DocNavItemTitle>;
   }
 
   return (
@@ -91,7 +87,7 @@ const P: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const navItem = useDocNavItem();
 
   if (navItem.nav) {
-    return <DocNavItemContent>{ children }</DocNavItemContent>;
+    return <DocNavItemContent>{children}</DocNavItemContent>;
   }
 
   return <Text my={2}>{children}</Text>;
@@ -118,7 +114,7 @@ export function DocLayout({ meta, term, children }: DocLayoutProps) {
   } as const;
 
   const title = useMemo(() => {
-    if(term) {
+    if (term) {
       return `Definition: ${term}`;
     }
     return meta?.title ?? "Documentation";

@@ -6,11 +6,7 @@ export interface DocNavItemContentProps {
 }
 
 export function DocNavItemContent({ children }: DocNavItemContentProps) {
-  return (
-    <Text fontSize="sm">
-      { children }
-    </Text>
-  );
+  return <Text fontSize="sm">{children}</Text>;
 }
 
 export default DocNavItemContent;

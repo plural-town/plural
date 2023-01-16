@@ -8,7 +8,7 @@ export interface DocNavItemTitleProps {
 export function DocNavItemTitle({ children }: DocNavItemTitleProps) {
   return (
     <Heading size="xs" textTransform="uppercase" pb={1}>
-      { children }
+      {children}
     </Heading>
   );
 }
