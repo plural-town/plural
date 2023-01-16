@@ -1,0 +1,33 @@
+import { Heading } from "@chakra-ui/react";
+import { DocLayout, DocNavItem } from "@plural/ui";
+
+# Server Profile
+
+A _profile_ on this server describes a page with a set username.
+
+Profiles are typically one of the following:
+
+- A page for a single individual
+- A page for an organization/project/buisness/team,
+  that one or more individuals can access
+- A shared system account for multiple [identities][identity]
+  (for [plural systems][plural-system])
+
+Each profile designates one or more [identities][identity] that can post content
+and/or manage the profile.
+
+<DocNavItem>
+
+### [The Full User Model](../../docs/terms/account/#user-model)
+
+A complete description of how users are represented as
+[accounts][account], [identities][identity], and [profiles][].
+
+</DocNavItem>
+
+[account]: /docs/terms/account/
+[identity]: /docs/terms/identity/
+[profiles]: /docs/terms/profile/
+[plural-system]: /docs/terms/plural-system/
+
+export default ({ children }) => <DocLayout term="Server Profile">{children}</DocLayout>;

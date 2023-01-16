@@ -1,0 +1,30 @@
+import { Heading } from "@chakra-ui/react";
+import { DocLayout } from "@plural/ui";
+
+# Server Accounts
+
+An _account_ on this server defines how a user logs in to the server.
+
+<Heading as="h2" size="md" id="user-model">
+  The PluralTown User Model
+</Heading>
+
+The [PluralTown Software](https://software.plural.town) that powers this server
+has a very flexible model when it comes to user identity.
+It's one of the main features, but also comes with some complexity that needs to be explained.
+
+On many other social media platforms, you have a single identity, that includes:
+
+- how you login (e.g. username + password)
+- who you are (staff role, what other accounts have allowed you to see their private content)
+- how you appear to the world (your username that can be `@` mentioned, your display name)
+
+We call those components Accounts, [Identities][identity], and [Profiles][], respectively.
+
+Multiple [Identities][identity] can share a single [Account][], and can have [Profiles][].
+
+[account]: /docs/terms/account/
+[identity]: /docs/terms/identity/
+[profiles]: /docs/terms/profile/
+
+export default ({ children }) => <DocLayout term="Account">{children}</DocLayout>;

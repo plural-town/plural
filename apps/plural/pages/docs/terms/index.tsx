@@ -13,8 +13,11 @@ export const getStaticProps = (async () => {
   // TODO: Figure out best (cross-environment) way to automatically find terms.
 
   const terms = [
+    { id: "account", name: "Account" },
     { id: "ActivityPub", name: "ActivityPub" },
     { id: "fediverse", name: "Fediverse" },
+    { id: "identity", name: "Identity" },
+    { id: "profile", name: "Profile" },
   ] as const satisfies readonly Term[];
 
   return {
