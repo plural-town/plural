@@ -9,6 +9,7 @@
     "asciidoctor.asciidoctor-vscode",
     "streetsidesoftware.code-spell-checker",
     "editorconfig.editorconfig",
-    "redhat.vscode-yaml"
+    "redhat.vscode-yaml",
+    "unifiedjs.vscode-mdx"
   ]
 }

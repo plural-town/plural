@@ -1,0 +1,38 @@
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Box } from "@chakra-ui/react";
+import { DocLayout } from "@plural/ui";
+export const meta = {
+  title: "Quickstart: Interacting with Content",
+  section: "start",
+};
+
+# Interacting with server content
+
+Anyone[<sup>1</sup>](#fn1) can interact with users and content on this server,
+whether they hold an account here or on a compatible server.
+
+## Using another server
+
+<Alert status="warning">
+  <AlertIcon />
+  <Box>
+    <AlertTitle>Specifics may vary depending on server implementation</AlertTitle>
+    <AlertDescription>
+      The following section describes how features are implemented in many
+      [fediverse](/docs/terms/fediverse/) servers, however the following instructions may not work on every server.
+
+      The instructions are confirmed to work on servers running [Mastodon](https://joinmastodon.org/) software.
+    </AlertDescription>
+
+  </Box>
+</Alert>
+
+<hr />
+<ol>
+  <li id="fn1">
+    This server may block specific external servers according to server rules and administrator
+    disgression. Users on those specific servers may be unable to interact with users and content on
+    this server.
+  </li>
+</ol>
+
+export default ({ children }) => <DocLayout meta={meta}>{children}</DocLayout>;

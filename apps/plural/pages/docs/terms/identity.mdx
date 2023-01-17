@@ -1,0 +1,29 @@
+import { Heading } from "@chakra-ui/react";
+import { DocLayout, DocNavItem } from "@plural/ui";
+
+# Server Identity
+
+An _identity_ on this server describes "who someone is" - their:
+
+- Name ("Jay Doe")
+- Avatar
+- User role (user, moderator, administrator, etc.)
+
+By default, identities are not visible to other users.
+
+You can login to multiple identities with a single [account][].
+
+<DocNavItem>
+
+### [The Full User Model](../../docs/terms/account/#user-model)
+
+A complete description of how users are represented as
+[accounts][account], [identities][identity], and [profiles][].
+
+</DocNavItem>
+
+[account]: /docs/terms/account/
+[identity]: /docs/terms/identity/
+[profiles]: /docs/terms/profile/
+
+export default ({ children }) => <DocLayout term="Server Identity">{children}</DocLayout>;

@@ -1,3 +1,7 @@
+export * from "./lib/doc-layout/doc-nav-item/DocNavItemContent";
+export * from "./lib/doc-layout/doc-nav-item/DocNavItemTitle";
+export * from "./lib/doc-layout/doc-nav-item/DocNavItem";
+export * from "./lib/doc-layout/DocLayout";
 export * from "./lib/glossary-link/GlossaryLink";
 export * from "./lib/sidebar-layout/sidebar-section-heading/SidebarSectionHeading";
 export * from "./lib/dashboard-layout/DashboardLayout";

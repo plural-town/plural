@@ -1,0 +1,40 @@
+import { DocLayout } from "@plural/ui";
+
+# The Fediverse
+
+The _fediverse_ refers to a collection of social media platforms and servers
+that can communicate with each other through common protocols ([ActivityPub](/docs/terms/ActivityPub/))
+
+## Types of Servers
+
+There are many different software platforms that can communicate with servers
+in the fediverse, including:
+
+- [Mastodon][], [Pleroma][], [PluralTown][], [Misskey][], and [Calckey][],
+  which all allow posting short "notes" (sometimes called "toots")
+- [WriteFreely][] for sharing long-form content/creating a blog
+- [Mobilizon][] for sharing and RSVPing to events
+- [PeerTube][] for posting online videos
+- [Pixelfed][] for sharing photos
+
+## Interactions
+
+Each server on the Fediverse may be slightly different, but in general,
+if you have an account on one Fediverse server, you can:
+
+- Follow/subscribe to be notified when content is posted to someone's page/feed/timeline
+- Leave a comment/reply to content
+- Share/boost content so people following you can see the content
+- "Like" content
+
+[pluraltown]: https://software.plural.town/
+[mastodon]: https://joinmastodon.org/
+[pleroma]: https://pleroma.social/
+[misskey]: https://join.misskey.page/en-US/
+[calckey]: https://codeberg.org/calckey/calckey
+[peertube]: https://joinpeertube.org/
+[pixelfed]: https://pixelfed.org/
+[writefreely]: https://writefreely.org/
+[mobilizon]: https://joinmobilizon.org/en/
+
+export default ({ children }) => <DocLayout term="Fediverse">{children}</DocLayout>;

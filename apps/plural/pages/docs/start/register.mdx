@@ -1,0 +1,51 @@
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Box } from "@chakra-ui/react";
+import { DocLayout } from "@plural/ui";
+export const meta = {
+  title: "Quickstart: Register an Account",
+  section: "start",
+};
+
+# Registering an Account
+
+<Alert status="success" variant="left-accent" my={2}>
+  <AlertIcon />
+  <Box>
+    <AlertTitle fontSize="sm">You may not need an account!</AlertTitle>
+    <AlertDescription fontSize="sm">
+      You can interact with the users and content on this server without a local account!
+      This server is compatible with [Fediverse](/docs/terms/fediverse/) servers, including
+      [Mastodon](https://joinmastodon.org/) servers.
+
+      If you have an account on a Mastodon server, check out how you can
+      [interact](/docs/start/interact/) with the content on this site.
+    </AlertDescription>
+
+  </Box>
+</Alert>
+
+<Alert status="info" variant="left-accent" my={2}>
+  <AlertIcon />
+  <Box>
+    <AlertTitle fontSize="sm">Registrations may be closed</AlertTitle>
+    <AlertDescription fontSize="sm">
+      This server may close registrations for various reasons. If registrations are closed, review
+      any information supplied by server administratators, and consider trying later, or registering
+      for another server running PluralTown.
+    </AlertDescription>
+  </Box>
+</Alert>
+
+## Register with Email
+
+{/* TODO: include some info that accounts != identities */}
+
+To start, visit the [registration page](/register/email/)
+and enter your email address.
+
+## Confirm your Email
+
+Follow the instructions in the email to confirm your email address.
+
+{/* TODO: Complete the instructions */}
+
+export default ({ children }) => <DocLayout meta={meta}>{children}</DocLayout>;
